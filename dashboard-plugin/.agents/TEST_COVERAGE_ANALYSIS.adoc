@@ -1,0 +1,14 @@
+= Analyse de Couverture — ALGER (dashboard-gradle)
+
+== Metriques
+
+|===
+| Metrique | Valeur
+| Tests unitaires | 0
+| Tests Cucumber | 0
+| Couverture lignes | N/A
+|===
+
+== Notes
+
+*Session 000* : Projet bootstrappe — zero code source, zero test.
