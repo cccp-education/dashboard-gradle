@@ -1,9 +1,14 @@
-= Archive des Taches Terminees — Juin 2026 — ALGER (dashboard-gradle)
+= Archive des Tâches Terminées — Juin 2026
 
+== Session 002 — 2026-06-19 — DSH-2 IndexCrawler
+
+[cols="3,5,2"]
 |===
-| Date | Session | Tache | EPIC | Pts
-| 2026-06-18 | 000 | AGENT.adoc — regles absolues, architecture, EPICs, references | DSH-0 | 1
-| 2026-06-18 | 000 | .agents/INDEX.adoc — roadmap + portefeuille 26 boroughs | DSH-0 | 1
-| 2026-06-18 | 000 | PROMPT_REPRISE, BACKLOG, TODO, SESSIONS_HISTORY, TEST_COVERAGE_ANALYSIS | DSH-0 | 1
-| 2026-06-18 | 000 | Structure repertoire dashboard-plugin/ | DSH-0 | 1 (bonus)
+| Item | Fichier | Pts
+| DDD — Modele pivot DashboardData | `src/main/kotlin/.../model/DashboardData.kt` | 3
+| TDD — IndexCrawler + tests unitaires | `IndexCrawler.kt` + `IndexCrawlerTest.kt` | 5
+| Tache crawlDashboard (JSON output) | `DashboardPlugin.kt` | 2
+| Tests fonctionnels TestKit | `CrawlDashboardFunctionalTest.kt` | 1
+| Cucumber BDD + steps + runner | `features/` + `scenarios/` | 2
+| Validation — 14/14 PASS | — | 0
 |===

@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin (ALGER)
 
-_Derniere mise a jour_ : 2026-06-18 — Session 000
-_Session terminee_ : 000
-_Prochaine session_ : 001 — DSH-1 Plugin scaffold
+_Derniere mise a jour_ : 2026-06-19 — Session 002
+_Session terminee_ : 002
+_Prochaine session_ : 003 — DSH-3 Dashboard theme JBake
 
 '''
 
@@ -34,6 +34,8 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 |===
 | # | Date | Type | Sujet | Score
 | 000 | 2026-06-18 | gouvernance | **Bootstrap ALGER** — AGENT.adoc, INDEX.adoc, PROMPT_REPRISE, BACKLOG, structure repertoire. ZERO code source. | 10/10
+| 001 | 2026-06-18 | build | **DSH-1 Plugin scaffold** — settings.gradle.kts, build.gradle.kts, catalog, DashboardPlugin.kt, DashboardExtension.kt, consumer root, 4/4 tests PASS | 10/10
+| 002 | 2026-06-19 | implementation | **DSH-2 IndexCrawler** — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, 14/14 tests PASS (unit/functional/cucumber) | 10/10
 |===
 
 '''
@@ -43,8 +45,8 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 |===
 | EPIC | Sujet | Pts | Priorite | Statut
 | DSH-0 | Bootstrap gouvernance + structure projet | 3 | P0 | ✅ S000 (3/3 pts)
-| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | PLANIFIE
-| DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | PLANIFIE
+| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | 🔄 S001 (5/8 pts)
+| DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | ✅ S002 (13/13 pts)
 | DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | PLANIFIE
 | DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | PLANIFIE
 | DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | PLANIFIE
@@ -87,5 +89,5 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | HTOWN | plantuml-gradle | N2 | Diagrammes LLM | —
 | Grand Central | graphify-gradle | N0 | Graphe connaissance | —
 | Liberty | api-key-pool-gradle | N0 | Pool cles API LLM | —
-| ==ALGER== | ==dashboard-gradle== | N3 | Dashboard vision/avancement | ==S000==
+| ==ALGER== | ==dashboard-gradle== | N3 | Dashboard vision/avancement | ==S002==
 |===

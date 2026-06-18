@@ -1,0 +1,60 @@
+= Session 002 — ALGER dashboard-gradle
+:date: 2026-06-19
+:type: implementation
+:epic: DSH-2
+
+== Sujet
+
+DSH-2 IndexCrawler — implémentation complète du crawler INDEX.adoc des 26 boroughs.
+
+== Baby steps DDD/TDD/BDD
+
+. **Step 1** : Cucumber dans le catalogue (gradle/libs.versions.toml + build.gradle.kts)
+. **Step 2** : DDD — modèle pivot DashboardData.kt (BoroughData, EpicData, DagNode, enums)
+. **Step 3** : TDD — IndexCrawlerTest (5 scénarios) → IndexCrawler.kt
+. **Step 4** : Functional TestKit — CrawlDashboardFunctionalTest (2 scénarios) + crawlDashboard task réelle (sortie JSON)
+. **Step 5** : Cucumber BDD — 3 features (crawl, missing dir, epic table) + steps + World + Runner
+. **Step 6** : Vérification — 14/14 tests PASS
+
+== Réalisations
+
+[cols="2,5"]
+|===
+| Fichier | Description
+| `gradle/libs.versions.toml` | + Cucumber 7.34.3
+| `build.gradle.kts` | + Cucumber bundle, tache cucumberTest, sourceSets
+| `src/main/kotlin/.../model/DashboardData.kt` | Modèle pivot DDD (BoroughData, EpicData, DagNode, enums)
+| `src/main/kotlin/.../IndexCrawler.kt` | Parse INDEX.adoc → DashboardData (tables borough + epic)
+| `src/main/kotlin/.../DashboardPlugin.kt` | crawlDashboard → IndexCrawler → JSON output
+| `src/test/kotlin/.../IndexCrawlerTest.kt` | 5 tests unitaires
+| `src/test/kotlin/.../CrawlDashboardFunctionalTest.kt` | 2 tests fonctionnels TestKit
+| `src/test/features/dashboard_crawl.feature` | 3 scénarios Cucumber
+| `src/test/scenarios/.../DashboardWorld.kt` | Shared state Cucumber
+| `src/test/scenarios/.../CrawlSteps.kt` | Step definitions
+| `src/test/scenarios/.../CucumberTestRunner.kt` | Runner JUnit Platform Suite
+|===
+
+== Tests
+
+|===
+| Type | Scénarios | Status
+| Unit (JUnit5 + AssertJ) | 5 | ✅
+| Functional (Gradle TestKit) | 2 | ✅
+| Cucumber BDD | 3 | ✅
+| Legacy (DashboardPluginTest) | 4 | ✅
+| Total | 14 | ✅ PASS
+|===
+
+== Problèmes résolus
+
+. `settings.gradle.kts` du subproject supprimé (ne doit pas exister — le root settings inclut le module)
+. `YAMLMapper` → `ObjectMapper` (YAMLMapper écrit `---` dans un fichier `.json`)
+. Trailing spaces après `|===` empêchant la regex de matcher les tables AsciiDoc
+. `writeText()` sur Path remplacé par `Files.writeString()` (Kotlin extension non disponible)
+
+== Décisions techniques
+
+. Le modèle pivot est en JSON (pas YAML) car pivot d'échange standard
+. Cucumber séparé des unit tests via `cucumberTest` task Gradle dédiée (excludeEngines)
+. Utilisation de `cucumber-picocontainer` pour DI entre steps (pattern workspace)
+. La tâche `crawlDashboard` écrit dans `build/dashboard/dashboard-data.json`

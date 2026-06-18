@@ -12,16 +12,16 @@
 
 |===
 | Item | EPIC | Pts | Session
-| Scaffold settings.gradle.kts plugin (nmcp, foobar, rootProject.name) | DSH-1 | 1 | S002
-| Build.gradle.kts plugin (java-gradle-plugin, signing, publish) | DSH-1 | 2 | S002
-| Version catalog libs.versions.toml | DSH-1 | 1 | S002
-| DashboardPlugin.kt + DashboardExtension.kt stubs | DSH-1 | 2 | S002
-| Consumer root (settings + build 3 lignes) | DSH-1 | 1 | S002
-| Verification compile + tasks | DSH-1 | 1 | S002
-| IndexCrawler — lit INDEX.adoc des 25 boroughs | DSH-2 | 5 | —
-| DashboardData modele pivot JSON | DSH-2 | 3 | —
-| Tache Gradle crawlDashboard | DSH-2 | 2 | —
-| Tests unitaires crawler | DSH-2 | 3 | —
+| Scaffold settings.gradle.kts plugin (nmcp, foobar, rootProject.name) | DSH-1 | 1 | S001 ✅
+| Build.gradle.kts plugin (java-gradle-plugin, signing, publish) | DSH-1 | 2 | S001 ✅
+| Version catalog libs.versions.toml | DSH-1 | 1 | S001 ✅
+| DashboardPlugin.kt + DashboardExtension.kt stubs | DSH-1 | 2 | S001 ✅
+| Consumer root (settings + build 3 lignes) | DSH-1 | 1 | S001 ✅
+| Verification compile + tasks | DSH-1 | 1 | S001 ✅
+| IndexCrawler — lit INDEX.adoc des 25 boroughs | DSH-2 | 5 | S002 ✅
+| DashboardData modele pivot JSON | DSH-2 | 3 | S002 ✅
+| Tache Gradle crawlDashboard | DSH-2 | 2 | S002 ✅
+| Tests unitaires + fonctionnels + Cucumber | DSH-2 | 3 | S002 ✅
 |===
 
 == P1 — Planifie

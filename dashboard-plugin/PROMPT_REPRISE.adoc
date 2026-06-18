@@ -1,32 +1,31 @@
 = PROMPT_REPRISE — ALGER (dashboard-gradle)
-:session: 001
-:date: 2026-06-18
+:session: 003
+:date: 2026-06-19
 
-== Mission accomplie
+== Mission accomplie (S002)
 
-*Session 000 TERMINEE* — Bootstrap gouvernance ALGER :
-- AGENT.adoc cree (48 regles, architecture, EPICs, references)
-- .agents/INDEX.adoc cree (roadmap 10 EPICs, portefeuille 26 boroughs)
-- .agents/SESSIONS_HISTORY.adoc cree
-- .agents/TEST_COVERAGE_ANALYSIS.adoc cree
-- PROMPT_REPRISE.adoc cree (cette mission)
-- BACKLOG.adoc + TODO.adoc crees
-- Structure repertoire dashboard-plugin/ creee
+*DSH-2 IndexCrawler* — 13/13 pts realises :
+1. ✅ DDD — DashboardData.kt (modele pivot BoroughData, EpicData, DagNode, enums)
+2. ✅ TDD — IndexCrawler.kt (parse INDEX.adoc → DashboardData, tables borough + epic)
+3. ✅ DashboardPlugin.kt — crawlDashboard task (IndexCrawler → JSON output)
+4. ✅ Tests unitaires IndexCrawlerTest — 5 scenarios (table complete, empty, VESTIGE, directory, skip)
+5. ✅ Tests fonctionnels CrawlDashboardFunctionalTest — 2 scenarios TestKit
+6. ✅ Cucumber BDD — 3 features, steps, World, Runner
+7. ✅ Verification — 14/14 tests PASS
 
 == Statut
 
 - DSH-0 (Bootstrap gouvernance) : 3/3 pts ✅
-- Prochaine session : 001 — DSH-1 Plugin scaffold
+- DSH-1 (Plugin scaffold) : 5/8 pts 🔄
+- DSH-2 (IndexCrawler) : 13/13 pts ✅
 
-== Prochaine session (001) — DSH-1 Plugin scaffold
+== Prochaine session (003) — DSH-3 Dashboard Theme JBake
 
-*Priorite P0* : Creer la structure build du plugin Gradle.
+*Priorite P0* : Creer le theme JBake custom avec vues Thymeleaf.
 
-1. **settings.gradle.kts** — foobar-resolver-convention + nmcp + rootProject.name
-2. **build.gradle.kts** — java-gradle-plugin + kotlin + signing + publish
-3. **gradle/libs.versions.toml** — catalogue versions (jackson, kotlinx, bakery)
-4. **DashboardPlugin.kt** — Plugin<Project> stub + extension
-5. **DashboardExtension.kt** — DSL extension (configPath, outputDir, boroughs)
-6. **settings.gradle.kts racine** — consumer root (applique le plugin)
-7. **build.gradle.kts racine** — 3 lignes dogfood
-8. **Verification** — ./gradlew tasks + compileKotlin
+1. Theme JBake (layout, templates Thymeleaf)
+2. Vue EPIC matrix — tableau borough × statut
+3. Vue DAG graphe — visualisation N0→N4
+4. Vue timeline — jalons MVP0
+5. Tests Cucumber pour le rendu
+6. Verification — ./gradlew test + cucumberTest
