@@ -1,4 +1,4 @@
-= Analyse de Couverture — ALGER (dashboard-gradle)
+= Analyse de Couverture — dashboard-gradle
 
 == Metriques
 
@@ -43,3 +43,4 @@
 *Session 000* : Projet bootstrappe — zero code source, zero test.
 *Session 001* : 4 tests PASS (DashboardPluginTest).
 *Session 002* : 14 tests PASS (9 unit + 2 functional + 3 Cucumber). Pipeline TDD/BDD complet.
+*Session 003* : Refactoring — renommage ALGER → dashboard/BAKERY dans les tests. Pas de nouveau test.

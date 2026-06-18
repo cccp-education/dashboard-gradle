@@ -1,4 +1,4 @@
-= TODO — ALGER (dashboard-gradle)
+= TODO — dashboard-gradle
 
 - [ ] Decider format JSON pivot (schema dashboard-data.json)
 - [ ] Definir palette couleurs EPIC matrix (vert/orange/rouge/gris)

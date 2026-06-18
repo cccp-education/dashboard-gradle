@@ -24,7 +24,7 @@ class CrawlDashboardFunctionalTest {
     @Test
     fun `crawlDashboard should produce JSON output when foundry has INDEX_adoc files`() {
         writePluginProject()
-        writeIndexAdoc(foundryDir.resolve("alger/INDEX.adoc"), "ALGER", "dashboard-gradle", "N3", "Dashboard")
+        writeIndexAdoc(foundryDir.resolve("bakery/INDEX.adoc"), "BAKERY", "bakery-gradle", "N2", "Site statique")
         writeIndexAdoc(foundryDir.resolve("newark/INDEX.adoc"), "Newark", "training-gradle", "N2", "Pipeline")
 
         val result = GradleRunner.create()
@@ -43,7 +43,7 @@ class CrawlDashboardFunctionalTest {
         val jsonFile = testDir.resolve("build/dashboard/dashboard-data.json")
         assertThat(jsonFile).exists()
         val content = Files.readString(jsonFile)
-        assertThat(content).contains("ALGER")
+        assertThat(content).contains("BAKERY")
         assertThat(content).contains("Newark")
     }
 

@@ -3,11 +3,11 @@ Feature: Dashboard data crawling
 
   Scenario: Crawl INDEX.adoc files in a foundry directory
     Given a Gradle project with the dashboard plugin applied
-    And a foundry directory with INDEX.adoc files for "ALGER" and "NEWARK"
+    And a foundry directory with INDEX.adoc files for "BAKERY" and "NEWARK"
     When I execute the "crawlDashboard" task
     Then the build should succeed
     And the dashboard data should contain 2 boroughs
-    And the dashboard data should contain borough "ALGER"
+    And the dashboard data should contain borough "BAKERY"
     And the dashboard data should contain borough "NEWARK"
 
   Scenario: Crawl with missing config directory

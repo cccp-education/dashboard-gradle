@@ -1,4 +1,4 @@
-= Session 002 — ALGER dashboard-gradle
+= Session 002 — dashboard-gradle
 :date: 2026-06-19
 :type: implementation
 :epic: DSH-2

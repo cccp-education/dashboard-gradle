@@ -1,4 +1,4 @@
-= BACKLOG — ALGER (dashboard-gradle)
+= BACKLOG — dashboard-gradle
 
 == P0 — En cours
 

@@ -1,17 +1,13 @@
-= PROMPT_REPRISE — ALGER (dashboard-gradle)
-:session: 003
+= PROMPT_REPRISE — dashboard-gradle
+:session: 004
 :date: 2026-06-19
 
-== Mission accomplie (S002)
+== Mission accomplie (S003)
 
-*DSH-2 IndexCrawler* — 13/13 pts realises :
-1. ✅ DDD — DashboardData.kt (modele pivot BoroughData, EpicData, DagNode, enums)
-2. ✅ TDD — IndexCrawler.kt (parse INDEX.adoc → DashboardData, tables borough + epic)
-3. ✅ DashboardPlugin.kt — crawlDashboard task (IndexCrawler → JSON output)
-4. ✅ Tests unitaires IndexCrawlerTest — 5 scenarios (table complete, empty, VESTIGE, directory, skip)
-5. ✅ Tests fonctionnels CrawlDashboardFunctionalTest — 2 scenarios TestKit
-6. ✅ Cucumber BDD — 3 features, steps, World, Runner
-7. ✅ Verification — 14/14 tests PASS
+*Renommage ALGER → dashboard* :
+1. ✅ 32 occurrences ALGER supprimees de 15 fichiers
+2. ✅ Zero occurrence restante (verifie)
+3. ✅ Compilation OK
 
 == Statut
 
@@ -19,7 +15,7 @@
 - DSH-1 (Plugin scaffold) : 5/8 pts 🔄
 - DSH-2 (IndexCrawler) : 13/13 pts ✅
 
-== Prochaine session (003) — DSH-3 Dashboard Theme JBake
+== Prochaine session (004) — DSH-3 Dashboard Theme JBake
 
 *Priorite P0* : Creer le theme JBake custom avec vues Thymeleaf.
 

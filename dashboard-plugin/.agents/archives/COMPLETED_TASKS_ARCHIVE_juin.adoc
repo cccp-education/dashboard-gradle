@@ -1,5 +1,16 @@
 = Archive des Tâches Terminées — Juin 2026
 
+== Session 003 — 2026-06-19 — Renommage ALGER → dashboard-gradle
+
+[cols="3,5,2"]
+|===
+| Item | Fichier | Nb
+| Gouvernance renommee | 11 fichiers .adoc | 0
+| Tests fixtures renommees | 5 fichiers test | 0
+| Verification zero ALGER restant | grep sur tout le projet | 0
+|===
+
+
 == Session 002 — 2026-06-19 — DSH-2 IndexCrawler
 
 [cols="3,5,2"]
