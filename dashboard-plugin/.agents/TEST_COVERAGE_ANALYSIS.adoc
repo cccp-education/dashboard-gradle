@@ -4,11 +4,42 @@
 
 |===
 | Metrique | Valeur
-| Tests unitaires | 0
-| Tests Cucumber | 0
-| Couverture lignes | N/A
+| Tests unitaires (JUnit5 + AssertJ) | 9
+| Tests fonctionnels (Gradle TestKit) | 2
+| Tests Cucumber BDD | 3
+| Total | 14
 |===
+
+== Details des tests (S002)
+
+=== Unitaires — IndexCrawlerTest (5)
+
+. `should parse INDEX_adoc with borough table and epic table`
+. `should return empty data for file without tables`
+. `should parse borough with VESTIGE status based on role`
+. `should crawl all INDEX_adoc files in a directory`
+. `should skip non-INDEX_adoc files`
+
+=== Unitaires — DashboardPluginTest (4)
+
+. `plugin should register extension and tasks`
+. `tasks should belong to dashboard group`
+. `extension should have default values`
+. `extension should accept custom values`
+
+=== Fonctionnels — CrawlDashboardFunctionalTest (2)
+
+. `crawlDashboard should produce JSON output when foundry has INDEX_adoc files`
+. `crawlDashboard should warn when config path does not exist`
+
+=== Cucumber BDD (3 scenarios)
+
+. `Crawl INDEX.adoc files in a foundry directory`
+. `Crawl with missing config directory`
+. `Crawl INDEX.adoc with epic table`
 
 == Notes
 
 *Session 000* : Projet bootstrappe — zero code source, zero test.
+*Session 001* : 4 tests PASS (DashboardPluginTest).
+*Session 002* : 14 tests PASS (9 unit + 2 functional + 3 Cucumber). Pipeline TDD/BDD complet.

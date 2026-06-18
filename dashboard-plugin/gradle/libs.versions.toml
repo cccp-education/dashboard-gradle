@@ -1,0 +1,38 @@
+[versions]
+dashboard = "0.0.1"
+plugin-publish = "2.1.0"
+kotlin = "2.3.20"
+jackson = "2.18.3"
+junit = "5.10.1"
+junit-platform = "1.10.1"
+slf4j = "2.0.17"
+logback = "1.4.14"
+assertj = "3.25.3"
+thymeleaf = "3.0.14.RELEASE"
+cucumber = "7.34.3"
+
+[plugins]
+dashboard = { id = "education.cccp.dashboard", version.ref = "dashboard" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publish" }
+
+[libraries]
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+thymeleaf = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
+cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber" }
+cucumber-junit-platform-engine = { module = "io.cucumber:cucumber-junit-platform-engine", version.ref = "cucumber" }
+cucumber-picocontainer = { module = "io.cucumber:cucumber-picocontainer", version.ref = "cucumber" }
+junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
+
+[bundles]
+jackson = ["jackson-module-kotlin", "jackson-dataformat-yaml"]
+cucumber = ["cucumber-java", "cucumber-junit-platform-engine", "cucumber-picocontainer", "junit-platform-suite"]
