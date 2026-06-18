@@ -1,0 +1,6 @@
+= SESSIONS_HISTORY — ALGER (dashboard-gradle)
+
+|===
+| # | Date | Objet | Fichiers
+| 000 | 2026-06-18 | Bootstrap gouvernance ALGER — AGENT.adoc, INDEX.adoc, PROMPT_REPRISE, BACKLOG, TODO, SESSIONS_HISTORY, TEST_COVERAGE_ANALYSIS, structure repertoire | 8 fichiers crees
+|===

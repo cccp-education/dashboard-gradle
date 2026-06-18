@@ -1,0 +1,9 @@
+= Archive des Taches Terminees — Juin 2026 — ALGER (dashboard-gradle)
+
+|===
+| Date | Session | Tache | EPIC | Pts
+| 2026-06-18 | 000 | AGENT.adoc — regles absolues, architecture, EPICs, references | DSH-0 | 1
+| 2026-06-18 | 000 | .agents/INDEX.adoc — roadmap + portefeuille 26 boroughs | DSH-0 | 1
+| 2026-06-18 | 000 | PROMPT_REPRISE, BACKLOG, TODO, SESSIONS_HISTORY, TEST_COVERAGE_ANALYSIS | DSH-0 | 1
+| 2026-06-18 | 000 | Structure repertoire dashboard-plugin/ | DSH-0 | 1 (bonus)
+|===

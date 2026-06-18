@@ -1,0 +1,32 @@
+= PROMPT_REPRISE — ALGER (dashboard-gradle)
+:session: 001
+:date: 2026-06-18
+
+== Mission accomplie
+
+*Session 000 TERMINEE* — Bootstrap gouvernance ALGER :
+- AGENT.adoc cree (48 regles, architecture, EPICs, references)
+- .agents/INDEX.adoc cree (roadmap 10 EPICs, portefeuille 26 boroughs)
+- .agents/SESSIONS_HISTORY.adoc cree
+- .agents/TEST_COVERAGE_ANALYSIS.adoc cree
+- PROMPT_REPRISE.adoc cree (cette mission)
+- BACKLOG.adoc + TODO.adoc crees
+- Structure repertoire dashboard-plugin/ creee
+
+== Statut
+
+- DSH-0 (Bootstrap gouvernance) : 3/3 pts ✅
+- Prochaine session : 001 — DSH-1 Plugin scaffold
+
+== Prochaine session (001) — DSH-1 Plugin scaffold
+
+*Priorite P0* : Creer la structure build du plugin Gradle.
+
+1. **settings.gradle.kts** — foobar-resolver-convention + nmcp + rootProject.name
+2. **build.gradle.kts** — java-gradle-plugin + kotlin + signing + publish
+3. **gradle/libs.versions.toml** — catalogue versions (jackson, kotlinx, bakery)
+4. **DashboardPlugin.kt** — Plugin<Project> stub + extension
+5. **DashboardExtension.kt** — DSL extension (configPath, outputDir, boroughs)
+6. **settings.gradle.kts racine** — consumer root (applique le plugin)
+7. **build.gradle.kts racine** — 3 lignes dogfood
+8. **Verification** — ./gradlew tasks + compileKotlin

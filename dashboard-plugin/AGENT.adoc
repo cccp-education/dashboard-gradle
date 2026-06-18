@@ -1,0 +1,166 @@
+= Dashboard Gradle Plugin — Directives Agent (ALGER)
+:toc: left
+:toclevels: 3
+:icons: font
+:sectnums:
+
+[CAUTION]
+====
+**ARRET OBLIGATOIRE** avant `rm`, `Write` (ecrasement), ou suppression de fichier :
+1. LIRE le fichier en entier
+2. VERIFIER `git ls-files -- <fichier>` (si pas dans git = pas de retour possible)
+3. DEMANDER confirmation fichier par fichier a l'utilisateur
+4. ATTENDRE "oui" avant d'agir
+====
+
+== Avertissement — Racine de Travail
+
+**Ce fichier est dans `dashboard-plugin/`**, la racine de travail du projet.
+
+La racine du depot git (`dashboard-gradle/`) ne contient QUE le repo git et les fichiers
+de build Gradle. TOUT le reste (code, tests, gouvernance, documentation agent) vit ici.
+
+* Les chemins dans ce fichier sont relatifs a **`dashboard-plugin/`**
+* L'agent travaille depuis **`dashboard-plugin/`**
+* Les commandes Gradle s'executent depuis **`dashboard-plugin/`** ou avec `-p dashboard-plugin`
+
+== Projet
+
+**Nom** : dashboard-gradle (plugin Gradle pour le dashboard de vision et d'avancement du workspace)
+**Borough** : ALGER 🟡
+**DAG** : N3 (aggrégation transverse, consommation de tous les INDEX.adoc / BACKLOG.adoc)
+**Stack** : Kotlin, Gradle (plugin development), JBake, Thymeleaf, D3.js/vis.js, Jackson
+**Documentation** : AsciiDoc + PlantUML + Gradle
+
+=== Positionnement dans le DAG
+
+dashboard-gradle est un N3 consommateur terminal — il lit les fichiers de gouvernance
+des 25 boroughs et produit un dashboard visuel statique. Il ne contient AUCUNE logique
+metier LLM/RAG. Il est deploye via runner-gradle (gh-pages).
+
+== Regles Absolues
+
+=== Git
+
+**INTERDICTION FORMELLE** de commit/push/merge sans permission explicite de l'utilisateur.
+
+Commandes autorisees (lecture seule) : `git status`, `git diff`, `git log`, `git show`
+Commandes interdites (sauf ordre) : `git add`, `git commit`, `git push`, `git merge`, `git rebase`
+
+=== Tests
+
+L'agent NE DOIT JAMAIS lancer de tests (`./gradlew test`, etc.) lors de la procedure de fin de session SANS permission explicite de l'utilisateur.
+
+=== Securite
+* Jamais de secrets en dur dans le code
+* Jamais de credentials dans les fichiers de config
+* Jamais de tokens API commites dans Git
+* Utiliser des references (`keyRef: ${GITHUB_TOKEN}`)
+
+=== Fichiers de configuration — REGLE ABSOLUE DE SURETE
+
+**NE JAMAIS ecraser** un fichier de configuration existant avec un `Write` complet si on peut faire un `Edit` partiel.
+**NE JAMAIS remplacer** des valeurs sensibles existantes par des valeurs factices.
+**NE JAMAIS modifier** un fichier sans avoir d'abord verifie `git check-ignore` et `git ls-files`.
+
+=== Fichiers personnels — Interdiction de modifier
+
+L'agent NE DOIT JAMAIS modifier, ecraser ou supprimer un fichier personnel de l'utilisateur (`~/.gitconfig`, `~/.bashrc`, etc.) SANS permission explicite.
+
+== Architecture
+
+=== Structure du Projet
+
+[source,bash]
+----
+dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
+|-- src/main/kotlin/              # Code source Kotlin
+|-- src/test/                      # Tests unitaires + Cucumber
+|-- .agents/                       # Documentation agent
+|   |-- INDEX.adoc                # Roadmap + EPICs + portefeuille
+|   |-- SESSIONS_HISTORY.adoc     # Historique des sessions
+|   |-- sessions/                  # Archives par session
+|   |-- archives/                  # Archives mensuelles
+|   |-- encyclopedies/             # Connaissance froide
+|   |-- backup/                   # Vagues froides
+|-- PROMPT_REPRISE.adoc            # Mission session en cours
+|-- AGENT.adoc                     # Directives completes (ce fichier)
+|-- BACKLOG.adoc                   # Suivi prioritaire des taches
+|-- TODO.adoc                      # Pense-bete informel
++-- build.gradle.kts               # Build du plugin
+----
+
+=== Composants Cles
+
+* **DashboardPlugin** : Point d'entree du plugin Gradle
+* **IndexCrawler** : Crawle les INDEX.adoc/BACKLOG.adoc des 25 boroughs
+* **DashboardData** : Modele de donnees pivot (EPICs, statuts, DAG, timeline)
+* **DashboardTheme** : Theme JBake custom avec vues Thymeleaf
+* **DashboardExtension** : Extension Gradle DSL
+
+=== Commandes Utiles
+
+[source,bash]
+----
+# Depuis la racine de travail (dashboard-plugin/)
+./gradlew compileKotlin
+./gradlew test
+./gradlew check
+----
+
+== EPICs Planifiees
+
+|===
+| EPIC | Sujet | Priorite | Statut
+| DSH-0 | Bootstrap gouvernance + structure projet | P0 | EN COURS
+| DSH-1 | Plugin scaffold + build + publication | P0 | PLANIFIE
+| DSH-2 | Crawler INDEX.adoc → JSON pivot | P0 | PLANIFIE
+| DSH-3 | Dashboard theme JBake + vues Thymeleaf | P0 | PLANIFIE
+| DSH-4 | EPIC matrix — tableau borough × statut | P1 | PLANIFIE
+| DSH-5 | DAG visualization — graphe N0→N4 | P1 | PLANIFIE
+| DSH-6 | Timeline roadmap — jalons MVP0 | P1 | PLANIFIE
+| DSH-7 | Integration runner-gradle + deploiement | P1 | PLANIFIE
+| DSH-8 | GitHub Sync — refresh depuis raw API | P2 | PLANIFIE
+| PUB | Publication Maven Central nmcp | P1 | PLANIFIE
+|===
+
+== Gestion du Contexte
+
+* **Que faire ensuite ?** -> **`BACKLOG.adoc`**
+* **`TODO.adoc`** -> pense-bete informel
+* **`PROMPT_REPRISE.adoc`** -> mission de la session en cours
+
+== Fichiers EAGER — chemins relatifs a dashboard-plugin/
+
+|===
+| Fichier | Role
+| `PROMPT_REPRISE.adoc` | Mission session en cours (max 70 lignes)
+| `.agents/INDEX.adoc` | Roadmap + EPICs + sessions recentes
+| `AGENT.adoc` | Ce fichier — Directives completes
+|===
+
+== Fichiers LAZY (sur demande)
+
+|===
+| Fichier | Role
+| `.agents/sessions/{N}*.adoc` | Archives detaillees par session
+| `.agents/archives/COMPLETED_TASKS_ARCHIVE_*.adoc` | Archive des taches terminees
+|===
+
+== Anti-Patterns
+
+|===
+| # | Anti-Pattern | Prevention
+| 1 | Dashboard sans donnees reelles | Toujours crawler les vrais INDEX.adoc, jamais de fixtures
+| 2 | Theme JBake sans dogfood | La racine consommatrice doit deployer le dashboard ALGER
+| 3 | DAG N3 qui fait du LLM | dashboard-gradle ne doit jamais contenir de logique LLM/RAG
+|===
+
+== References — Codebases LAZY
+
+|===
+| Projet | Chemin | Role
+| bakery-gradle | `/home/cheroliv/workspace/foundry/public/bakery-gradle/bakery-plugin` | Reference theme JBake
+| runner-gradle | `/home/cheroliv/workspace/foundry/public/runner-gradle` | Reference deploiement N3
+| graphify-gradle | `/home/cheroliv/workspace/foundry/public/graphify-gradle/graphify-plugin` | Reference extraction graphe
+|===

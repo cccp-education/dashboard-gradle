@@ -1,0 +1,7 @@
+= TODO — ALGER (dashboard-gradle)
+
+- [ ] Decider format JSON pivot (schema dashboard-data.json)
+- [ ] Definir palette couleurs EPIC matrix (vert/orange/rouge/gris)
+- [ ] Choisir lib JS graphe (vis.js, d3.js, cytoscape.js ?)
+- [ ] Voir si graphify-gradle peut fournir le DAG tout prete
+- [ ] Ajouter une page "Sante du workspace" (builds qui cassent, versions)

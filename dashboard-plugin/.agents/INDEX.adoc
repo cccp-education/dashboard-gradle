@@ -1,0 +1,91 @@
+= Index des Sessions — Dashboard Gradle Plugin (ALGER)
+
+_Derniere mise a jour_ : 2026-06-18 — Session 000
+_Session terminee_ : 000
+_Prochaine session_ : 001 — DSH-1 Plugin scaffold
+
+'''
+
+== Regles Absolues
+
+=== 0. PUBLISH TO MAVEN LOCAL — OBLIGATOIRE
+
+_Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q publishToMavenLocal` AVANT tout test fonctionnel._
+
+=== 1. COMMITS/GIT
+
+_L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explicite de l'utilisateur.
+
+=== 2. TESTS EN FIN DE SESSION — INTERDICTION FORMELLE
+
+=== 3. PROCEDURE DE FIN DE SESSION — 6 ETAPES
+
+. Creer l'archive `.agents/sessions/{N}-{titre}.adoc`
+. Mettre a jour `PROMPT_REPRISE.adoc` pour la session N+1
+. Mettre a jour `SESSIONS_HISTORY.adoc`
+. Mettre a jour `INDEX.adoc` (session en cours, roadmap)
+. Mettre a jour `TEST_COVERAGE_ANALYSIS.adoc` (si tests modifies)
+. Mettre a jour `COMPLETED_TASKS_ARCHIVE.adoc` dans `.agents/archives/`
+
+'''
+
+== Sessions Recentes
+
+|===
+| # | Date | Type | Sujet | Score
+| 000 | 2026-06-18 | gouvernance | **Bootstrap ALGER** — AGENT.adoc, INDEX.adoc, PROMPT_REPRISE, BACKLOG, structure repertoire. ZERO code source. | 10/10
+|===
+
+'''
+
+== Roadmap — EPICs
+
+|===
+| EPIC | Sujet | Pts | Priorite | Statut
+| DSH-0 | Bootstrap gouvernance + structure projet | 3 | P0 | ✅ S000 (3/3 pts)
+| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | PLANIFIE
+| DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | PLANIFIE
+| DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | PLANIFIE
+| DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | PLANIFIE
+| DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | PLANIFIE
+| DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | PLANIFIE
+| DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | PLANIFIE
+| DSH-8 | GitHub Sync — refresh depuis raw API | 8 | P2 | PLANIFIE
+| PUB | Publication Maven Central nmcp | 5 | P1 | PLANIFIE
+|===
+
+'''
+
+== Portefeuille
+
+=== Projets gouvernes (extrait — 26 boroughs)
+
+|===
+| Borough | Projet | DAG | Role | Session
+| Newark | training-gradle | N2 | Pipeline formation (COEUR) | —
+| Manhattan | planner-gradle | N2 | LLM prompting SPG/SPD | —
+| Brooklyn | codex-gradle | N2 | Asciidoctor→PDF, slides | —
+| Queens | codebase-gradle | N1 | RAG socle, pgvector | —
+| The Bronx | quizz-benchmark-gradle | N2 | Quiz evaluation | —
+| Staten Island | magic-stick | N2 | Site formation | —
+| New Jersey | runner-gradle | N3 | Orchestration DAG, deploy | —
+| Compton | waiter-gradle | N2 | Paiement, facturation | —
+| Detroit | capsule-gradle | N2 | Capture video capsule | —
+| South Central | workspace-gradle | N4 | Scaffold workspace | —
+| Long Island | workspace-agent | N-IDE | Cockpit IntelliJ | —
+| Watts | hyperframes-gradle | N2 | AsciiDoc→MP4 | —
+| Chiraq | readme-gradle | N2 | README PlantUML | —
+| New Orleans | document-gradle | N2 | Doc multi-format | —
+| Atlanta | agile-gradle | N4 | Pilotage agile IA | —
+| Harlem | ticket-gradle | N4 | Tickets GitHub | —
+| Baltimore | review-gradle | N4 | Code review IA | —
+| Oakland | flow-gradle | N4 | Orchestration merge/CI | —
+| Philly | jhipster-gradle | N2 | JHipster tooling | —
+| Bushwick | bakery-gradle | N2 | Site statique JBake | —
+| MIAMI | slider-gradle | N2 | Slides Reveal.js | —
+| MEMPHIS | workspace-bom | N0 | BOM partage | —
+| HTOWN | plantuml-gradle | N2 | Diagrammes LLM | —
+| Grand Central | graphify-gradle | N0 | Graphe connaissance | —
+| Liberty | api-key-pool-gradle | N0 | Pool cles API LLM | —
+| ==ALGER== | ==dashboard-gradle== | N3 | Dashboard vision/avancement | ==S000==
+|===

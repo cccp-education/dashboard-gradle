@@ -1,0 +1,60 @@
+= SESSION_CHECKLIST — ALGER (dashboard-gradle)
+
+== Ouverture de session
+
+[cols="1,3"]
+|===
+| Ordre | Action
+
+| 1
+| Lire `PROMPT_REPRISE.adoc` — mission en cours
+
+| 2
+| Lire `AGENT.adoc` — règles absolues
+
+| 3
+| Lire `.agents/INDEX.adoc` — roadmap, statut EPICs, portefeuille
+
+| 4
+| Lire `BACKLOG.adoc` — backlog prioritaire
+
+| 5
+| `git status` — vérifier l'état du working tree
+
+| 6
+| `./gradlew tasks` (dans `dashboard-plugin/`) — voir les tâches disponibles
+
+| 7
+| Vérifier que le build compile avant de coder
+|===
+
+== Fermeture de session
+
+[cols="1,3,3"]
+|===
+| Étape | Action | Fichier
+
+| 1
+| Rapport de session
+| `.agents/sessions/NNN-sujet.adoc`
+
+| 2
+| Contexte reprise
+| `PROMPT_REPRISE.adoc` (max 70 lignes)
+
+| 3
+| Dashboard
+| `.agents/INDEX.adoc` (session N+1, roadmap, statut EPICs)
+
+| 4
+| Historique
+| `.agents/SESSIONS_HISTORY.adoc` (ajouter entrée)
+
+| 5
+| Tests
+| `.agents/TEST_COVERAGE_ANALYSIS.adoc` (si tests modifiés)
+
+| 6
+| Archivage
+| `.agents/archives/COMPLETED_TASKS_ARCHIVE_{mois}.adoc`
+|===

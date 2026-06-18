@@ -1,0 +1,46 @@
+= Session 000 — Bootstrap Gouvernance ALGER
+:date: 2026-06-18
+
+== Contexte
+
+Premiere session du borough ALGER (dashboard-gradle). Creer la gouvernance
+agent complete pour le plugin N3 de dashboard vision/avancement workspace.
+
+== Travail effectue
+
+1. AGENT.adoc — 48 regles, architecture (Plugin Independant + Racine Consommateur),
+   EPICs DSH-0→DSH-8 + PUB, references cross-borough (bakery, runner, graphify)
+2. .agents/INDEX.adoc — roadmap 10 EPICs, portefeuille 26 boroughs
+3. .agents/SESSION_CHECKLIST.adoc — checklist ouverture/fermeture
+4. .agents/SESSIONS_HISTORY.adoc — historique session 000
+5. .agents/TEST_COVERAGE_ANALYSIS.adoc — metriques initiales (zero test)
+6. PROMPT_REPRISE.adoc — mission session 001 (DSH-1 scaffold)
+7. BACKLOG.adoc — backlog P0/P1/P2 complet
+8. TODO.adoc — questions ouvertes (JSON pivot, lib JS graphe, palette couleurs)
+9. Structure repertoire dashboard-plugin/ creee
+
+== Fichiers modifies
+
+|===
+| Fichier | Action
+| AGENT.adoc | CREE
+| .agents/INDEX.adoc | CREE
+| .agents/SESSION_CHECKLIST.adoc | CREE
+| .agents/SESSIONS_HISTORY.adoc | CREE
+| .agents/TEST_COVERAGE_ANALYSIS.adoc | CREE
+| PROMPT_REPRISE.adoc | CREE
+| BACKLOG.adoc | CREE
+| TODO.adoc | CREE
+|===
+
+== Decisions
+
+* Borough : ALGER 🟡
+* DAG : N3 (agregation transverse, zero LLM/RAG)
+* Architecture : Plugin Independant + Racine Consommateur (article #0124)
+* Theme : JBake custom (herite de bakery-gradle)
+* Deploiement : gh-pages via runner-gradle
+
+== Prochaine session
+
+Session 001 — DSH-1 Plugin scaffold (build.gradle.kts, settings, extension stub)

@@ -1,0 +1,38 @@
+= dashboard-gradle — ALGER 🟡
+
+Plugin Gradle N3 de visualisation de la vision et de l'avancement du workspace.
+
+== Structure
+
+[source]
+----
+dashboard-gradle/
+├── dashboard-plugin/        # Plugin Gradle (build ind√©pendant)
+│   ├── AGENT.adoc           # R√®gles absolues
+│   ├── .agents/             # Gouvernance agent
+│   ├── src/                 # Code source Kotlin
+│   └── build.gradle.kts     # java-gradle-plugin
+├── build.gradle.kts         # Racine consommateur (dogfood)
+├── settings.gradle.kts      # Settings racine
+└── gradle/                  # Wrapper + catalogue
+----
+
+== Pr√©-requis
+
+- JDK 24+
+- Gradle 9.5+
+
+== D√©veloppement
+
+[source,shell]
+----
+# Builder le plugin
+cd dashboard-plugin && ./gradlew publishToMavenLocal
+
+# L'exercer depuis la racine
+cd .. && ./gradlew tasks
+----
+
+== Licence
+
+Apache 2.0
