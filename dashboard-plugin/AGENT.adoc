@@ -1,4 +1,4 @@
-= Dashboard Gradle Plugin — Directives Agent (ALGER)
+= Dashboard Gradle Plugin — Directives Agent
 :toc: left
 :toclevels: 3
 :icons: font
@@ -27,7 +27,7 @@ de build Gradle. TOUT le reste (code, tests, gouvernance, documentation agent) v
 == Projet
 
 **Nom** : dashboard-gradle (plugin Gradle pour le dashboard de vision et d'avancement du workspace)
-**Borough** : ALGER 🟡
+**Borough** : dashboard-gradle 🟡
 **DAG** : N3 (aggrégation transverse, consommation de tous les INDEX.adoc / BACKLOG.adoc)
 **Stack** : Kotlin, Gradle (plugin development), JBake, Thymeleaf, D3.js/vis.js, Jackson
 **Documentation** : AsciiDoc + PlantUML + Gradle
@@ -152,7 +152,7 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 |===
 | # | Anti-Pattern | Prevention
 | 1 | Dashboard sans donnees reelles | Toujours crawler les vrais INDEX.adoc, jamais de fixtures
-| 2 | Theme JBake sans dogfood | La racine consommatrice doit deployer le dashboard ALGER
+| 2 | Theme JBake sans dogfood | La racine consommatrice doit deployer le dashboard
 | 3 | DAG N3 qui fait du LLM | dashboard-gradle ne doit jamais contenir de logique LLM/RAG
 |===
 

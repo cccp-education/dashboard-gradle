@@ -1,4 +1,4 @@
-= dashboard-gradle — ALGER 🟡
+= dashboard-gradle 🟡
 
 Plugin Gradle N3 de visualisation de la vision et de l'avancement du workspace.
 

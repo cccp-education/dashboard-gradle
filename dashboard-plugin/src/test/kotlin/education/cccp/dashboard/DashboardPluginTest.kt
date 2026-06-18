@@ -52,10 +52,10 @@ class DashboardPluginTest {
         val ext = project.extensions.findByName("dashboard") as DashboardExtension
         ext.configPath.set("custom/config")
         ext.outputDir.set("custom/output")
-        ext.boroughs.set(listOf("ALGER", "NEWARK"))
+        ext.boroughs.set(listOf("BAKERY", "NEWARK"))
 
         assertThat(ext.configPath.get()).isEqualTo("custom/config")
         assertThat(ext.outputDir.get()).isEqualTo("custom/output")
-        assertThat(ext.boroughs.get()).containsExactly("ALGER", "NEWARK")
+        assertThat(ext.boroughs.get()).containsExactly("BAKERY", "NEWARK")
     }
 }

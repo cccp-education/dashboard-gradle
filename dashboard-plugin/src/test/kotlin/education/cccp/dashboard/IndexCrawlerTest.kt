@@ -24,11 +24,11 @@ class IndexCrawlerTest {
     @Test
     fun `should parse INDEX_adoc with borough table and epic table`() {
         val indexAdoc = """
-            = Index — ALGER
+            = Index — BAKERY
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Newark | training-gradle | N2 | Pipeline formation | 010 ✅
-            | ALGER | dashboard-gradle | N3 | Dashboard vision | S001
+            | BAKERY | bakery-gradle | N2 | Site statique | S001
             |===
             |===
             | EPIC | Sujet | Pts | Priorite | Statut
@@ -46,7 +46,7 @@ class IndexCrawlerTest {
         assertThat(data.boroughs[0].name).isEqualTo("Newark")
         assertThat(data.boroughs[0].project).isEqualTo("training-gradle")
         assertThat(data.boroughs[0].dagLevel).isEqualTo("N2")
-        assertThat(data.boroughs[1].name).isEqualTo("ALGER")
+        assertThat(data.boroughs[1].name).isEqualTo("BAKERY")
 
         assertThat(data.epics).hasSize(3)
         assertThat(data.epics[0].id).isEqualTo("DSH-0")
@@ -88,12 +88,12 @@ class IndexCrawlerTest {
 
     @Test
     fun `should crawl all INDEX_adoc files in a directory`() {
-        val algerDir = tempDir.resolve("alger")
-        Files.createDirectories(algerDir)
-        Files.writeString(algerDir.resolve("INDEX.adoc"), """
+        val bakeryDir = tempDir.resolve("bakery")
+        Files.createDirectories(bakeryDir)
+        Files.writeString(bakeryDir.resolve("INDEX.adoc"), """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
-            | ALGER | dashboard-gradle | N3 | Dashboard vision | S001
+            | BAKERY | bakery-gradle | N2 | Site statique | S001
             |===
         """.trimIndent())
 
@@ -109,7 +109,7 @@ class IndexCrawlerTest {
         val data = crawler.crawlDirectory(tempDir)
 
         assertThat(data.boroughs).hasSize(2)
-        assertThat(data.boroughs.map { it.name }).containsExactlyInAnyOrder("ALGER", "Newark")
+        assertThat(data.boroughs.map { it.name }).containsExactlyInAnyOrder("BAKERY", "Newark")
     }
 
     @Test

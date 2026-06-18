@@ -1,9 +1,9 @@
-= Session 000 — Bootstrap Gouvernance ALGER
+= Session 000 — Bootstrap Gouvernance Dashboard
 :date: 2026-06-18
 
 == Contexte
 
-Premiere session du borough ALGER (dashboard-gradle). Creer la gouvernance
+Premiere session du borough dashboard-gradle. Creer la gouvernance
 agent complete pour le plugin N3 de dashboard vision/avancement workspace.
 
 == Travail effectue
@@ -35,7 +35,7 @@ agent complete pour le plugin N3 de dashboard vision/avancement workspace.
 
 == Decisions
 
-* Borough : ALGER 🟡
+* Borough : dashboard-gradle 🟡
 * DAG : N3 (agregation transverse, zero LLM/RAG)
 * Architecture : Plugin Independant + Racine Consommateur (article #0124)
 * Theme : JBake custom (herite de bakery-gradle)

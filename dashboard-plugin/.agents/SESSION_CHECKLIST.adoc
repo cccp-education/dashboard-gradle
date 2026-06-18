@@ -1,4 +1,4 @@
-= SESSION_CHECKLIST — ALGER (dashboard-gradle)
+= SESSION_CHECKLIST — dashboard-gradle
 
 == Ouverture de session
 

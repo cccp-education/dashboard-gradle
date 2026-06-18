@@ -1,0 +1,55 @@
+= Session 003 — Renommage ALGER → dashboard-gradle
+:date: 2026-06-19
+:type: refactoring
+
+== Sujet
+
+Suppression de toutes les mentions du nom de code interne ALGER dans le
+projet public `foundry/public/dashboard-gradle/`. ALGER est désormais un
+nom réservé aux documents de jardin secret (office/, racine).
+
+== Travail effectué
+
+1. Gouvernance (11 fichiers) : ALGER → dashboard-gradle dans les en-têtes,
+   titres, références borough (AGENT.adoc, BACKLOG.adoc, TODO.adoc,
+   PROMPT_REPRISE.adoc, SESSION_CHECKLIST.adoc, SESSIONS_HISTORY.adoc,
+   TEST_COVERAGE_ANALYSIS.adoc, INDEX.adoc, README.adoc,
+   sessions/000*, sessions/002*)
+2. Tests (5 fichiers) : ALGER → BAKERY (borough réel existant) dans les
+   fixtures de test (DashboardPluginTest, CrawlDashboardFunctionalTest,
+   IndexCrawlerTest, dashboard_crawl.feature)
+3. Portefeuille INDEX.adoc : ALGER → Dashboard (nom public)
+
+== Fichiers modifiés
+
+|===
+| Fichier | Nb changements
+| README.adoc | 1
+| AGENT.adoc | 3
+| BACKLOG.adoc | 1
+| TODO.adoc | 1
+| PROMPT_REPRISE.adoc | 1
+| .agents/INDEX.adoc | 3
+| .agents/SESSION_CHECKLIST.adoc | 1
+| .agents/SESSIONS_HISTORY.adoc | 2
+| .agents/TEST_COVERAGE_ANALYSIS.adoc | 1
+| .agents/sessions/000-bootstrap-gouvernance.adoc | 3
+| .agents/sessions/002-dsh-2-index-crawler.adoc | 1
+| src/test/.../DashboardPluginTest.kt | 2
+| src/test/.../CrawlDashboardFunctionalTest.kt | 3
+| src/test/.../IndexCrawlerTest.kt | 6
+| src/test/features/dashboard_crawl.feature | 2
+|===
+
+== Tests
+
+|===
+| Type | Status
+| Compilation | ✅
+|===
+
+== Décisions
+
+- ALGER disparaît de foundry/public/dashboard-gradle/
+- Le nom public du borough est "Dashboard"
+- Les fixtures de test utilisent BAKERY (borough réel existant)
