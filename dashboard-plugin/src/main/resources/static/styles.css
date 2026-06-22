@@ -82,3 +82,12 @@ body {
 .navbar-brand {
     font-weight: 700;
 }
+
+.borough-header {
+    background-color: #e9ecef;
+}
+
+.borough-header td {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}

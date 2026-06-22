@@ -46,6 +46,30 @@ class DashboardRendererTest {
     }
 
     @Test
+    fun `render should group epics by borough in html table`(@TempDir tempDir: Path) {
+        val data = DashboardData(
+            boroughs = listOf(
+                BoroughData("BAKERY", "bakery-gradle", "N2", "Site statique", "S001"),
+                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")
+            ),
+            epics = listOf(
+                EpicData("BKY-1", "Bakery task", "BAKERY", 5, "P1", EpicStatus.EN_COURS),
+                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE)
+            ),
+            dagNodes = emptyList()
+        )
+
+        DashboardRenderer().render(data, tempDir)
+
+        val html = Files.readString(tempDir.resolve("index.html"))
+        assertThat(html).contains("BAKERY (N2)")
+        assertThat(html).contains("Dashboard (N3)")
+        assertThat(html).contains("bakery-gradle")
+        assertThat(html).contains("BKY-1")
+        assertThat(html).contains("DSH-0")
+    }
+
+    @Test
     fun `render should include activity stream section when sessions present`(@TempDir tempDir: Path) {
         val data = DashboardData(
             boroughs = listOf(

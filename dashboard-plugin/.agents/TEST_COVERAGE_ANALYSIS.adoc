@@ -4,15 +4,15 @@
 
 |===
 | Metrique | Valeur
-| Tests unitaires (JUnit5 + AssertJ) | 13
-| Tests fonctionnels (Gradle TestKit) | 4
-| Tests Cucumber BDD | 6 scenarios
-| Total | 23 PASS
+| Tests unitaires (JUnit5 + AssertJ) | 17
+| Tests fonctionnels (Gradle TestKit) | 5
+| Tests Cucumber BDD | 8 scenarios
+| Total | 30 PASS
 |===
 
 == Details des tests
 
-=== Unitaires — IndexCrawlerTest (6)
+=== Unitaires — IndexCrawlerTest (7)
 
 . `should parse INDEX_adoc with borough table and epic table`
 . `should return empty data for file without tables`
@@ -29,31 +29,45 @@
 . `extension should have default values`
 . `extension should accept custom values`
 
-=== Unitaires — DashboardRendererTest (4) — S005
+=== Unitaires — DashboardRendererTest (5)
 
 . `render should produce index html with epic matrix`
 . `render should include activity stream section when sessions present`
 . `render should copy dashboard css to output directory`
 . `epic status should map to css class`
+. `render should group epics by borough in html table`
+
+=== Unitaires — BoroughGroupTest (4) — S006
+
+. `should group epics by borough sorted by dag level`
+. `should sort epics inside borough by priority then id`
+. `should expose borough status as string`
+. `should create UNASSIGNED group for epics without borough`
 
 === Fonctionnels — CrawlDashboardFunctionalTest (2)
 
 . `crawlDashboard should produce JSON output when foundry has INDEX_adoc files`
 . `crawlDashboard should warn when config path does not exist`
 
-=== Fonctionnels — GenerateDashboardFunctionalTest (2) — S005
+=== Fonctionnels — GenerateDashboardFunctionalTest (2)
 
 . `generateDashboard should produce index html with epic matrix`
 . `generateDashboard should include activity stream from sessions history`
 
-=== Cucumber BDD (6 scenarios)
+=== Fonctionnels — PublishDashboardFunctionalTest (1) — S006
+
+. `publishDashboard should copy generated dashboard to publish directory`
+
+=== Cucumber BDD (8 scenarios)
 
 . `Crawl INDEX.adoc files in a foundry directory`
 . `Crawl with missing config directory`
 . `Crawl INDEX.adoc with epic table`
 . `Crawl SESSIONS_HISTORY.adoc for activity stream`
-. `Generate dashboard site from crawled data` (S005)
-. `Generate dashboard site with activity stream` (S005)
+. `Generate dashboard site from crawled data`
+. `Generate dashboard site with activity stream`
+. `Generate dashboard site with epic matrix grouped by borough` (S006)
+. `Publish dashboard site copies generated output to publish directory` (S006)
 
 == Notes
 
@@ -63,3 +77,4 @@
 *Session 003* : Refactoring — pas de nouveau test.
 *Session 004* : 13 tests PASS (+2 tests unitaires SessionActivity).
 *Session 005* : 23 tests PASS — pipeline DDD/TDD/BDD complète pour le rendu statique.
+*Session 006* : 30 tests PASS — EPIC Matrix groupée par borough + tâche publishDashboard + dogfood root.

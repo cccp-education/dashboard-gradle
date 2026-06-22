@@ -72,24 +72,30 @@
                             <tr>
                                 <th>EPIC</th>
                                 <th>Sujet</th>
-                                <th>Borough</th>
                                 <th>Priorité</th>
                                 <th>Statut</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="epic : ${page.epics}" th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
-                                <td th:text="${epic.id}">DSH-0</td>
-                                <td th:text="${epic.title}">Bootstrap</td>
-                                <td th:text="${epic.borough}">Dashboard</td>
-                                <td th:text="${epic.priority}">P0</td>
-                                <td>
-                                    <span class="status-badge" th:class="'status-badge ' + ${statusHelper.statusCssClass(epic.status)}"
-                                          th:text="${epic.status}">TERMINE</span>
-                                </td>
-                            </tr>
+                            <th:block th:each="group : ${page.boroughGroups}" th:if="${not #lists.isEmpty(group.epics)}">
+                                <tr class="borough-header">
+                                    <td colspan="4">
+                                        <strong th:text="${group.name} + ' (' + ${group.dagLevel} + ')'">Dashboard (N3)</strong>
+                                        <small class="text-muted ms-2" th:text="${group.project}">dashboard-gradle</small>
+                                    </td>
+                                </tr>
+                                <tr th:each="epic : ${group.epics}" th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
+                                    <td th:text="${epic.id}">DSH-0</td>
+                                    <td th:text="${epic.title}">Bootstrap</td>
+                                    <td th:text="${epic.priority}">P0</td>
+                                    <td>
+                                        <span class="status-badge" th:class="'status-badge ' + ${statusHelper.statusCssClass(epic.status)}"
+                                              th:text="${epic.status}">TERMINE</span>
+                                    </td>
+                                </tr>
+                            </th:block>
                             <tr th:if="${#lists.isEmpty(page.epics)}">
-                                <td colspan="5" class="text-center text-muted py-4">Aucun EPIC détecté</td>
+                                <td colspan="4" class="text-center text-muted py-4">Aucun EPIC détecté</td>
                             </tr>
                             </tbody>
                         </table>

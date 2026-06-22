@@ -19,6 +19,9 @@
 | Theme JBake dashboard (layout, templates) | DSH-3 | 5 | S005 ✅
 | Vue EPIC matrix (Thymeleaf) | DSH-3 / DSH-4 | 3 | S005 ✅
 | Vue Activity Stream (sessions) | DSH-3 | 2 | S005 ✅
+| EPIC Matrix groupée par borough | DSH-4 | 3 | S006 ✅
+| Tâche publishDashboard | DSH-7 | 2 | S006 ✅
+| Root build.gradle.kts dogfood | DSH-7 | 1 | S006 ✅
 |===
 
 == P0 / P1 — Planifie
@@ -27,9 +30,7 @@
 | Item | EPIC | Pts
 | Vue DAG graphe | DSH-5 | 3
 | Vue timeline | DSH-6 | 2
-| EPIC Matrix groupée par borough | DSH-4 | 3
-| Integration runner-gradle CI (root dogfood) | DSH-7 | 3
-| Deploiement gh-pages | DSH-7 | 2
+| Deploiement gh-pages via runner-gradle | DSH-7 | 2
 |===
 
 == P2 — Planifie

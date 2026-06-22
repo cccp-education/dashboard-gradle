@@ -1,10 +1,17 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-22 — Session 005
-_Session terminee_ : 005
-_Prochaine session_ : 006 — DSH-4 EPIC Matrix par borough + DSH-7 runner-gradle dogfood
+_Derniere mise a jour_ : 2026-06-22 — Session 006
+_Session terminee_ : 006
+_Prochaine session_ : 007 — DSH-7 gh-pages via runner-gradle OU DSH-5 DAG visualization
 
 '''
+
+== Borough
+
+|===
+| Borough | Project | DAG | Role in MVP0 | Session
+| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S006
+|===
 
 == Regles Absolues
 
@@ -39,6 +46,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 003 | 2026-06-19 | refactoring | **Renommage ALGER → dashboard-gradle** — 32 occ supprimees de 15 fichiers, compilation OK | 10/10
 | 004 | 2026-06-22 | vision/implémentation | **Cadrage DSH-3** — vues EPIC Matrix / DAG Graph / Timeline MVP0 / Activity Stream ; modèle `SessionActivity` implémenté et testé ; 9 unit + 4 Cucumber PASS | 10/10
 | 005 | 2026-06-22 | implementation | **DSH-3 Theme + EPIC Matrix** — DashboardRenderer, Thymeleaf, CSS, generateDashboard wiring, 23/23 tests PASS | 10/10
+| 006 | 2026-06-22 | implementation | **DSH-4 EPIC Matrix par borough + DSH-7 dogfood** — BoroughGrouper, publishDashboard, root build.gradle.kts dogfood, 30/30 tests PASS | 10/10
 |===
 
 '''
@@ -46,17 +54,17 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 == Roadmap — EPICs
 
 |===
-| EPIC | Sujet | Pts | Priorite | Statut
-| DSH-0 | Bootstrap gouvernance + structure projet | 3 | P0 | ✅ S000 (3/3 pts)
-| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | ✅ S005 (8/8 pts)
-| DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | ✅ S002 (13/13 pts)
-| DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | ✅ S005 (13/13 pts)
-| DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | PLANIFIE
-| DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | PLANIFIE
-| DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | PLANIFIE
-| DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | PLANIFIE
-| DSH-8 | GitHub Sync — refresh depuis raw API | 8 | P2 | PLANIFIE
-| PUB | Publication Maven Central nmcp | 5 | P1 | PLANIFIE
+| EPIC | Sujet | Pts | Priorite | Statut | Borough
+| DSH-0 | Bootstrap gouvernance + structure projet | 3 | P0 | ✅ S000 (3/3 pts) | Dashboard
+| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | ✅ S005 (8/8 pts) | Dashboard
+| DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | ✅ S002 (13/13 pts) | Dashboard
+| DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | ✅ S005 (13/13 pts) | Dashboard
+| DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | ✅ S006 (8/8 pts) | Dashboard
+| DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | PLANIFIE | Dashboard
+| DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | PLANIFIE | Dashboard
+| DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | 🔄 S006 (3/5 pts) | Dashboard
+| DSH-8 | GitHub Sync — refresh depuis raw API | 8 | P2 | PLANIFIE | Dashboard
+| PUB | Publication Maven Central nmcp | 5 | P1 | PLANIFIE | Dashboard
 |===
 
 '''

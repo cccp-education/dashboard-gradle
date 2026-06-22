@@ -17,7 +17,8 @@ data class DashboardPage(
     val boroughs: List<BoroughData>,
     val epics: List<EpicData>,
     val sessions: List<SessionActivity>,
-    val stats: DashboardStats
+    val stats: DashboardStats,
+    val boroughGroups: List<BoroughGroup>
 )
 
 data class DashboardStats(
@@ -27,4 +28,12 @@ data class DashboardStats(
     val inProgressCount: Int,
     val plannedCount: Int,
     val blockedCount: Int
+)
+
+data class BoroughGroup(
+    val name: String,
+    val dagLevel: String,
+    val project: String,
+    val status: String,
+    val epics: List<EpicData>
 )
