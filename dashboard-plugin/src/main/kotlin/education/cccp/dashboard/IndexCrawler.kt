@@ -6,6 +6,7 @@ import education.cccp.dashboard.model.DashboardData
 import education.cccp.dashboard.model.DagNode
 import education.cccp.dashboard.model.EpicData
 import education.cccp.dashboard.model.EpicStatus
+import education.cccp.dashboard.model.SessionActivity
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
@@ -16,10 +17,12 @@ class IndexCrawler {
 
     fun crawlDirectory(root: Path): DashboardData {
         val indexFiles = mutableListOf<Path>()
+        val sessionFiles = mutableListOf<Path>()
         Files.walkFileTree(root, object : SimpleFileVisitor<Path>() {
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                if (file.fileName.toString() == "INDEX.adoc") {
-                    indexFiles.add(file)
+                when (file.fileName.toString()) {
+                    "INDEX.adoc" -> indexFiles.add(file)
+                    "SESSIONS_HISTORY.adoc" -> sessionFiles.add(file)
                 }
                 return FileVisitResult.CONTINUE
             }
@@ -27,16 +30,23 @@ class IndexCrawler {
         val allBoroughs = mutableListOf<BoroughData>()
         val allEpics = mutableListOf<EpicData>()
         val allNodes = mutableListOf<DagNode>()
+        val allSessions = mutableListOf<SessionActivity>()
         for (f in indexFiles) {
             val data = crawlIndex(f)
             allBoroughs.addAll(data.boroughs)
             allEpics.addAll(data.epics)
             allNodes.addAll(data.dagNodes)
         }
+        for (f in sessionFiles) {
+            val sessions = crawlSessionsHistory(f)
+            val borough = extractBoroughFromPath(f, allBoroughs)
+            allSessions.addAll(sessions.map { it.copy(borough = borough ?: it.borough) })
+        }
         return DashboardData(
             boroughs = allBoroughs,
             epics = allEpics,
-            dagNodes = allNodes
+            dagNodes = allNodes,
+            sessions = allSessions
         )
     }
 
@@ -47,6 +57,18 @@ class IndexCrawler {
         val epics = tables.firstNotNullOfOrNull { parseEpicTable(it) } ?: emptyList()
         val nodes = boroughs.map { DagNode(borough = it.name, project = it.project, dagLevel = it.dagLevel) }
         return DashboardData(boroughs = boroughs, epics = epics, dagNodes = nodes)
+    }
+
+    fun crawlSessionsHistory(file: Path): List<SessionActivity> {
+        val content = Files.readString(file)
+        val tables = parseTables(content)
+        return tables.firstNotNullOfOrNull { parseSessionsTable(it) } ?: emptyList()
+    }
+
+    private fun extractBoroughFromPath(file: Path, boroughs: List<BoroughData>): String? {
+        val pathStr = file.toString()
+        return boroughs.find { pathStr.contains(it.project) }?.name
+            ?: boroughs.find { pathStr.contains(it.name, ignoreCase = true) }?.name
     }
 
     private fun parseTables(content: String): List<List<List<String>>> {
@@ -106,6 +128,27 @@ class IndexCrawler {
                 points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
                 status = parseEpicStatus(rawStatus)
+            )
+        }
+    }
+
+    private fun parseSessionsTable(rows: List<List<String>>): List<SessionActivity>? {
+        if (rows.isEmpty()) return null
+        val header = rows.first().map { it.lowercase().trim() }
+        val numIdx = header.indexOfFirst { it.contains("#") }
+        val dateIdx = header.indexOfFirst { it.contains("date") }
+        val typeIdx = header.indexOfFirst { it.contains("type") }
+        val objIdx = header.indexOfFirst { it.contains("objet") || it.contains("object") || it.contains("sujet") }
+        val filesIdx = header.indexOfFirst { it.contains("fichiers") || it.contains("files") }
+        if (numIdx == -1 || objIdx == -1) return null
+
+        return rows.drop(1).map { row ->
+            SessionActivity(
+                number = row.getOrElse(numIdx) { "" },
+                date = dateIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
+                type = typeIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
+                subject = row.getOrElse(objIdx) { "" },
+                files = filesIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
             )
         }
     }

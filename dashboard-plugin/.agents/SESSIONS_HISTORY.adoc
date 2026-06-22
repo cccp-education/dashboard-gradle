@@ -6,4 +6,5 @@
 | 001 | 2026-06-18 | DSH-1 Plugin scaffold — settings.gradle.kts, build.gradle.kts, gradle/libs.versions.toml, DashboardPlugin.kt, DashboardExtension.kt, consumer root, 4/4 tests PASS | 7 fichiers crees
 | 002 | 2026-06-19 | DSH-2 IndexCrawler — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, Cucumber BDD, 14/14 tests PASS | 12 fichiers crees
 | 003 | 2026-06-19 | Renommage ALGER → dashboard-gradle — 32 occurrences supprimees de 15 fichiers | 15 fichiers modifies
+| 004 | 2026-06-22 | Cadrage vision DSH-3 + implémentation modèle SessionActivity — vues validées, IndexCrawler parse SESSIONS_HISTORY.adoc, tests 9 unit + 4 Cucumber PASS | .agents/sessions/004-cadrage-vision-dsh-3.adoc, DashboardData.kt, IndexCrawler.kt, IndexCrawlerTest.kt, CrawlSteps.kt, dashboard_crawl.feature
 |===

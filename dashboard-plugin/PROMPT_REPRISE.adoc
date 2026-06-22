@@ -1,27 +1,32 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 004
-:date: 2026-06-19
+:session: 005
+:date: 2026-06-22
 
-== Mission accomplie (S003)
+== Mission accomplie (S004)
 
-*Renommage ALGER → dashboard* :
-1. ✅ 32 occurrences ALGER supprimees de 15 fichiers
-2. ✅ Zero occurrence restante (verifie)
-3. ✅ Compilation OK
+*Cadrage vision DSH-3 + modèle Activity Stream* :
+1. ✅ 4 vues validées : EPIC Matrix, DAG Graph, Timeline MVP0, Activity Stream
+2. ✅ Niveau de détail validé : EPICs + BACKLOG + ROADMAP + sessions
+3. ✅ Modèle pivot enrichi : `SessionActivity` + crawler `SESSIONS_HISTORY.adoc`
+4. ✅ Navigation Thymeleaf/JBake validée
+5. ✅ Palette couleurs statut validée
+6. ✅ Génération = sessions dashboard uniquement (pas d'auto-refresh)
+7. ✅ Tests : 9 unit + 4 Cucumber PASS
 
 == Statut
 
 - DSH-0 (Bootstrap gouvernance) : 3/3 pts ✅
 - DSH-1 (Plugin scaffold) : 5/8 pts 🔄
 - DSH-2 (IndexCrawler) : 13/13 pts ✅
+- DSH-3 (Dashboard theme + vues) : cadrage ✅, modèle ✅, implémentation UI 🔄
 
-== Prochaine session (004) — DSH-3 Dashboard Theme JBake
+== Prochaine session (005) — DSH-3 Implementation Theme JBake
 
-*Priorite P0* : Creer le theme JBake custom avec vues Thymeleaf.
+*Priorite P0* : Implementer le theme JBake custom et la vue EPIC Matrix.
 
-1. Theme JBake (layout, templates Thymeleaf)
-2. Vue EPIC matrix — tableau borough × statut
-3. Vue DAG graphe — visualisation N0→N4
-4. Vue timeline — jalons MVP0
-5. Tests Cucumber pour le rendu
-6. Verification — ./gradlew test + cucumberTest
+1. Theme JBake dashboard (`dashboard.thyme`, layout, CSS statut)
+2. Tâche `generateDashboard` consomme `dashboard-data.json` et produit le site
+3. Vue EPIC Matrix — tableau borough × statut avec EPICs + BACKLOG
+4. Vue Activity Stream — sessions récentes depuis SESSIONS_HISTORY.adoc
+5. Tests unitaires + fonctionnels + Cucumber
+6. Vérification — `./gradlew test` + `cucumberTest`

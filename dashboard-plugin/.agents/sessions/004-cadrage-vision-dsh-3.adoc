@@ -1,0 +1,126 @@
+= Session 004 — dashboard-gradle
+:date: 2026-06-22
+:type: vision
+:epic: DSH-3
+
+== Sujet
+
+Cadrage vision du dashboard — DSH-3 theme JBake + vues Thymeleaf.
+Pas de code produit. Objectif : figer les vues, le modèle de données,
+la navigation et l'intégration runner-gradle pour les sessions de
+implémentation suivantes.
+
+== Decisions validées
+
+=== 1. Job-to-be-done
+
+Le dashboard répond à la question :
+
+> Pour l'opencode/humain qui reprend le workspace : quel est l'etat de
+> chaque borough a l'instant T, et ou dois-je mettre mon effort maintenant ?
+
+Trois sous-questions adressees par les vues :
+
+* Quels EPICs sont termines / en cours / bloques / planifies ?
+* Quels boroughs sont des dependances critiques pour les autres ?
+* Quelle est la prochaine livraison MVP0 et ce qui manque ?
+
+=== 2. Vues principales
+
+|===
+| Vue | Question repondue | Donnees source
+| **EPIC Matrix** | "Ou en est chaque borough ?" | INDEX.adoc table EPICs + BACKLOG items
+| **DAG Graph** | "Quelle dependance bloque quoi ?" | DAG N0→N4 + chaine de valeur du portefeuille
+| **Timeline MVP0** | "Quand est-ce livrable ?" | Dates sessions + statut EPICs + jalons
+| **Activity Stream** | "Qu'est-ce qui s'est passe recemment ?" | SESSIONS_HISTORY.adoc + `.agents/sessions/*.adoc`
+|===
+
+=== 3. Niveau de detail
+
+* EPICs : id, titre, borough, points, priorite, statut, ratio done/total
+* BACKLOG : items P0/P1/P2 planifies, en cours, termines
+* ROADMAP : jalons MVP0 extraits des EPICs termines + sessions recentes
+
+=== 4. Modèle de données pivot
+
+Le `IndexCrawler` produit deja `dashboard-data.json`. Les champs a afficher :
+
+```json
+{
+  "boroughs": [
+    {
+      "name": "dashboard-gradle",
+      "project": "foundry/public/dashboard-gradle/dashboard-plugin",
+      "dagLevel": "N3",
+      "role": "Dashboard vision/avancement",
+      "session": "003",
+      "status": "ACTIVE"
+    }
+  ],
+  "epics": [
+    {
+      "id": "DSH-3",
+      "title": "Dashboard theme JBake + vues Thymeleaf",
+      "borough": "dashboard-gradle",
+      "points": 13,
+      "priority": "P0",
+      "status": "PLANIFIE"
+    }
+  ],
+  "dagNodes": [
+    {
+      "borough": "dashboard-gradle",
+      "project": "...",
+      "dagLevel": "N3",
+      "children": []
+    }
+  ],
+  "timestamp": "2026-06-22T..."
+}
+```
+
+=== 5. Thème JBake / navigation
+
+* Layout unique `dashboard.thyme` avec menu fixe
+* 3 pages generees :
+  ** `index.html` — EPIC Matrix par defaut
+  ** `dag.html` — graphe N0→N4
+  ** `timeline.html` — jalons MVP0
+* CSS leger inline (pas de framework lourd)
+* Couleurs par statut :
+  ** ✅ TERMINE — vert
+  ** 🔄 EN COURS — orange
+  ** ⛔ BLOQUE — rouge
+  ** ⚪ PLANIFIE — gris
+  ** 💤 DORMANT — gris clair
+  ** 🪦 VESTIGE — gris fonce
+
+=== 6. Génération et déploiement
+
+* Tâche Gradle `generateDashboard` consomme `dashboard-data.json`
+* Génération déclenchée uniquement lors des sessions dashboard
+* Pas d'auto-refresh inter-borough
+* Déploiement via runner-gradle sur `gh-pages`
+* URL cible : `https://cccp-education.github.io/dashboard-gradle/`
+
+== Livrables de S004 en modèle de données
+
+* `SessionActivity` ajouté au modèle pivot `DashboardData.kt`
+* `IndexCrawler` parse désormais `SESSIONS_HISTORY.adoc`
+* La tâche `crawlDashboard` compte et logue les sessions
+* Tests unitaires + fonctionnels + Cucumber mis à jour
+* 9 unit tests PASS, 4 scénarios Cucumber PASS
+
+== Livrables attendus pour DSH-3 (sessions 005+)
+
+. Thème JBake dashboard (layout, templates Thymeleaf)
+. Vue EPIC matrix — tableau borough × statut
+. Vue Activity Stream — sessions récentes depuis SESSIONS_HISTORY.adoc
+. Vue DAG graphe — visualisation N0→N4 (vis.js)
+. Vue timeline — jalons MVP0
+. Tests Cucumber pour le rendu
+. Vérification `./gradlew test` + `cucumberTest`
+
+== Prochaine session
+
+Session 005 — DSH-3 implementation : theme JBake + EPIC Matrix.

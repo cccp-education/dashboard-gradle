@@ -1,7 +1,13 @@
 = TODO — dashboard-gradle
 
-- [ ] Decider format JSON pivot (schema dashboard-data.json)
-- [ ] Definir palette couleurs EPIC matrix (vert/orange/rouge/gris)
-- [ ] Choisir lib JS graphe (vis.js, d3.js, cytoscape.js ?)
-- [ ] Voir si graphify-gradle peut fournir le DAG tout prete
-- [ ] Ajouter une page "Sante du workspace" (builds qui cassent, versions)
+- [x] Decider format JSON pivot (schema dashboard-data.json) — S004 ✅
+- [x] Definir palette couleurs EPIC matrix (vert/orange/rouge/gris) — S004 ✅
+- [x] Choisir lib JS graphe (vis.js, d3.js, cytoscape.js ?) — vis.js — S004 ✅
+- [x] Voir si graphify-gradle peut fournir le DAG tout prete — non, DAG simplifié extrait du portefeuille INDEX.adoc — S004 ✅
+- [x] Ajouter SessionActivity au modèle pivot + crawler SESSIONS_HISTORY.adoc — S004 ✅
+- [ ] Ajouter une page "Sante du workspace" (builds qui cassent, versions) — P2
+- [ ] Implémenter theme JBake dashboard.thyme — S005
+- [ ] Implémenter vue EPIC Matrix — S005
+- [ ] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005
+- [ ] Implémenter vue DAG Graph — S006
+- [ ] Implémenter vue Timeline MVP0 — S006

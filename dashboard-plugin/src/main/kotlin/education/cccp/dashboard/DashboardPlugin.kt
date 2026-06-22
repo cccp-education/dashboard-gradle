@@ -37,7 +37,7 @@ class DashboardPlugin : Plugin<Project> {
 
                 val jsonFile = outPath.resolve("dashboard-data.json")
                 mapper.writeValue(jsonFile.toFile(), data)
-                project.logger.lifecycle("Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics)")
+                project.logger.lifecycle("Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions)")
             }
         }
 

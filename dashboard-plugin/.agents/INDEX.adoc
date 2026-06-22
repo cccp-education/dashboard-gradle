@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-19 — Session 003
-_Session terminee_ : 003
-_Prochaine session_ : 004 — DSH-3 Dashboard theme JBake
+_Derniere mise a jour_ : 2026-06-22 — Session 004
+_Session terminee_ : 004
+_Prochaine session_ : 005 — DSH-3 Implementation theme JBake + EPIC Matrix
 
 '''
 
@@ -37,6 +37,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 001 | 2026-06-18 | build | **DSH-1 Plugin scaffold** — settings.gradle.kts, build.gradle.kts, catalog, DashboardPlugin.kt, DashboardExtension.kt, consumer root, 4/4 tests PASS | 10/10
 | 002 | 2026-06-19 | implementation | **DSH-2 IndexCrawler** — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, 14/14 tests PASS (unit/functional/cucumber) | 10/10
 | 003 | 2026-06-19 | refactoring | **Renommage ALGER → dashboard-gradle** — 32 occ supprimees de 15 fichiers, compilation OK | 10/10
+| 004 | 2026-06-22 | vision/implémentation | **Cadrage DSH-3** — vues EPIC Matrix / DAG Graph / Timeline MVP0 / Activity Stream ; modèle `SessionActivity` implémenté et testé ; 9 unit + 4 Cucumber PASS | 10/10
 |===
 
 '''
