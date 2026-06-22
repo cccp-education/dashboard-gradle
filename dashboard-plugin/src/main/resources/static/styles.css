@@ -91,3 +91,11 @@ body {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
 }
+
+.dag-graph-canvas {
+    width: 100%;
+    height: 480px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+}

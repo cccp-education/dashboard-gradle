@@ -1,12 +1,20 @@
-package education.cccp.dashboard
+package dashboard
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import education.cccp.dashboard.render.DashboardRenderer
+import dashboard.render.DashboardRenderer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.nio.file.Files
 
+/**
+ * Gradle plugin entry point for the workspace dashboard.
+ *
+ * Registers three tasks:
+ * - `crawlDashboard`: scans INDEX.adoc / SESSIONS_HISTORY.adoc and writes dashboard-data.json
+ * - `generateDashboard`: renders the static HTML/CSS dashboard from the JSON data
+ * - `publishDashboard`: copies the generated site to the configured publish directory
+ */
 class DashboardPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -14,7 +22,7 @@ class DashboardPlugin : Plugin<Project> {
 
         project.tasks.register("crawlDashboard") { task ->
             task.group = "dashboard"
-            task.description = "Crawls INDEX.adoc and BACKLOG.adoc from all boroughs."
+            task.description = "Crawls INDEX.adoc and SESSIONS_HISTORY.adoc from all boroughs."
             task.doLast {
                 val configPath = extension.configPath.get()
                 val outputDir = extension.outputDir.get()

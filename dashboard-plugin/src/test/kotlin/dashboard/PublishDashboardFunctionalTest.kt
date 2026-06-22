@@ -1,4 +1,4 @@
-package education.cccp.dashboard
+package dashboard
 
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner

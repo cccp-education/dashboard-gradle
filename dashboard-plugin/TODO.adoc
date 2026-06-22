@@ -9,5 +9,5 @@
 - [ ] Implémenter theme JBake dashboard.thyme — S005
 - [ ] Implémenter vue EPIC Matrix — S005
 - [ ] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005
-- [ ] Implémenter vue DAG Graph — S006
+- [x] Implémenter vue DAG Graph — S007 ✅
 - [ ] Implémenter vue Timeline MVP0 — S006

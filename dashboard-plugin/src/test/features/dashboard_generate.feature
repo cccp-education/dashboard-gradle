@@ -4,7 +4,7 @@ Feature: Dashboard static site generation
   Scenario: Generate dashboard site from crawled data
     Given a Gradle project with the dashboard plugin applied
     And a foundry directory with INDEX.adoc containing epics:
-      | EPIC  | Sujet           | Pts | Prio | Statut   |
+      | EPIC  | Subject         | Pts | Prio | Status   |
       | DSH-0 | Bootstrap       | 3   | P0   | ✅ S000  |
       | DSH-1 | Plugin scaffold | 8   | P0   | 🔄 S001  |
       | DSH-2 | Crawler         | 13  | P0   | PLANIFIE |
@@ -26,10 +26,10 @@ Feature: Dashboard static site generation
   Scenario: Generate dashboard site with epic matrix grouped by borough
     Given a Gradle project with the dashboard plugin applied
     And a foundry directory with INDEX.adoc for borough "BAKERY" project "bakery-gradle" dag "N2" containing epics:
-      | EPIC  | Sujet       | Pts | Prio | Statut   |
+      | EPIC  | Subject     | Pts | Prio | Status   |
       | BKY-1 | Bakery task | 5   | P1   | EN COURS |
     And a foundry directory with INDEX.adoc for borough "DASHBOARD" project "dashboard-gradle" dag "N3" containing epics:
-      | EPIC  | Sujet     | Pts | Prio | Statut  |
+      | EPIC  | Subject   | Pts | Prio | Status  |
       | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
     When I execute the "generateDashboard" task
     Then the build should succeed
@@ -41,7 +41,7 @@ Feature: Dashboard static site generation
   Scenario: Publish dashboard site copies generated output to publish directory
     Given a Gradle project with the dashboard plugin applied
     And a foundry directory with INDEX.adoc containing epics:
-      | EPIC  | Sujet     | Pts | Prio | Statut  |
+      | EPIC  | Subject   | Pts | Prio | Status  |
       | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
     When I execute the "publishDashboard" task
     Then the build should succeed

@@ -1,0 +1,31 @@
+:= COMPLETED_TASKS_ARCHIVE — Juin 2026 — dashboard-gradle
+
+== Sessions archivées
+
+|===
+| # | Date | Sujet | Livrables clés
+| 000 | 2026-06-18 | Bootstrap gouvernance | AGENT.adoc, INDEX.adoc, PROMPT_REPRISE.adoc, BACKLOG.adoc, TODO.adoc, SESSIONS_HISTORY.adoc, structure répertoire
+| 001 | 2026-06-18 | DSH-1 Plugin scaffold | build.gradle.kts, settings.gradle.kts, catalog, DashboardPlugin.kt, DashboardExtension.kt, consumer root
+| 002 | 2026-06-19 | DSH-2 IndexCrawler | DashboardData, IndexCrawler, crawlDashboard, 14/14 tests PASS
+| 003 | 2026-06-19 | Renommage ALGER → dashboard-gradle | 32 occurrences supprimées de 15 fichiers
+| 004 | 2026-06-22 | Cadrage DSH-3 + SessionActivity | vues validées, parse SESSIONS_HISTORY.adoc, 9 unit + 4 Cucumber PASS
+| 005 | 2026-06-22 | DSH-3 Theme + EPIC Matrix | DashboardRenderer, Thymeleaf, CSS, 23/23 tests PASS
+| 006 | 2026-06-22 | DSH-4 EPIC Matrix par borough + DSH-7 dogfood | BoroughGrouper, publishDashboard, root dogfood, 30/30 tests PASS
+| 007 | 2026-06-23 | Renommage packages + DSH-5 DAG visualization + traduction anglaise | packages `dashboard.*`, DagGraphBuilder, vis.js, 31/31 tests PASS
+|===
+
+== EPICs terminés ce mois
+
+- DSH-0 Bootstrap gouvernance ✅
+- DSH-1 Plugin scaffold ✅
+- DSH-2 Crawler INDEX.adoc → JSON pivot ✅
+- DSH-3 Dashboard theme JBake + vues Thymeleaf ✅
+- DSH-4 EPIC matrix par borough ✅
+- DSH-5 DAG visualization ✅
+
+== Points ouverts à reporter
+
+- DSH-6 Timeline MVP0
+- DSH-7 Déploiement gh-pages via runner-gradle (3/5)
+- DSH-8 GitHub Sync
+- PUB Maven Central

@@ -1,17 +1,17 @@
-package education.cccp.dashboard.render
+package dashboard.render
 
-import education.cccp.dashboard.model.BoroughData
-import education.cccp.dashboard.model.BoroughStatus
-import education.cccp.dashboard.model.DashboardData
-import education.cccp.dashboard.model.EpicData
+import dashboard.model.BoroughData
+import dashboard.model.BoroughStatus
+import dashboard.model.DashboardData
+import dashboard.model.EpicData
 
 /**
- * Groupe les EPICs par borough pour le rendu du dashboard.
+ * Groups EPICs by borough for dashboard rendering.
  *
- * Règles de groupement :
- * - un groupe par borough connu, trié par niveau DAG
- * - les EPICs d'un borough sont triés par priorité puis identifiant
- * - les EPICs sans borough sont regroupés dans un groupe "UNASSIGNED"
+ * Grouping rules:
+ * - one group per known borough, sorted by DAG level
+ * - EPICs inside a borough group are sorted by priority then id
+ * - EPICs without a borough are grouped under "UNASSIGNED"
  */
 object BoroughGrouper {
 

@@ -1,17 +1,17 @@
-package education.cccp.dashboard.render
+package dashboard.render
 
-import education.cccp.dashboard.model.BoroughData
-import education.cccp.dashboard.model.BoroughStatus
-import education.cccp.dashboard.model.DashboardData
-import education.cccp.dashboard.model.EpicData
-import education.cccp.dashboard.model.EpicStatus
+import dashboard.model.BoroughData
+import dashboard.model.BoroughStatus
+import dashboard.model.DashboardData
+import dashboard.model.EpicData
+import dashboard.model.EpicStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class BoroughGroupTest {
 
     @Test
-    fun `should group epics by borough sorted by dag level`() {
+    fun `groupByBorough should group epics by borough sorted by dag level`() {
         val data = DashboardData(
             boroughs = listOf(
                 BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
@@ -33,7 +33,7 @@ class BoroughGroupTest {
     }
 
     @Test
-    fun `should sort epics inside borough by priority then id`() {
+    fun `groupByBorough should sort epics inside borough by priority then id`() {
         val data = DashboardData(
             boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
             epics = listOf(
@@ -51,7 +51,7 @@ class BoroughGroupTest {
     }
 
     @Test
-    fun `should expose borough status as string`() {
+    fun `groupByBorough should expose borough status as string`() {
         val data = DashboardData(
             boroughs = listOf(BoroughData("Nashville", "newpipe-gradle", "N2", "VESTIGE", "S001", BoroughStatus.VESTIGE)),
             epics = listOf(EpicData("NP-1", "Auth", "Nashville", 5, "P2", EpicStatus.TERMINE)),
@@ -64,7 +64,7 @@ class BoroughGroupTest {
     }
 
     @Test
-    fun `should create UNASSIGNED group for epics without borough`() {
+    fun `groupByBorough should create UNASSIGNED group for epics without borough`() {
         val data = DashboardData(
             boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
             epics = listOf(

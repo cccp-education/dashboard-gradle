@@ -28,7 +28,8 @@
 
 |===
 | Item | EPIC | Pts
-| Vue DAG graphe | DSH-5 | 3
+| DAG graph builder + vis.js rendering | DSH-5 | 3 | S007 ✅
+| DAG graph section in dashboard template | DSH-5 | 3 | S007 ✅
 | Vue timeline | DSH-6 | 2
 | Deploiement gh-pages via runner-gradle | DSH-7 | 2
 |===

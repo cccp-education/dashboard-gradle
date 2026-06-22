@@ -1,4 +1,4 @@
-package education.cccp.dashboard
+package dashboard
 
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testfixtures.ProjectBuilder
@@ -26,7 +26,7 @@ class DashboardPluginTest {
         val crawl = project.tasks.findByName("crawlDashboard")
         assertThat(crawl).isNotNull
         assertThat(crawl!!.group).isEqualTo("dashboard")
-        assertThat(crawl.description).isEqualTo("Crawls INDEX.adoc and BACKLOG.adoc from all boroughs.")
+        assertThat(crawl.description).isEqualTo("Crawls INDEX.adoc and SESSIONS_HISTORY.adoc from all boroughs.")
 
         val generate = project.tasks.findByName("generateDashboard")
         assertThat(generate).isNotNull

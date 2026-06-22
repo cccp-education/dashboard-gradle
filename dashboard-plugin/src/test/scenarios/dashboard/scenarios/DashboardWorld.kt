@@ -1,4 +1,4 @@
-package education.cccp.dashboard.scenarios
+package dashboard.scenarios
 
 import io.cucumber.java.After
 import org.gradle.testkit.runner.BuildResult

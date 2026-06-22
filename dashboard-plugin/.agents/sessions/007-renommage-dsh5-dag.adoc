@@ -1,0 +1,66 @@
+:= Session 007 — dashboard-gradle
+:date: 2026-06-23
+:session-type: refactoring + implementation
+:score: 10/10
+
+== Objectifs
+
+1. Renommer les packages Kotlin `education.cccp.dashboard` → `dashboard` (id plugin inchangé).
+2. Implémenter DSH-5 DAG visualization (graphe N0→N4 avec vis.js).
+3. Traduire README, commentaires code, noms de fonctions tests et Gherkin en anglais.
+
+== Réalisations
+
+=== Renommage packages
+
+- Déplacement de `src/main/kotlin/education/cccp/dashboard/**` vers `src/main/kotlin/dashboard/**`
+- Déplacement de `src/test/kotlin/education/cccp/dashboard/**` vers `src/test/kotlin/dashboard/**`
+- Déplacement de `src/test/scenarios/education/cccp/dashboard/**` vers `src/test/scenarios/dashboard/**`
+- Mise à jour de `build.gradle.kts` : `implementationClass = "dashboard.DashboardPlugin"`, filtre tests `dashboard.scenarios.**`
+- L'id du plugin Maven/Gradle reste `education.cccp.dashboard`
+
+=== DSH-5 DAG visualization
+
+- `DagGraphBuilder` : construit graphe orienté par niveaux DAG consécutifs
+- `DagGraph`, `DagNodeView`, `DagEdgeView` : modèle de graphe
+- `DashboardRenderer` : sérialise le graphe en JSON intégré au HTML
+- `dashboard.thyme` : section "DAG Graph" + balise `<script type="application/json" id="dag-graph-data">` + vis.js hierarchical layout LR
+- `styles.css` : `.dag-graph-canvas` 480px
+- `DagGraphBuilderTest` : 5 tests unitaires
+- `DashboardRendererTest` : 1 test supplémentaire pour la section DAG
+
+=== Traduction anglaise
+
+- `README.adoc` : entièrement en anglais
+- Commentaires KDoc/Kotlin : anglais
+- Noms de fonctions de test : anglais
+- Gherkin features : anglais (`Subject`, `Priority`, `Status`)
+- Parser `IndexCrawler` : supporte aussi les headers anglais (`Subject`, `Files`)
+
+== Métriques
+
+- Compilation Kotlin : OK
+- `./gradlew check` : 31/31 PASS
+  - 17 unit tests
+  - 5 functional tests
+  - 8 Cucumber scenarios
+  - `validatePlugins` OK
+
+== Fichiers modifiés/crés
+
+- `src/main/kotlin/dashboard/*` (créés)
+- `src/test/kotlin/dashboard/*` (créés)
+- `src/test/scenarios/dashboard/*` (créés)
+- `src/main/kotlin/education/cccp/dashboard/*` (supprimés)
+- `src/test/kotlin/education/cccp/dashboard/*` (supprimés)
+- `src/test/scenarios/education/cccp/dashboard/*` (supprimés)
+- `src/main/resources/templates/dashboard.thyme`
+- `src/main/resources/static/styles.css`
+- `src/test/features/dashboard_crawl.feature`
+- `src/test/features/dashboard_generate.feature`
+- `build.gradle.kts`
+- `README.adoc`
+
+== Prochaine session (008)
+
+Priorité P1 : DSH-7 déploiement gh-pages via runner-gradle OU DSH-6 Timeline MVP0.
