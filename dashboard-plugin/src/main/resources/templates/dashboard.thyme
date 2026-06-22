@@ -128,6 +128,35 @@
             </div>
         </div>
 
+        <!-- Timeline -->
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Timeline</h2>
+                    <span class="badge bg-secondary" th:text="${page.timeline.milestones.size} + ' milestones'">0 milestones</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="timeline-wrapper">
+                        <ul class="timeline list-unstyled mb-0 py-4 px-3">
+                            <li class="timeline-item" th:each="milestone : ${page.timeline.milestones}">
+                                <div class="timeline-marker" th:class="'timeline-marker status-' + ${milestone.status}"></div>
+                                <div class="timeline-content">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <strong class="mb-1" th:text="${milestone.label}">Bootstrap</strong>
+                                        <small class="text-muted" th:text="${milestone.date}">2026-06-18</small>
+                                    </div>
+                                    <small class="text-muted" th:text="${milestone.borough} + ' (' + ${milestone.dagLevel} + ') — ' + ${milestone.id}">Dashboard (N3) — DSH-0</small>
+                                </div>
+                            </li>
+                            <li class="timeline-item text-center text-muted py-4" th:if="${#lists.isEmpty(page.timeline.milestones)}">
+                                Aucun jalon disponible
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- DAG Graph -->
         <div class="col-12">
             <div class="card dashboard-card">

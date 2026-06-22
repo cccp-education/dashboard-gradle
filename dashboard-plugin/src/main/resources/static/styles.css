@@ -99,3 +99,63 @@ body {
     border: 1px solid #e9ecef;
     border-radius: 0.5rem;
 }
+
+/* Timeline styles */
+.timeline {
+    position: relative;
+    padding-left: 1rem;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 2rem;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 2.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 1.55rem;
+    top: 0.25rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background-color: var(--status-planned);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #dee2e6;
+}
+
+.timeline-marker.status-DONE {
+    background-color: var(--status-done);
+    box-shadow: 0 0 0 2px var(--status-done);
+}
+
+.timeline-marker.status-IN_PROGRESS {
+    background-color: var(--status-in-progress);
+    box-shadow: 0 0 0 2px var(--status-in-progress);
+}
+
+.timeline-marker.status-PLANNED {
+    background-color: var(--status-planned);
+    box-shadow: 0 0 0 2px var(--status-planned);
+}
+
+.timeline-content {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}

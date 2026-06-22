@@ -38,6 +38,15 @@ Feature: Dashboard static site generation
     And the dashboard site should contain "BKY-1"
     And the dashboard site should contain "DSH-0"
 
+  Scenario: Generate dashboard site with timeline
+    Given a Gradle project with the dashboard plugin applied
+    And a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc containing completed epics for "DASHBOARD"
+    When I execute the "generateDashboard" task
+    Then the build should succeed
+    And the dashboard site should contain "Timeline"
+    And the dashboard site should contain "Bootstrap"
+    And the dashboard site should contain "2026-06-18"
+
   Scenario: Publish dashboard site copies generated output to publish directory
     Given a Gradle project with the dashboard plugin applied
     And a foundry directory with INDEX.adoc containing epics:

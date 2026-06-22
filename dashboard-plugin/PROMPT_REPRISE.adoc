@@ -1,16 +1,15 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 008
+:session: 009
 :date: 2026-06-23
 
-== Mission accomplie (S007)
+== Mission accomplie (S008)
 
-*Renommage packages + DSH-5 DAG visualization + traduction anglaise* :
-1. Packages Kotlin `education.cccp.dashboard` → `dashboard` (id plugin inchangé)
-2. `DagGraphBuilder` construit graphe DAG N0→N4
-3. `DashboardRenderer` intègre JSON graphe dans `index.html`
-4. Template `dashboard.thyme` affiche DAG Graph via vis.js
-5. README, commentaires, noms de fonctions tests, Gherkin passés en anglais
-6. Tests : 17 unit + 5 functional + 8 Cucumber = 31/31 PASS
+*DSH-6 Timeline MVP0* :
+1. Domaine `dashboard.timeline` — `Milestone`, `Timeline`, `TimelineBuilder`
+2. `EpicData` enrichi du champ `session` ; `IndexCrawler` extrait le numéro de session
+3. `DashboardRenderer` intègre la timeline dans `DashboardPage`
+4. Template `dashboard.thyme` affiche la timeline verticale avec marqueurs de statut
+5. Tests : 28 unit + 5 functional + 9 Cucumber = 42/42 JUnit PASS + 9/9 Cucumber PASS
 
 == Statut
 
@@ -20,16 +19,16 @@
 - DSH-3 (Dashboard theme + vues) : 13/13 pts ✅
 - DSH-4 (EPIC Matrix par borough) : 8/8 pts ✅
 - DSH-5 (DAG visualization) : 8/8 pts ✅
-- DSH-6 (Timeline MVP0) : 0/5 pts ⏸️ PLANIFIE
+- DSH-6 (Timeline MVP0) : 5/5 pts ✅
 - DSH-7 (Intégration runner-gradle) : 3/5 pts 🔄 (publishDashboard OK, gh-pages N+1)
 - DSH-8 (GitHub Sync) : 0/8 pts PLANIFIE
 - PUB (Maven Central) : 0/5 pts PLANIFIE
 
-== Prochaine session (008)
+== Prochaine session (009)
 
-*Priorité P1* : Finaliser DSH-7 (déploiement gh-pages via runner-gradle) OU DSH-6 (Timeline MVP0).
+*Priorité P1* : Finaliser DSH-7 (déploiement gh-pages via runner-gradle).
 
-1. Intégration runner-gradle : consommer `publishDir` pour déployer gh-pages
-2. Alternative : DSH-6 Timeline MVP0 — jalons des 24 sessions
+1. Consommer `publishDir` pour déploiement gh-pages via runner-gradle
+2. Vérifier le wiring avec le dogfood root `build.gradle.kts`
 3. Tests unitaires + fonctionnels + Cucumber
 4. Vérification — `./gradlew test` + `cucumberTest`

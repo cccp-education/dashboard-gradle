@@ -12,6 +12,7 @@
 | 005 | 2026-06-22 | DSH-3 Theme + EPIC Matrix | DashboardRenderer, Thymeleaf, CSS, 23/23 tests PASS
 | 006 | 2026-06-22 | DSH-4 EPIC Matrix par borough + DSH-7 dogfood | BoroughGrouper, publishDashboard, root dogfood, 30/30 tests PASS
 | 007 | 2026-06-23 | Renommage packages + DSH-5 DAG visualization + traduction anglaise | packages `dashboard.*`, DagGraphBuilder, vis.js, 31/31 tests PASS
+| 008 | 2026-06-23 | DSH-6 Timeline MVP0 | domaine `dashboard.timeline`, Milestone, Timeline, TimelineBuilder, section template Thymeleaf, 42/42 PASS + 9/9 Cucumber PASS
 |===
 
 == EPICs terminés ce mois
@@ -22,10 +23,10 @@
 - DSH-3 Dashboard theme JBake + vues Thymeleaf ✅
 - DSH-4 EPIC matrix par borough ✅
 - DSH-5 DAG visualization ✅
+- DSH-6 Timeline MVP0 ✅
 
 == Points ouverts à reporter
 
-- DSH-6 Timeline MVP0
 - DSH-7 Déploiement gh-pages via runner-gradle (3/5)
 - DSH-8 GitHub Sync
 - PUB Maven Central

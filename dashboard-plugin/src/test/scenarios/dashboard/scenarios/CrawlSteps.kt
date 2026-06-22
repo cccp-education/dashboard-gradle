@@ -65,6 +65,34 @@ class CrawlSteps(private val world: DashboardWorld) {
         world.writeIndexAdoc("foundry/${borough.lowercase()}/INDEX.adoc", sb.toString())
     }
 
+    @Given("a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc containing completed epics for {string}")
+    fun givenFoundryWithCompletedEpics(borough: String) {
+        val lower = borough.lowercase()
+        world.writeIndexAdoc(
+            "foundry/$lower/INDEX.adoc",
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | $borough | $lower-gradle | N3 | Test role | S000
+            |===
+            |===
+            | EPIC | Subject | Pts | Priority | Status
+            | DSH-0 | Bootstrap | 3 | P0 | ✅ S000
+            |===
+            """.trimIndent()
+        )
+        world.writeIndexAdoc(
+            "foundry/$lower/.agents/SESSIONS_HISTORY.adoc",
+            """
+            = SESSIONS_HISTORY
+            |===
+            | # | Date | Subject | Files
+            | 000 | 2026-06-18 | Bootstrap | 8 files
+            |===
+            """.trimIndent()
+        )
+    }
+
     @Given("a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc for {string}")
     fun givenFoundryWithSessions(borough: String) {
         world.writeIndexAdoc(

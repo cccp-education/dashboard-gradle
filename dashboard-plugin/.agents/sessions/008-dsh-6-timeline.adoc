@@ -1,0 +1,84 @@
+:= Session 008 — dashboard-gradle
+:date: 2026-06-23
+:session-type: implementation
+:score: 10/10
+
+== Objectifs
+
+1. Implémenter DSH-6 Timeline MVP0 — jalons des sessions de formation.
+2. Suivre la méthodologie baby step DDD/TDD/BDD (unit / functional / Cucumber).
+3. Maintenir la qualité agile software craftsmanship : petits commits logiques, tests avant code, refactorings constants.
+
+== Réalisations
+
+=== DDD — Modèle de domaine timeline
+
+- `Milestone` : value object immuable (id, label, date, borough, dagLevel, type, status).
+- `MilestoneType` : `EPIC_RELEASE`, `SESSION`, `SPRINT_GATE`.
+- `MilestoneStatus` : `DONE`, `IN_PROGRESS`, `PLANNED`.
+- `Timeline` : agrégat qui maintient les jalons triés par date puis par id, expose `milestonesUpTo(date)` et `byType(type)`.
+- `TimelineBuilder` : domain service transformant `DashboardData` en `Timeline`.
+
+Règle métier clé : un jalon EPIC est daté par la session de livraison extraite de `SESSIONS_HISTORY.adoc`. Si aucune session ne correspond, une date future par défaut est utilisée et le statut est `PLANNED`.
+
+=== TDD — Tests unitaires
+
+- `MilestoneTest` : 3 tests (propriétés, tri par date, tri par id si dates identiques).
+- `TimelineTest` : 3 tests (tri, filtre par date, filtre par type).
+- `TimelineBuilderTest` : 5 tests (mapping EPIC terminé → milestone daté, fallback planned, in-progress, skip sans borough, dag level).
+
+=== Intégration dans le pipeline existant
+
+- `EpicData` enrichi d’un champ `session` pour conserver le numéro de session de livraison.
+- `IndexCrawler` parse le numéro de session dans la colonne statut (`✅ S000` → `000`).
+- `DashboardPage` expose `timeline: Timeline`.
+- `DashboardRenderer` construit la timeline via `TimelineBuilder` et la passe au template.
+- `dashboard.thyme` : nouvelle section "Timeline" avec liste verticale, marqueurs colorés par statut.
+- `styles.css` : styles `.timeline*`, marqueurs `.status-DONE`, `.status-IN_PROGRESS`, `.status-PLANNED`.
+
+=== BDD — Cucumber
+
+- Scénario `Generate dashboard site with timeline` dans `dashboard_generate.feature`.
+- Step `givenFoundryWithCompletedEpics` dans `CrawlSteps.kt` pour créer un borough avec EPIC terminé et SESSIONS_HISTORY.
+
+== Métriques
+
+- Compilation Kotlin : OK
+- `./gradlew test` : 44/44 PASS
+  - 22 unit tests (+11)
+  - 5 functional tests
+- `./gradlew cucumberTest` : 9/9 scenarios PASS (+1)
+- `validatePlugins` : OK
+- `publishToMavenLocal` : OK
+
+== Fichiers modifiés/crés
+
+- Créés :
+  * `src/main/kotlin/dashboard/timeline/Milestone.kt`
+  * `src/main/kotlin/dashboard/timeline/Timeline.kt`
+  * `src/main/kotlin/dashboard/timeline/TimelineBuilder.kt`
+  * `src/test/kotlin/dashboard/timeline/MilestoneTest.kt`
+  * `src/test/kotlin/dashboard/timeline/TimelineTest.kt`
+  * `src/test/kotlin/dashboard/timeline/TimelineBuilderTest.kt`
+- Modifiés :
+  * `src/main/kotlin/dashboard/model/DashboardData.kt` (champ `session` dans EpicData)
+  * `src/main/kotlin/dashboard/IndexCrawler.kt` (extraction session)
+  * `src/main/kotlin/dashboard/render/DashboardPage.kt` (champ timeline)
+  * `src/main/kotlin/dashboard/render/DashboardRenderer.kt` (intégration TimelineBuilder)
+  * `src/main/resources/templates/dashboard.thyme` (section Timeline)
+  * `src/main/resources/static/styles.css` (styles timeline)
+  * `src/test/kotlin/dashboard/DashboardRendererTest.kt` (test timeline)
+  * `src/test/features/dashboard_generate.feature` (scénario timeline)
+  * `src/test/scenarios/dashboard/scenarios/CrawlSteps.kt` (step completed epics)
+  * `.agents/sessions/008-dsh-6-timeline.adoc`
+  * `PROMPT_REPRISE.adoc`
+  * `.agents/INDEX.adoc`
+  * `.agents/SESSIONS_HISTORY.adoc`
+  * `.agents/TEST_COVERAGE_ANALYSIS.adoc`
+  * `.agents/archives/COMPLETED_TASKS_ARCHIVE_2026-06.adoc`
+  * `BACKLOG.adoc`
+  * `TODO.adoc`
+
+== Prochaine session (009)
+
+Priorité P1 : reprendre DSH-7 (déploiement gh-pages via runner-gradle) pour fermer l’intégration N3.
