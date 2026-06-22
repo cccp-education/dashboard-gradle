@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${page.title}">Dashboard Workspace CCCP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{styles.css}" href="styles.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1" th:text="${page.title}">Dashboard Workspace CCCP</span>
+        <span class="navbar-text text-light">
+            <span th:text="${page.stats.boroughCount}">0</span> boroughs —
+            <span th:text="${page.stats.epicCount}">0</span> epics
+        </span>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+        <!-- Stats cards -->
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card stats-card stats-done">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Terminés</h5>
+                            <p class="display-6" th:text="${page.stats.doneCount}">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card stats-in-progress">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">En cours</h5>
+                            <p class="display-6" th:text="${page.stats.inProgressCount}">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card stats-planned">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Planifiés</h5>
+                            <p class="display-6" th:text="${page.stats.plannedCount}">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card stats-blocked">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Bloqués</h5>
+                            <p class="display-6" th:text="${page.stats.blockedCount}">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EPIC Matrix -->
+        <div class="col-lg-8">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">EPIC Matrix</h2>
+                    <span class="badge bg-secondary" th:text="${page.epics.size} + ' epics'">0 epics</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th>EPIC</th>
+                                <th>Sujet</th>
+                                <th>Borough</th>
+                                <th>Priorité</th>
+                                <th>Statut</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="epic : ${page.epics}" th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
+                                <td th:text="${epic.id}">DSH-0</td>
+                                <td th:text="${epic.title}">Bootstrap</td>
+                                <td th:text="${epic.borough}">Dashboard</td>
+                                <td th:text="${epic.priority}">P0</td>
+                                <td>
+                                    <span class="status-badge" th:class="'status-badge ' + ${statusHelper.statusCssClass(epic.status)}"
+                                          th:text="${epic.status}">TERMINE</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(page.epics)}">
+                                <td colspan="5" class="text-center text-muted py-4">Aucun EPIC détecté</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Stream -->
+        <div class="col-lg-4">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Activity Stream</h2>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item activity-item" th:each="session : ${page.sessions}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <strong class="mb-1" th:text="'S' + ${session.number}">S000</strong>
+                                <small class="text-muted" th:text="${session.date}">2026-06-22</small>
+                            </div>
+                            <p class="mb-1" th:text="${session.subject}">Sujet de la session</p>
+                            <small class="text-muted" th:text="${session.borough} + (${session.files.isEmpty()} ? '' : ' — ' + ${session.files})">Borough</small>
+                        </li>
+                        <li class="list-group-item text-center text-muted py-4" th:if="${#lists.isEmpty(page.sessions)}">
+                            Aucune session récente
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white mt-5 py-3">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2026 CCCP Education — Dashboard workspace</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

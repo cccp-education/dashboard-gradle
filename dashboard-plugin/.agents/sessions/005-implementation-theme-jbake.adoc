@@ -1,0 +1,40 @@
+= Rapport de Session 005 — dashboard-gradle
+:date: 2026-06-22
+:session: 005
+:epic: DSH-3
+
+== Objectif
+
+Implémenter le thème JBake/Thymeleaf statique du dashboard et la vue EPIC Matrix.
+
+== Livrables
+
+. [x] Moteur de rendu `DashboardRenderer` (package `render`)
+. [x] Modèle de page `DashboardPage` + `DashboardStats`
+. [x] Template Thymeleaf `dashboard.thyme`
+. [x] Feuille de style `styles.css` avec palette de statuts
+. [x] Tâche Gradle `generateDashboard` câblée sur `crawlDashboard`
+. [x] Tests unitaires `DashboardRendererTest` (4 tests)
+. [x] Tests fonctionnels `GenerateDashboardFunctionalTest` (2 tests)
+. [x] Feature Cucumber `dashboard_generate.feature` + steps (2 scénarios)
+. [x] `publishToMavenLocal` OK — plugin consommable
+
+== Métriques
+
+|===
+| Métrique | Valeur
+| Tests unitaires | 13
+| Tests fonctionnels | 4
+| Scénarios Cucumber | 6
+| Total | 23 PASS
+|===
+
+== Décisions
+
+* Pas de JBake runtime : le site est généré directement par Thymeleaf à partir du JSON pivot.
+* `generateDashboard` dépend de `crawlDashboard` — un seul appel produit le site complet.
+* Le CSS statut est embarqué dans les ressources (`static/styles.css`).
+
+== Prochaine session
+
+DSH-4 EPIC Matrix avancée / DSH-7 intégration runner-gradle dogfood.

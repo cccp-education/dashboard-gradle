@@ -46,6 +46,11 @@ class DashboardWorld {
         return if (Files.exists(jsonFile)) Files.readString(jsonFile) else null
     }
 
+    fun readHtmlOutput(): String? {
+        val htmlFile = projectDir.resolve("build/dashboard/index.html")
+        return if (Files.exists(htmlFile)) Files.readString(htmlFile) else null
+    }
+
     fun setConfigPath(path: String) {
         configPath = path
     }

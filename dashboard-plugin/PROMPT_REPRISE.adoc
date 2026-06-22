@@ -1,32 +1,31 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 005
+:session: 006
 :date: 2026-06-22
 
-== Mission accomplie (S004)
+== Mission accomplie (S005)
 
-*Cadrage vision DSH-3 + modèle Activity Stream* :
-1. ✅ 4 vues validées : EPIC Matrix, DAG Graph, Timeline MVP0, Activity Stream
-2. ✅ Niveau de détail validé : EPICs + BACKLOG + ROADMAP + sessions
-3. ✅ Modèle pivot enrichi : `SessionActivity` + crawler `SESSIONS_HISTORY.adoc`
-4. ✅ Navigation Thymeleaf/JBake validée
-5. ✅ Palette couleurs statut validée
-6. ✅ Génération = sessions dashboard uniquement (pas d'auto-refresh)
-7. ✅ Tests : 9 unit + 4 Cucumber PASS
+*Implémentation DSH-3 — Theme JBake + EPIC Matrix + Activity Stream* :
+1. ✅ `DashboardRenderer` génère `index.html` + `styles.css` depuis `DashboardData`
+2. ✅ Template Thymeleaf `dashboard.thyme` avec EPIC Matrix et Activity Stream
+3. ✅ CSS statut embarqué (`status-done`, `status-in-progress`, `status-planned`, `status-blocked`)
+4. ✅ Tâche `generateDashboard` câblée sur `crawlDashboard`
+5. ✅ `publishToMavenLocal` OK — plugin consommable par runner-gradle
+6. ✅ Tests : 13 unit + 4 functional + 6 Cucumber = 23 PASS
 
 == Statut
 
 - DSH-0 (Bootstrap gouvernance) : 3/3 pts ✅
-- DSH-1 (Plugin scaffold) : 5/8 pts 🔄
+- DSH-1 (Plugin scaffold) : 8/8 pts ✅
 - DSH-2 (IndexCrawler) : 13/13 pts ✅
-- DSH-3 (Dashboard theme + vues) : cadrage ✅, modèle ✅, implémentation UI 🔄
+- DSH-3 (Dashboard theme + vues) : 13/13 pts ✅
 
-== Prochaine session (005) — DSH-3 Implementation Theme JBake
+== Prochaine session (006) — DSH-4 / DSH-7
 
-*Priorite P0* : Implementer le theme JBake custom et la vue EPIC Matrix.
+*Priorite P0* : Affiner la vue EPIC Matrix (borough × statut groupé) et préparer l'intégration runner-gradle dogfood.
 
-1. Theme JBake dashboard (`dashboard.thyme`, layout, CSS statut)
-2. Tâche `generateDashboard` consomme `dashboard-data.json` et produit le site
-3. Vue EPIC Matrix — tableau borough × statut avec EPICs + BACKLOG
-4. Vue Activity Stream — sessions récentes depuis SESSIONS_HISTORY.adoc
+1. EPIC Matrix par borough : regroupement des EPICs sous chaque borough
+2. Backlog dans la matrice : inclure les items P0/P1/P2 du BACKLOG.adoc
+3. Tâche `publishDashboard` rapatriée ou alignée avec runner-gradle
+4. Root `dashboard-gradle/build.gradle.kts` dogfood minimal (3 lignes)
 5. Tests unitaires + fonctionnels + Cucumber
 6. Vérification — `./gradlew test` + `cucumberTest`

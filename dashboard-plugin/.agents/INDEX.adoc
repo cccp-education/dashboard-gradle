@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-22 — Session 004
-_Session terminee_ : 004
-_Prochaine session_ : 005 — DSH-3 Implementation theme JBake + EPIC Matrix
+_Derniere mise a jour_ : 2026-06-22 — Session 005
+_Session terminee_ : 005
+_Prochaine session_ : 006 — DSH-4 EPIC Matrix par borough + DSH-7 runner-gradle dogfood
 
 '''
 
@@ -38,6 +38,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 002 | 2026-06-19 | implementation | **DSH-2 IndexCrawler** — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, 14/14 tests PASS (unit/functional/cucumber) | 10/10
 | 003 | 2026-06-19 | refactoring | **Renommage ALGER → dashboard-gradle** — 32 occ supprimees de 15 fichiers, compilation OK | 10/10
 | 004 | 2026-06-22 | vision/implémentation | **Cadrage DSH-3** — vues EPIC Matrix / DAG Graph / Timeline MVP0 / Activity Stream ; modèle `SessionActivity` implémenté et testé ; 9 unit + 4 Cucumber PASS | 10/10
+| 005 | 2026-06-22 | implementation | **DSH-3 Theme + EPIC Matrix** — DashboardRenderer, Thymeleaf, CSS, generateDashboard wiring, 23/23 tests PASS | 10/10
 |===
 
 '''
@@ -47,9 +48,9 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 |===
 | EPIC | Sujet | Pts | Priorite | Statut
 | DSH-0 | Bootstrap gouvernance + structure projet | 3 | P0 | ✅ S000 (3/3 pts)
-| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | 🔄 S001 (5/8 pts)
+| DSH-1 | Plugin scaffold + build + publication | 8 | P0 | ✅ S005 (8/8 pts)
 | DSH-2 | Crawler INDEX.adoc → JSON pivot | 13 | P0 | ✅ S002 (13/13 pts)
-| DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | PLANIFIE
+| DSH-3 | Dashboard theme JBake + vues Thymeleaf | 13 | P0 | ✅ S005 (13/13 pts)
 | DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | PLANIFIE
 | DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | PLANIFIE
 | DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | PLANIFIE

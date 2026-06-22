@@ -134,6 +134,18 @@ class CrawlSteps(private val world: DashboardWorld) {
         assertThat(session.subject).isEqualTo(subject)
     }
 
+    @Then("the dashboard site should contain {string}")
+    fun thenDashboardSiteContains(text: String) {
+        val html = world.readHtmlOutput() ?: error("No dashboard HTML output")
+        assertThat(html).contains(text)
+    }
+
+    @Then("the dashboard site should contain a stylesheet link")
+    fun thenDashboardSiteContainsStylesheet() {
+        val html = world.readHtmlOutput() ?: error("No dashboard HTML output")
+        assertThat(html).contains("styles.css")
+    }
+
     companion object {
         val mapper = jacksonObjectMapper()
     }
