@@ -2,6 +2,7 @@ package education.cccp.dashboard
 
 import education.cccp.dashboard.model.BoroughStatus
 import education.cccp.dashboard.model.EpicStatus
+import education.cccp.dashboard.model.SessionActivity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -128,5 +129,50 @@ class IndexCrawlerTest {
 
         assertThat(data.boroughs).hasSize(1)
         assertThat(data.boroughs[0].name).isEqualTo("Test")
+    }
+
+    @Test
+    fun `should parse SESSIONS_HISTORY_adoc into session activities`() {
+        val sessionsAdoc = """
+            = SESSIONS_HISTORY
+            |===
+            | # | Date | Objet | Fichiers
+            | 000 | 2026-06-18 | Bootstrap gouvernance | 8 fichiers
+            | 001 | 2026-06-18 | Plugin scaffold | 7 fichiers
+            |===
+        """.trimIndent()
+        val file = tempDir.resolve("SESSIONS_HISTORY.adoc")
+        Files.writeString(file, sessionsAdoc)
+
+        val sessions = crawler.crawlSessionsHistory(file)
+
+        assertThat(sessions).hasSize(2)
+        assertThat(sessions[0]).isEqualTo(SessionActivity("000", "2026-06-18", "", "Bootstrap gouvernance", "", "8 fichiers"))
+        assertThat(sessions[1]).isEqualTo(SessionActivity("001", "2026-06-18", "", "Plugin scaffold", "", "7 fichiers"))
+    }
+
+    @Test
+    fun `should crawl SESSIONS_HISTORY_adoc alongside INDEX_adoc`() {
+        val dashboardDir = tempDir.resolve("dashboard-gradle/dashboard-plugin")
+        Files.createDirectories(dashboardDir)
+        Files.writeString(dashboardDir.resolve("INDEX.adoc"), """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | Dashboard | dashboard-gradle | N3 | Dashboard vision | S003
+            |===
+        """.trimIndent())
+        Files.writeString(dashboardDir.resolve("SESSIONS_HISTORY.adoc"), """
+            |===
+            | # | Date | Objet | Fichiers
+            | 003 | 2026-06-19 | Renommage ALGER | 15 fichiers
+            |===
+        """.trimIndent())
+
+        val data = crawler.crawlDirectory(tempDir)
+
+        assertThat(data.boroughs).hasSize(1)
+        assertThat(data.sessions).hasSize(1)
+        assertThat(data.sessions[0].borough).isEqualTo("Dashboard")
+        assertThat(data.sessions[0].subject).isEqualTo("Renommage ALGER")
     }
 }

@@ -8,6 +8,7 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import io.cucumber.java.en.And
 import org.assertj.core.api.Assertions.assertThat
 
 class CrawlSteps(private val world: DashboardWorld) {
@@ -44,6 +45,30 @@ class CrawlSteps(private val world: DashboardWorld) {
         }
         sb.appendLine("|===")
         world.writeIndexAdoc("foundry/test/INDEX.adoc", sb.toString())
+    }
+
+    @Given("a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc for {string}")
+    fun givenFoundryWithSessions(borough: String) {
+        world.writeIndexAdoc(
+            "foundry/${borough.lowercase()}/INDEX.adoc",
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | $borough | ${borough.lowercase()}-gradle | N3 | Test role | S000
+            |===
+            """.trimIndent()
+        )
+        world.writeIndexAdoc(
+            "foundry/${borough.lowercase()}/.agents/SESSIONS_HISTORY.adoc",
+            """
+            = SESSIONS_HISTORY
+            |===
+            | # | Date | Objet | Fichiers
+            | 000 | 2026-06-18 | Bootstrap gouvernance | 8 fichiers
+            | 001 | 2026-06-18 | Plugin scaffold | 7 fichiers
+            |===
+            """.trimIndent()
+        )
     }
 
     @When("I execute the {string} task")
@@ -91,6 +116,22 @@ class CrawlSteps(private val world: DashboardWorld) {
         val epic = data.epics.find { it.id == epicId }
             ?: error("Epic $epicId not found")
         assertThat(epic.status.name).isEqualTo(statusRaw)
+    }
+
+    @Then("the dashboard data should contain {int} sessions")
+    fun thenDataContainsSessions(count: Int) {
+        val json = world.readJsonOutput() ?: error("No dashboard JSON output")
+        val data = mapper.readValue(json, DashboardData::class.java)
+        assertThat(data.sessions).hasSize(count)
+    }
+
+    @Then("session {string} should have subject {string}")
+    fun thenSessionHasSubject(number: String, subject: String) {
+        val json = world.readJsonOutput() ?: error("No dashboard JSON output")
+        val data = mapper.readValue(json, DashboardData::class.java)
+        val session = data.sessions.find { it.number == number }
+            ?: error("Session $number not found")
+        assertThat(session.subject).isEqualTo(subject)
     }
 
     companion object {

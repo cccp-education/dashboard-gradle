@@ -30,3 +30,11 @@ Feature: Dashboard data crawling
     And epic "DSH-0" should have status "TERMINE"
     And epic "DSH-1" should have status "EN_COURS"
     And epic "DSH-2" should have status "PLANIFIE"
+
+  Scenario: Crawl SESSIONS_HISTORY.adoc for activity stream
+    Given a Gradle project with the dashboard plugin applied
+    And a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc for "DASHBOARD"
+    When I execute the "crawlDashboard" task
+    Then the build should succeed
+    And the dashboard data should contain 2 sessions
+    And session "000" should have subject "Bootstrap gouvernance"
