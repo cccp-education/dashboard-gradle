@@ -1,17 +1,11 @@
 = BACKLOG — dashboard-gradle
 
-== P0 — En cours
+== P0 — Terminé
 
 |===
 | Item | EPIC | Pts | Session
 | Bootstrap gouvernance (AGENT, INDEX, BACKLOG, PROMPT_REPRISE, SESSIONS_HISTORY) | DSH-0 | 2 | S000 ✅
 | Creer structure repertoire dashboard-plugin/ | DSH-0 | 1 | S000 ✅
-|===
-
-== P0 — Planifie
-
-|===
-| Item | EPIC | Pts | Session
 | Scaffold settings.gradle.kts plugin (nmcp, foobar, rootProject.name) | DSH-1 | 1 | S001 ✅
 | Build.gradle.kts plugin (java-gradle-plugin, signing, publish) | DSH-1 | 2 | S001 ✅
 | Version catalog libs.versions.toml | DSH-1 | 1 | S001 ✅
@@ -22,17 +16,19 @@
 | DashboardData modele pivot JSON | DSH-2 | 3 | S002 ✅
 | Tache Gradle crawlDashboard | DSH-2 | 2 | S002 ✅
 | Tests unitaires + fonctionnels + Cucumber | DSH-2 | 3 | S002 ✅
+| Theme JBake dashboard (layout, templates) | DSH-3 | 5 | S005 ✅
+| Vue EPIC matrix (Thymeleaf) | DSH-3 / DSH-4 | 3 | S005 ✅
+| Vue Activity Stream (sessions) | DSH-3 | 2 | S005 ✅
 |===
 
-== P1 — Planifie
+== P0 / P1 — Planifie
 
 |===
 | Item | EPIC | Pts
-| Theme JBake dashboard (layout, templates) | DSH-3 | 5
-| Vue EPIC matrix (Thymeleaf) | DSH-3 / DSH-4 | 3
-| Vue DAG graphe | DSH-3 / DSH-5 | 3
-| Vue timeline | DSH-3 / DSH-6 | 2
-| Integration runner-gradle CI | DSH-7 | 3
+| Vue DAG graphe | DSH-5 | 3
+| Vue timeline | DSH-6 | 2
+| EPIC Matrix groupée par borough | DSH-4 | 3
+| Integration runner-gradle CI (root dogfood) | DSH-7 | 3
 | Deploiement gh-pages | DSH-7 | 2
 |===
 

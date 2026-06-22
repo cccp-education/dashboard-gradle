@@ -7,4 +7,5 @@
 | 002 | 2026-06-19 | DSH-2 IndexCrawler — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, Cucumber BDD, 14/14 tests PASS | 12 fichiers crees
 | 003 | 2026-06-19 | Renommage ALGER → dashboard-gradle — 32 occurrences supprimees de 15 fichiers | 15 fichiers modifies
 | 004 | 2026-06-22 | Cadrage vision DSH-3 + implémentation modèle SessionActivity — vues validées, IndexCrawler parse SESSIONS_HISTORY.adoc, tests 9 unit + 4 Cucumber PASS | .agents/sessions/004-cadrage-vision-dsh-3.adoc, DashboardData.kt, IndexCrawler.kt, IndexCrawlerTest.kt, CrawlSteps.kt, dashboard_crawl.feature
+| 005 | 2026-06-22 | DSH-3 Theme JBake/Thymeleaf + EPIC Matrix + Activity Stream — DashboardRenderer, templates, CSS, generateDashboard wiring, 23/23 tests PASS | .agents/sessions/005-implementation-theme-jbake.adoc, DashboardRenderer.kt, DashboardPage.kt, dashboard.thyme, styles.css, DashboardPlugin.kt, DashboardRendererTest.kt, GenerateDashboardFunctionalTest.kt, dashboard_generate.feature, CrawlSteps.kt, DashboardWorld.kt
 |===

@@ -2,6 +2,7 @@ package education.cccp.dashboard
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import education.cccp.dashboard.render.DashboardRenderer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.nio.file.Files
@@ -44,9 +45,19 @@ class DashboardPlugin : Plugin<Project> {
         project.tasks.register("generateDashboard") { task ->
             task.group = "dashboard"
             task.description = "Generates the static dashboard site from crawled data."
+            task.dependsOn("crawlDashboard")
             task.doLast {
-                val outputDir = extension.outputDir.get()
-                project.logger.lifecycle("Generating dashboard at $outputDir")
+                val outputDir = project.projectDir.toPath().resolve(extension.outputDir.get())
+                val jsonFile = outputDir.resolve("dashboard-data.json")
+
+                if (!Files.exists(jsonFile)) {
+                    project.logger.warn("Dashboard data not found: $jsonFile. Run crawlDashboard first.")
+                    return@doLast
+                }
+
+                project.logger.lifecycle("Generating dashboard site at $outputDir")
+                DashboardRenderer().renderFromJson(jsonFile, outputDir)
+                project.logger.lifecycle("Dashboard site generated: ${outputDir.resolve("index.html")}")
             }
         }
     }

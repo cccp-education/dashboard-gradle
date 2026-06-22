@@ -1,5 +1,20 @@
 = Archive des Tâches Terminées — Juin 2026
 
+== Session 005 — 2026-06-22 — DSH-3 Theme JBake/Thymeleaf + EPIC Matrix
+
+[cols="3,5,2"]
+|===
+| Item | Fichier | Pts
+| DDD — Modele page DashboardPage + DashboardStats | `src/main/kotlin/.../render/DashboardPage.kt` | 2
+| TDD — DashboardRenderer + tests | `DashboardRenderer.kt` + `DashboardRendererTest.kt` | 5
+| Template Thymeleaf + CSS | `templates/dashboard.thyme` + `static/styles.css` | 3
+| Tache generateDashboard wiring | `DashboardPlugin.kt` | 1
+| Tests fonctionnels TestKit | `GenerateDashboardFunctionalTest.kt` | 1
+| Cucumber BDD dashboard_generate | `dashboard_generate.feature` + `CrawlSteps.kt` | 1
+| Validation — 23/23 PASS + publishToMavenLocal | — | 0
+|===
+
+
 == Session 003 — 2026-06-19 — Renommage ALGER → dashboard-gradle
 
 [cols="3,5,2"]

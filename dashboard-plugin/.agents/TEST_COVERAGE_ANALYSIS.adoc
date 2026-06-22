@@ -4,21 +4,23 @@
 
 |===
 | Metrique | Valeur
-| Tests unitaires (JUnit5 + AssertJ) | 9
-| Tests fonctionnels (Gradle TestKit) | 2
-| Tests Cucumber BDD | 3
-| Total | 14
+| Tests unitaires (JUnit5 + AssertJ) | 13
+| Tests fonctionnels (Gradle TestKit) | 4
+| Tests Cucumber BDD | 6 scenarios
+| Total | 23 PASS
 |===
 
-== Details des tests (S002)
+== Details des tests
 
-=== Unitaires — IndexCrawlerTest (5)
+=== Unitaires — IndexCrawlerTest (6)
 
 . `should parse INDEX_adoc with borough table and epic table`
 . `should return empty data for file without tables`
 . `should parse borough with VESTIGE status based on role`
 . `should crawl all INDEX_adoc files in a directory`
 . `should skip non-INDEX_adoc files`
+. `should parse SESSIONS_HISTORY_adoc into session activities`
+. `should crawl SESSIONS_HISTORY_adoc alongside INDEX_adoc`
 
 === Unitaires — DashboardPluginTest (4)
 
@@ -27,20 +29,37 @@
 . `extension should have default values`
 . `extension should accept custom values`
 
+=== Unitaires — DashboardRendererTest (4) — S005
+
+. `render should produce index html with epic matrix`
+. `render should include activity stream section when sessions present`
+. `render should copy dashboard css to output directory`
+. `epic status should map to css class`
+
 === Fonctionnels — CrawlDashboardFunctionalTest (2)
 
 . `crawlDashboard should produce JSON output when foundry has INDEX_adoc files`
 . `crawlDashboard should warn when config path does not exist`
 
-=== Cucumber BDD (3 scenarios)
+=== Fonctionnels — GenerateDashboardFunctionalTest (2) — S005
+
+. `generateDashboard should produce index html with epic matrix`
+. `generateDashboard should include activity stream from sessions history`
+
+=== Cucumber BDD (6 scenarios)
 
 . `Crawl INDEX.adoc files in a foundry directory`
 . `Crawl with missing config directory`
 . `Crawl INDEX.adoc with epic table`
+. `Crawl SESSIONS_HISTORY.adoc for activity stream`
+. `Generate dashboard site from crawled data` (S005)
+. `Generate dashboard site with activity stream` (S005)
 
 == Notes
 
 *Session 000* : Projet bootstrappe — zero code source, zero test.
 *Session 001* : 4 tests PASS (DashboardPluginTest).
-*Session 002* : 14 tests PASS (9 unit + 2 functional + 3 Cucumber). Pipeline TDD/BDD complet.
-*Session 003* : Refactoring — renommage ALGER → dashboard/BAKERY dans les tests. Pas de nouveau test.
+*Session 002* : 14 tests PASS (9 unit + 2 functional + 3 Cucumber).
+*Session 003* : Refactoring — pas de nouveau test.
+*Session 004* : 13 tests PASS (+2 tests unitaires SessionActivity).
+*Session 005* : 23 tests PASS — pipeline DDD/TDD/BDD complète pour le rendu statique.
