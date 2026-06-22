@@ -1,38 +1,53 @@
 = dashboard-gradle 🟡
 
-Plugin Gradle N3 de visualisation de la vision et de l'avancement du workspace.
+N3 Gradle plugin for visualizing workspace vision and progress.
 
 == Structure
 
 [source]
 ----
 dashboard-gradle/
-├── dashboard-plugin/        # Plugin Gradle (build ind√©pendant)
-│   ├── AGENT.adoc           # R√®gles absolues
-│   ├── .agents/             # Gouvernance agent
-│   ├── src/                 # Code source Kotlin
+├── dashboard-plugin/        # Gradle plugin (independent build)
+│   ├── AGENT.adoc           # Absolute rules
+│   ├── .agents/             # Agent governance
+│   ├── src/                 # Kotlin source code
 │   └── build.gradle.kts     # java-gradle-plugin
-├── build.gradle.kts         # Racine consommateur (dogfood)
-├── settings.gradle.kts      # Settings racine
-└── gradle/                  # Wrapper + catalogue
+├── build.gradle.kts         # Root consumer (dogfood)
+├── settings.gradle.kts      # Root settings
+└── gradle/                  # Wrapper + catalog
 ----
 
-== Pr√©-requis
+== Prerequisites
 
 - JDK 24+
 - Gradle 9.5+
 
-== D√©veloppement
+== Development
 
 [source,shell]
 ----
-# Builder le plugin
+# Build the plugin
 cd dashboard-plugin && ./gradlew publishToMavenLocal
 
-# L'exercer depuis la racine
+# Exercise it from the root
 cd .. && ./gradlew tasks
 ----
 
-== Licence
+== Tasks
+
+- `crawlDashboard` — crawls all `INDEX.adoc` and `SESSIONS_HISTORY.adoc` files and produces `build/dashboard/dashboard-data.json`
+- `generateDashboard` — renders the static dashboard site (`index.html`, `styles.css`, DAG graph)
+- `publishDashboard` — copies the generated site to `build/dashboard-publish`
+
+== Testing
+
+[source,shell]
+----
+./gradlew test          # unit + functional tests
+./gradlew cucumberTest  # BDD scenarios
+./gradlew check         # everything
+----
+
+== License
 
 Apache 2.0

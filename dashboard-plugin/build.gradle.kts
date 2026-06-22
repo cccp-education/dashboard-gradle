@@ -32,7 +32,7 @@ dependencies {
 
 // ── Unit tests — exclude Cucumber scenarios ─────────────────
 tasks.named<Test>("test") {
-    filter { excludeTestsMatching("education.cccp.dashboard.scenarios.**") }
+    filter { excludeTestsMatching("dashboard.scenarios.**") }
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
@@ -73,7 +73,7 @@ gradlePlugin {
     plugins {
         create("dashboard") {
             id = "education.cccp.dashboard"
-            implementationClass = "education.cccp.dashboard.DashboardPlugin"
+            implementationClass = "dashboard.DashboardPlugin"
             displayName = "Dashboard Plugin"
             description = "Gradle plugin for workspace vision and progress dashboard."
             tags.set(listOf("dashboard", "workspace", "visualization", "jbake", "thymeleaf"))

@@ -1,8 +1,8 @@
-package education.cccp.dashboard
+package dashboard
 
-import education.cccp.dashboard.model.BoroughStatus
-import education.cccp.dashboard.model.EpicStatus
-import education.cccp.dashboard.model.SessionActivity
+import dashboard.model.BoroughStatus
+import dashboard.model.EpicStatus
+import dashboard.model.SessionActivity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should parse INDEX_adoc with borough table and epic table`() {
+    fun `crawlIndex should parse borough and epic tables`() {
         val indexAdoc = """
             = Index — BAKERY
             |===
@@ -32,10 +32,10 @@ class IndexCrawlerTest {
             | BAKERY | bakery-gradle | N2 | Site statique | S001
             |===
             |===
-            | EPIC | Sujet | Pts | Priorite | Statut
-            | DSH-0 | Bootstrap gouvernance | 3 | P0 | ✅ S000
+            | EPIC | Subject | Pts | Priority | Status
+            | DSH-0 | Bootstrap governance | 3 | P0 | ✅ S000
             | DSH-1 | Plugin scaffold | 8 | P0 | 🔄 S001
-            | DSH-2 | Crawler INDEX | 13 | P0 | PLANIFIE
+            | DSH-2 | Crawler | 13 | P0 | PLANIFIE
             |===
         """.trimIndent()
         val file = tempDir.resolve("INDEX.adoc")
@@ -59,7 +59,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should return empty data for file without tables`() {
+    fun `crawlIndex should return empty data for file without tables`() {
         val file = tempDir.resolve("EMPTY.adoc")
         Files.writeString(file, "= Just a title\n\nNo tables here.\n")
 
@@ -70,7 +70,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should parse borough with VESTIGE status based on role`() {
+    fun `crawlIndex should infer VESTIGE borough status from role`() {
         val indexAdoc = """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
@@ -88,7 +88,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should crawl all INDEX_adoc files in a directory`() {
+    fun `crawlDirectory should collect all INDEX_adoc files`() {
         val bakeryDir = tempDir.resolve("bakery")
         Files.createDirectories(bakeryDir)
         Files.writeString(bakeryDir.resolve("INDEX.adoc"), """
@@ -114,7 +114,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should skip non-INDEX_adoc files`() {
+    fun `crawlDirectory should skip non-INDEX_adoc files`() {
         Files.writeString(tempDir.resolve("README.adoc"), "= Readme")
         val subDir = tempDir.resolve("sub")
         Files.createDirectories(subDir)
@@ -132,11 +132,11 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should parse SESSIONS_HISTORY_adoc into session activities`() {
+    fun `crawlSessionsHistory should parse session activities`() {
         val sessionsAdoc = """
             = SESSIONS_HISTORY
             |===
-            | # | Date | Objet | Fichiers
+            | # | Date | Subject | Files
             | 000 | 2026-06-18 | Bootstrap gouvernance | 8 fichiers
             | 001 | 2026-06-18 | Plugin scaffold | 7 fichiers
             |===
@@ -152,7 +152,7 @@ class IndexCrawlerTest {
     }
 
     @Test
-    fun `should crawl SESSIONS_HISTORY_adoc alongside INDEX_adoc`() {
+    fun `crawlDirectory should attach sessions to their borough`() {
         val dashboardDir = tempDir.resolve("dashboard-gradle/dashboard-plugin")
         Files.createDirectories(dashboardDir)
         Files.writeString(dashboardDir.resolve("INDEX.adoc"), """
@@ -163,7 +163,7 @@ class IndexCrawlerTest {
         """.trimIndent())
         Files.writeString(dashboardDir.resolve("SESSIONS_HISTORY.adoc"), """
             |===
-            | # | Date | Objet | Fichiers
+            | # | Date | Subject | Files
             | 003 | 2026-06-19 | Renommage ALGER | 15 fichiers
             |===
         """.trimIndent())

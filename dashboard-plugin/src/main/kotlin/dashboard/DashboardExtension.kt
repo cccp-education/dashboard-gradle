@@ -1,4 +1,4 @@
-package education.cccp.dashboard
+package dashboard
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty

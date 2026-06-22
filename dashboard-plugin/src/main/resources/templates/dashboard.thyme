@@ -127,6 +127,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- DAG Graph -->
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">DAG Graph</h2>
+                    <span class="badge bg-secondary" th:text="${page.dagGraph.nodes.size} + ' boroughs / ' + ${page.dagGraph.edges.size} + ' edges'">0 / 0</span>
+                </div>
+                <div class="card-body">
+                    <div id="dag-graph" class="dag-graph-canvas"></div>
+                    <p class="text-muted mt-2 mb-0 small" th:if="${#lists.isEmpty(page.dagGraph.nodes)}">
+                        Aucun graphe DAG disponible.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -137,5 +153,42 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script type="application/json" id="dag-graph-data" th:utext="${page.dagGraphJson}">{"nodes":[],"edges":[]}</script>
+<script>
+    (function() {
+        var dataElement = document.getElementById('dag-graph-data');
+        var parsed = dataElement ? JSON.parse(dataElement.textContent) : { nodes: [], edges: [] };
+        var container = document.getElementById('dag-graph');
+        if (container && parsed.nodes.length > 0) {
+            var nodes = new vis.DataSet(parsed.nodes.map(function(n) {
+                return { id: n.id, label: n.label, level: n.level, group: n.group };
+            }));
+            var edges = new vis.DataSet(parsed.edges.map(function(e) {
+                return { from: e.from, to: e.to, arrows: 'to' };
+            }));
+            var options = {
+                layout: {
+                    hierarchical: {
+                        direction: 'LR',
+                        sortMethod: 'directed',
+                        levelSeparation: 180,
+                        nodeSpacing: 160
+                    }
+                },
+                physics: { hierarchicalRepulsion: { nodeDistance: 140 } },
+                groups: {
+                    'N0': { color: { background: '#6f42c1', border: '#5936a2' }, font: { color: '#fff' } },
+                    'N1': { color: { background: '#0d6efd', border: '#0a58ca' }, font: { color: '#fff' } },
+                    'N2': { color: { background: '#198754', border: '#146c43' }, font: { color: '#fff' } },
+                    'N3': { color: { background: '#fd7e14', border: '#ca6510' }, font: { color: '#fff' } },
+                    'N4': { color: { background: '#dc3545', border: '#b02a37' }, font: { color: '#fff' } }
+                },
+                nodes: { shape: 'box', margin: 10, font: { size: 14 } }
+            };
+            new vis.Network(container, { nodes: nodes, edges: edges }, options);
+        }
+    })();
+</script>
 </body>
 </html>

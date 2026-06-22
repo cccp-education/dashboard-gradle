@@ -20,7 +20,7 @@ Feature: Dashboard data crawling
   Scenario: Crawl INDEX.adoc with epic table
     Given a Gradle project with the dashboard plugin applied
     And a foundry directory with INDEX.adoc containing epics:
-      | EPIC    | Sujet                | Pts | Prio | Statut   |
+      | EPIC    | Subject              | Pts | Prio | Status   |
       | DSH-0   | Bootstrap            | 3   | P0   | ✅ S000  |
       | DSH-1   | Plugin scaffold      | 8   | P0   | 🔄 S001  |
       | DSH-2   | Crawler              | 13  | P0   | PLANIFIE |

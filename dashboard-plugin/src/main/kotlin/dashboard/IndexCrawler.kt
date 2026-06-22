@@ -1,18 +1,22 @@
-package education.cccp.dashboard
+package dashboard
 
-import education.cccp.dashboard.model.BoroughData
-import education.cccp.dashboard.model.BoroughStatus
-import education.cccp.dashboard.model.DashboardData
-import education.cccp.dashboard.model.DagNode
-import education.cccp.dashboard.model.EpicData
-import education.cccp.dashboard.model.EpicStatus
-import education.cccp.dashboard.model.SessionActivity
+import dashboard.model.BoroughData
+import dashboard.model.BoroughStatus
+import dashboard.model.DashboardData
+import dashboard.model.DagNode
+import dashboard.model.EpicData
+import dashboard.model.EpicStatus
+import dashboard.model.SessionActivity
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 
+/**
+ * Crawls INDEX.adoc and SESSIONS_HISTORY.adoc files from the configured
+ * workspace directory and produces a typed [DashboardData] model.
+ */
 class IndexCrawler {
 
     fun crawlDirectory(root: Path): DashboardData {
@@ -123,7 +127,7 @@ class IndexCrawler {
         if (rows.isEmpty()) return null
         val header = rows.first().map { it.lowercase().trim() }
         val epicIdx = header.indexOfFirst { it.contains("epic") }
-        val sujetIdx = header.indexOfFirst { it.contains("sujet") || it.contains("subject") }
+        val subjectIdx = header.indexOfFirst { it.contains("sujet") || it.contains("subject") }
         val ptsIdx = header.indexOfFirst { it.contains("pt") }
         val priorityIdx = header.indexOfFirst { it.contains("priorite") || it.contains("priority") }
         val statusIdx = header.indexOfFirst { it.contains("statut") || it.contains("status") }
@@ -134,7 +138,7 @@ class IndexCrawler {
             val rawStatus = row.getOrElse(statusIdx.takeIf { it >= 0 && it < row.size } ?: -1) { "" }
             EpicData(
                 id = row.getOrElse(epicIdx) { "" },
-                title = sujetIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
+                title = subjectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 borough = boroughIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
@@ -149,16 +153,16 @@ class IndexCrawler {
         val numIdx = header.indexOfFirst { it.contains("#") }
         val dateIdx = header.indexOfFirst { it.contains("date") }
         val typeIdx = header.indexOfFirst { it.contains("type") }
-        val objIdx = header.indexOfFirst { it.contains("objet") || it.contains("object") || it.contains("sujet") }
+        val subjectIdx = header.indexOfFirst { it.contains("objet") || it.contains("object") || it.contains("sujet") || it.contains("subject") }
         val filesIdx = header.indexOfFirst { it.contains("fichiers") || it.contains("files") }
-        if (numIdx == -1 || objIdx == -1) return null
+        if (numIdx == -1 || subjectIdx == -1) return null
 
         return rows.drop(1).map { row ->
             SessionActivity(
                 number = row.getOrElse(numIdx) { "" },
                 date = dateIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 type = typeIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
-                subject = row.getOrElse(objIdx) { "" },
+                subject = row.getOrElse(subjectIdx) { "" },
                 files = filesIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
             )
         }

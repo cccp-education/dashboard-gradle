@@ -1,13 +1,13 @@
-package education.cccp.dashboard
+package dashboard
 
-import education.cccp.dashboard.render.DashboardRenderer
-import education.cccp.dashboard.model.BoroughData
-import education.cccp.dashboard.model.BoroughStatus
-import education.cccp.dashboard.model.DashboardData
-import education.cccp.dashboard.model.DagNode
-import education.cccp.dashboard.model.EpicData
-import education.cccp.dashboard.model.EpicStatus
-import education.cccp.dashboard.model.SessionActivity
+import dashboard.render.DashboardRenderer
+import dashboard.model.BoroughData
+import dashboard.model.BoroughStatus
+import dashboard.model.DashboardData
+import dashboard.model.DagNode
+import dashboard.model.EpicData
+import dashboard.model.EpicStatus
+import dashboard.model.SessionActivity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -102,6 +102,29 @@ class DashboardRendererTest {
         DashboardRenderer().render(data, tempDir)
 
         assertThat(tempDir.resolve("styles.css")).exists()
+    }
+
+    @Test
+    fun `render should include DAG graph section with embedded graph json`(@TempDir tempDir: Path) {
+        val data = DashboardData(
+            boroughs = listOf(
+                BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
+                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")
+            ),
+            epics = emptyList(),
+            dagNodes = emptyList()
+        )
+
+        DashboardRenderer().render(data, tempDir)
+
+        val html = Files.readString(tempDir.resolve("index.html"))
+        assertThat(html).contains("DAG Graph")
+        assertThat(html).contains("dag-graph")
+        assertThat(html).contains("vis-network")
+        assertThat(html).contains("BAKERY (N2)")
+        assertThat(html).contains("Dashboard (N3)")
+        assertThat(html).contains("\"from\" : \"BAKERY\"")
+        assertThat(html).contains("\"to\" : \"Dashboard\"")
     }
 
     @Test

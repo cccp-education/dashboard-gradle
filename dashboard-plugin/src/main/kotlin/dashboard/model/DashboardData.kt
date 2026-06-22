@@ -1,4 +1,4 @@
-package education.cccp.dashboard.model
+package dashboard.model
 
 data class DashboardData(
     val boroughs: List<BoroughData>,

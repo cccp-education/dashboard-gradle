@@ -1,9 +1,9 @@
 @file:Suppress("unused")
 
-package education.cccp.dashboard.scenarios
+package dashboard.scenarios
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import education.cccp.dashboard.model.DashboardData
+import dashboard.model.DashboardData
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
@@ -39,9 +39,9 @@ class CrawlSteps(private val world: DashboardWorld) {
         sb.appendLine("| Test | test-gradle | N0 | Test role | S000")
         sb.appendLine("|===")
         sb.appendLine("|===")
-        sb.appendLine("| EPIC | Sujet | Pts | Priorite | Statut")
+        sb.appendLine("| EPIC | Subject | Pts | Priority | Status")
         for (row in rows) {
-            sb.appendLine("| ${row["EPIC"]} | ${row["Sujet"]} | ${row["Pts"]} | ${row["Prio"]} | ${row["Statut"]}")
+            sb.appendLine("| ${row["EPIC"]} | ${row["Subject"]} | ${row["Pts"]} | ${row["Prio"]} | ${row["Status"]}")
         }
         sb.appendLine("|===")
         world.writeIndexAdoc("foundry/test/INDEX.adoc", sb.toString())
@@ -57,9 +57,9 @@ class CrawlSteps(private val world: DashboardWorld) {
         sb.appendLine("| $borough | $project | $dag | Test role | S000")
         sb.appendLine("|===")
         sb.appendLine("|===")
-        sb.appendLine("| EPIC | Sujet | Pts | Priorite | Statut")
+        sb.appendLine("| EPIC | Subject | Pts | Priority | Status")
         for (row in rows) {
-            sb.appendLine("| ${row["EPIC"]} | ${row["Sujet"]} | ${row["Pts"]} | ${row["Prio"]} | ${row["Statut"]}")
+            sb.appendLine("| ${row["EPIC"]} | ${row["Subject"]} | ${row["Pts"]} | ${row["Prio"]} | ${row["Status"]}")
         }
         sb.appendLine("|===")
         world.writeIndexAdoc("foundry/${borough.lowercase()}/INDEX.adoc", sb.toString())

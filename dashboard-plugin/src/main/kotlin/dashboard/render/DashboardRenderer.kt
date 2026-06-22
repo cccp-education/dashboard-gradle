@@ -1,11 +1,11 @@
-package education.cccp.dashboard.render
+package dashboard.render
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import education.cccp.dashboard.model.DashboardData
-import education.cccp.dashboard.model.EpicStatus
+import dashboard.model.DashboardData
+import dashboard.model.EpicStatus
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.thymeleaf.templatemode.TemplateMode
@@ -14,12 +14,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 /**
- * Rend le dashboard statique à partir de [DashboardData].
+ * Renders the static dashboard from [DashboardData].
  *
- * Le moteur Thymeleaf est initialisé avec un [ClassLoaderTemplateResolver] pointant
- * sur les templates embarqués dans `src/main/resources/templates/`. Le rendu produit :
- * - `index.html` : page principale avec la matrice EPIC et l'activity stream
- * - `styles.css` : feuille de style avec la palette de statuts
+ * Thymeleaf is initialized with a [ClassLoaderTemplateResolver] pointing to the
+ * embedded templates in `src/main/resources/templates/`. The output produces:
+ * - `index.html`: main page with EPIC matrix, activity stream, and DAG graph
+ * - `styles.css`: stylesheet with the status palette
  */
 class DashboardRenderer {
 
@@ -33,13 +33,17 @@ class DashboardRenderer {
     fun render(data: DashboardData, outputDir: Path) {
         Files.createDirectories(outputDir)
 
+        val dagGraph = DagGraphBuilder.build(data)
+
         val page = DashboardPage(
             title = "Dashboard Workspace CCCP",
             boroughs = data.boroughs.sortedBy { it.dagLevel },
             epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
             sessions = data.sessions.sortedByDescending { it.number.padStart(3, '0') },
             stats = computeStats(data),
-            boroughGroups = BoroughGrouper.groupByBorough(data)
+            boroughGroups = BoroughGrouper.groupByBorough(data),
+            dagGraph = dagGraph,
+            dagGraphJson = mapper.writeValueAsString(dagGraph)
         )
 
         val context = Context().apply {
@@ -54,7 +58,7 @@ class DashboardRenderer {
     }
 
     /**
-     * Charge les données JSON produites par la tâche `crawlDashboard` et génère le site.
+     * Loads JSON data produced by the `crawlDashboard` task and generates the site.
      */
     fun renderFromJson(jsonPath: Path, outputDir: Path) {
         val data: DashboardData = mapper.readValue(jsonPath.toFile())
@@ -72,8 +76,6 @@ class DashboardRenderer {
             blockedCount = byStatus[EpicStatus.BLOQUE] ?: 0
         )
     }
-
-
 
     private fun copyStaticAsset(resourcePath: String, target: Path) {
         javaClass.classLoader.getResourceAsStream(resourcePath)?.use { input ->
@@ -95,14 +97,14 @@ class DashboardRenderer {
 
     companion object {
         /**
-         * Renvoie la classe CSS associée à un statut d'EPIC.
+         * Returns the CSS class associated with an EPIC status.
          */
         fun statusCssClass(status: EpicStatus): String = StatusCssHelper.statusCssClass(status)
     }
 }
 
 /**
- * Helper instanciable exposé au template Thymeleaf.
+ * Instantiabable helper exposed to the Thymeleaf template.
  */
 object StatusCssHelper {
     fun statusCssClass(status: EpicStatus): String = when (status) {
