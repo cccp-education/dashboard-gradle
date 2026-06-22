@@ -1,5 +1,21 @@
 = Archive des Tâches Terminées — Juin 2026
 
+== Session 006 — 2026-06-22 — DSH-4 EPIC Matrix par borough + DSH-7 dogfood
+
+[cols="3,5,2"]
+|===
+| Item | Fichier | Pts
+| DDD — BoroughGroup + BoroughGrouper | `src/main/kotlin/.../render/BoroughGrouper.kt` + `DashboardPage.kt` | 2
+| TDD — IndexCrawler assigne borough + tests | `IndexCrawler.kt` + `BoroughGroupTest.kt` | 3
+| Tâche publishDashboard | `DashboardPlugin.kt` + `DashboardExtension.kt` | 2
+| Template EPIC Matrix groupée par borough | `templates/dashboard.thyme` + `styles.css` | 2
+| Root build.gradle.kts dogfood | `dashboard-gradle/build.gradle.kts` | 1
+| Tests fonctionnels TestKit | `PublishDashboardFunctionalTest.kt` + MAJ `DashboardRendererTest.kt` | 1
+| Cucumber BDD EPIC Matrix + publish | `dashboard_generate.feature` + `CrawlSteps.kt` | 2
+| Validation — 30/30 PASS + publishToMavenLocal + dogfood | — | 0
+|===
+
+
 == Session 005 — 2026-06-22 — DSH-3 Theme JBake/Thymeleaf + EPIC Matrix
 
 [cols="3,5,2"]

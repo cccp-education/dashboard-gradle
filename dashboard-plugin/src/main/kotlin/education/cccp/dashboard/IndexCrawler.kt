@@ -28,15 +28,21 @@ class IndexCrawler {
             }
         })
         val allBoroughs = mutableListOf<BoroughData>()
-        val allEpics = mutableListOf<EpicData>()
         val allNodes = mutableListOf<DagNode>()
-        val allSessions = mutableListOf<SessionActivity>()
         for (f in indexFiles) {
-            val data = crawlIndex(f)
+            val data = parseIndex(f)
             allBoroughs.addAll(data.boroughs)
-            allEpics.addAll(data.epics)
             allNodes.addAll(data.dagNodes)
         }
+
+        val allEpics = mutableListOf<EpicData>()
+        for (f in indexFiles) {
+            val data = parseIndex(f)
+            val owner = extractBoroughFromPath(f, allBoroughs)
+            allEpics.addAll(data.epics.map { it.copy(borough = owner ?: it.borough) })
+        }
+
+        val allSessions = mutableListOf<SessionActivity>()
         for (f in sessionFiles) {
             val sessions = crawlSessionsHistory(f)
             val borough = extractBoroughFromPath(f, allBoroughs)
@@ -50,7 +56,9 @@ class IndexCrawler {
         )
     }
 
-    fun crawlIndex(file: Path): DashboardData {
+    fun crawlIndex(file: Path): DashboardData = parseIndex(file)
+
+    private fun parseIndex(file: Path): DashboardData {
         val content = Files.readString(file)
         val tables = parseTables(content)
         val boroughs = tables.firstNotNullOfOrNull { parseBoroughTable(it) } ?: emptyList()
@@ -66,9 +74,9 @@ class IndexCrawler {
     }
 
     private fun extractBoroughFromPath(file: Path, boroughs: List<BoroughData>): String? {
-        val pathStr = file.toString()
-        return boroughs.find { pathStr.contains(it.project) }?.name
-            ?: boroughs.find { pathStr.contains(it.name, ignoreCase = true) }?.name
+        val segments = file.map { it.toString().lowercase() }
+        return boroughs.find { segments.contains(it.project.lowercase()) }?.name
+            ?: boroughs.find { segments.contains(it.name.lowercase()) }?.name
     }
 
     private fun parseTables(content: String): List<List<List<String>>> {
@@ -85,13 +93,15 @@ class IndexCrawler {
         if (rows.isEmpty()) return null
         val header = rows.first().map { it.lowercase().trim() }
         val boroughIdx = header.indexOfFirst { it.contains("borough") }
-        val projectIdx = header.indexOfFirst { it.contains("project") }
+        val projectIdx = header.indexOfFirst { it.contains("project") || it.contains("projet") }
         val dagIdx = header.indexOfFirst { it.contains("dag") }
         val roleIdx = header.indexOfFirst { it.contains("role") }
         val sessionIdx = header.indexOfFirst { it.contains("session") }
-        if (boroughIdx == -1) return null
+        if (boroughIdx == -1 || projectIdx == -1) return null
 
-        return rows.drop(1).map { row ->
+        return rows.drop(1).mapNotNull { row ->
+            val project = projectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
+            if (project.isBlank() || project.contains("==")) return@mapNotNull null
             val role = roleIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
             val status = when {
                 role.contains("VESTIGE", ignoreCase = true) -> BoroughStatus.VESTIGE
@@ -99,8 +109,8 @@ class IndexCrawler {
                 else -> BoroughStatus.ACTIVE
             }
             BoroughData(
-                name = row.getOrElse(boroughIdx) { "" },
-                project = projectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
+                name = row.getOrElse(boroughIdx) { "" }.replace("==", "").trim(),
+                project = project.replace("==", "").trim(),
                 dagLevel = dagIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 role = role,
                 session = sessionIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
@@ -117,6 +127,7 @@ class IndexCrawler {
         val ptsIdx = header.indexOfFirst { it.contains("pt") }
         val priorityIdx = header.indexOfFirst { it.contains("priorite") || it.contains("priority") }
         val statusIdx = header.indexOfFirst { it.contains("statut") || it.contains("status") }
+        val boroughIdx = header.indexOfFirst { it.contains("borough") }
         if (epicIdx == -1) return null
 
         return rows.drop(1).map { row ->
@@ -124,7 +135,7 @@ class IndexCrawler {
             EpicData(
                 id = row.getOrElse(epicIdx) { "" },
                 title = sujetIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
-                borough = "",
+                borough = boroughIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
                 status = parseEpicStatus(rawStatus)

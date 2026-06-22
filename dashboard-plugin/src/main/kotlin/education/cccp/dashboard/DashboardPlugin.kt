@@ -60,5 +60,25 @@ class DashboardPlugin : Plugin<Project> {
                 project.logger.lifecycle("Dashboard site generated: ${outputDir.resolve("index.html")}")
             }
         }
+
+        project.tasks.register("publishDashboard") { task ->
+            task.group = "dashboard"
+            task.description = "Publishes the generated dashboard site to the publish directory."
+            task.dependsOn("generateDashboard")
+            task.doLast {
+                val outputDir = project.projectDir.toPath().resolve(extension.outputDir.get())
+                val publishDir = project.projectDir.toPath().resolve(extension.publishDir.get())
+
+                if (!Files.exists(outputDir)) {
+                    project.logger.warn("Dashboard output not found: $outputDir. Run generateDashboard first.")
+                    return@doLast
+                }
+
+                project.logger.lifecycle("Publishing dashboard from $outputDir to $publishDir")
+                Files.createDirectories(publishDir)
+                outputDir.toFile().copyRecursively(publishDir.toFile(), overwrite = true)
+                project.logger.lifecycle("Dashboard published: ${publishDir.resolve("index.html")}")
+            }
+        }
     }
 }

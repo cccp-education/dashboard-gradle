@@ -15,6 +15,7 @@ class DashboardPluginTest {
 
         assertThat(project.tasks.findByName("crawlDashboard")).isNotNull
         assertThat(project.tasks.findByName("generateDashboard")).isNotNull
+        assertThat(project.tasks.findByName("publishDashboard")).isNotNull
     }
 
     @Test
@@ -41,6 +42,7 @@ class DashboardPluginTest {
         val ext = project.extensions.findByName("dashboard") as DashboardExtension
         assertThat(ext.configPath.get()).isEqualTo("foundry")
         assertThat(ext.outputDir.get()).isEqualTo("build/dashboard")
+        assertThat(ext.publishDir.get()).isEqualTo("build/dashboard-publish")
         assertThat(ext.boroughs.get()).isEmpty()
     }
 
@@ -52,10 +54,12 @@ class DashboardPluginTest {
         val ext = project.extensions.findByName("dashboard") as DashboardExtension
         ext.configPath.set("custom/config")
         ext.outputDir.set("custom/output")
+        ext.publishDir.set("custom/publish")
         ext.boroughs.set(listOf("BAKERY", "NEWARK"))
 
         assertThat(ext.configPath.get()).isEqualTo("custom/config")
         assertThat(ext.outputDir.get()).isEqualTo("custom/output")
+        assertThat(ext.publishDir.get()).isEqualTo("custom/publish")
         assertThat(ext.boroughs.get()).containsExactly("BAKERY", "NEWARK")
     }
 }

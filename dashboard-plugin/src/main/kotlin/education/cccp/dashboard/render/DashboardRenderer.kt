@@ -38,7 +38,8 @@ class DashboardRenderer {
             boroughs = data.boroughs.sortedBy { it.dagLevel },
             epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
             sessions = data.sessions.sortedByDescending { it.number.padStart(3, '0') },
-            stats = computeStats(data)
+            stats = computeStats(data),
+            boroughGroups = BoroughGrouper.groupByBorough(data)
         )
 
         val context = Context().apply {
@@ -71,6 +72,8 @@ class DashboardRenderer {
             blockedCount = byStatus[EpicStatus.BLOQUE] ?: 0
         )
     }
+
+
 
     private fun copyStaticAsset(resourcePath: String, target: Path) {
         javaClass.classLoader.getResourceAsStream(resourcePath)?.use { input ->

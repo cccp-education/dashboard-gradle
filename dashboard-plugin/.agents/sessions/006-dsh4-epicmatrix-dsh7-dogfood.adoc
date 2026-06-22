@@ -1,0 +1,56 @@
+= Session 006 — DSH-4 EPIC Matrix par borough + DSH-7 dogfood
+:date: 2026-06-22
+:status: TERMINE
+:score: 10/10
+
+== Objectifs
+
+. Grouper les EPICs par borough dans la matrice visuelle.
+. Assigner automatiquement le borough aux EPICs crawls (colonne `Borough` ou matching par chemin).
+. Ajouter la tâche `publishDashboard` et le root `build.gradle.kts` dogfood.
+. Valider avec TDD/DDD/BDD : unit → functional → Cucumber.
+
+== Livrables
+
+|===
+| Fichier | Changement
+| `IndexCrawler.kt` | Parsing colonne `Borough` optionnelle ; assignation par matching de chemin ; filtre `==` et project vide.
+| `DashboardPage.kt` | Ajout `BoroughGroup` + champ `boroughGroups`.
+| `BoroughGrouper.kt` | Nouveau — groupement EPICs par borough trié par DAG.
+| `DashboardRenderer.kt` | Utilise `BoroughGrouper`, expose `boroughGroups` au template.
+| `dashboard.thyme` | EPIC Matrix groupée par borough avec header `borough-header`.
+| `styles.css` | Style `.borough-header`.
+| `DashboardExtension.kt` | Propriété `publishDir`.
+| `DashboardPlugin.kt` | Tâche `publishDashboard`.
+| `build.gradle.kts` (root) | Dogfood 6 lignes : plugin + configuration.
+| `BoroughGroupTest.kt` | 4 tests unitaires.
+| `DashboardRendererTest.kt` | +1 test groupage.
+| `PublishDashboardFunctionalTest.kt` | 1 test fonctionnel.
+| `dashboard_generate.feature` | +2 scénarios Cucumber.
+| `CrawlSteps.kt` | Steps `givenFoundryWithBoroughEpics`, log contains, published at.
+| `DashboardPluginTest.kt` | MAJ pour `publishDashboard` + `publishDir`.
+| `INDEX.adoc` | Table `Borough`, colonne `Borough` dans EPICs, DSH-4/DSH-7 en cours S006.
+|===
+
+== Tests
+
+|===
+| Type | Nombre | Résultat
+| Tests unitaires (JUnit5 + AssertJ) | 17 | PASS
+| Tests fonctionnels (Gradle TestKit) | 5 | PASS
+| Tests Cucumber BDD | 8 scenarios | PASS
+| Total | 30 | PASS
+|===
+
+== Dogfood
+
+`./gradlew generateDashboard publishDashboard` depuis la racine produit :
+
+* `build/dashboard/dashboard-data.json` — 1 borough, 10 epics, 6 sessions.
+* `build/dashboard-publish/index.html` — site statique publiable.
+
+== Rétrospective
+
+* Baby-step DDD/TDD/BDD respecté : modèle d'abord, tests unitaires, puis fonctionnels, puis Cucumber.
+* Le filtrage des faux boroughs (`==`, project vide) a nécessité une itération après le dogfood.
+* Prochaine session : DSH-5 DAG visualization ou DSH-8 GitHub sync selon priorité.

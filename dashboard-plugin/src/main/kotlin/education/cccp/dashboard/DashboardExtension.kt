@@ -17,6 +17,10 @@ abstract class DashboardExtension {
 
     @get:Input
     @get:Optional
+    abstract val publishDir: Property<String>
+
+    @get:Input
+    @get:Optional
     abstract val boroughs: ListProperty<String>
 
     @get:Internal
@@ -25,6 +29,7 @@ abstract class DashboardExtension {
     init {
         configPath.convention("foundry")
         outputDir.convention("build/dashboard")
+        publishDir.convention("build/dashboard-publish")
         boroughs.convention(emptyList())
     }
 }

@@ -22,3 +22,28 @@ Feature: Dashboard static site generation
     Then the build should succeed
     And the dashboard site should contain "Activity Stream"
     And the dashboard site should contain "Bootstrap gouvernance"
+
+  Scenario: Generate dashboard site with epic matrix grouped by borough
+    Given a Gradle project with the dashboard plugin applied
+    And a foundry directory with INDEX.adoc for borough "BAKERY" project "bakery-gradle" dag "N2" containing epics:
+      | EPIC  | Sujet       | Pts | Prio | Statut   |
+      | BKY-1 | Bakery task | 5   | P1   | EN COURS |
+    And a foundry directory with INDEX.adoc for borough "DASHBOARD" project "dashboard-gradle" dag "N3" containing epics:
+      | EPIC  | Sujet     | Pts | Prio | Statut  |
+      | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
+    When I execute the "generateDashboard" task
+    Then the build should succeed
+    And the dashboard site should contain "BAKERY (N2)"
+    And the dashboard site should contain "DASHBOARD (N3)"
+    And the dashboard site should contain "BKY-1"
+    And the dashboard site should contain "DSH-0"
+
+  Scenario: Publish dashboard site copies generated output to publish directory
+    Given a Gradle project with the dashboard plugin applied
+    And a foundry directory with INDEX.adoc containing epics:
+      | EPIC  | Sujet     | Pts | Prio | Statut  |
+      | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
+    When I execute the "publishDashboard" task
+    Then the build should succeed
+    And the build log should contain "Dashboard published"
+    And the dashboard site should be published at "build/dashboard-publish/index.html"

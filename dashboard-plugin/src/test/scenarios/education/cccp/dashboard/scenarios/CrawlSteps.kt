@@ -47,6 +47,24 @@ class CrawlSteps(private val world: DashboardWorld) {
         world.writeIndexAdoc("foundry/test/INDEX.adoc", sb.toString())
     }
 
+    @Given("a foundry directory with INDEX.adoc for borough {string} project {string} dag {string} containing epics:")
+    fun givenFoundryWithBoroughEpics(borough: String, project: String, dag: String, table: DataTable) {
+        val rows = table.asMaps()
+        val sb = StringBuilder()
+        sb.appendLine("= Index — $borough")
+        sb.appendLine("|===")
+        sb.appendLine("| Borough | Project | DAG | Role in MVP0 | Session")
+        sb.appendLine("| $borough | $project | $dag | Test role | S000")
+        sb.appendLine("|===")
+        sb.appendLine("|===")
+        sb.appendLine("| EPIC | Sujet | Pts | Priorite | Statut")
+        for (row in rows) {
+            sb.appendLine("| ${row["EPIC"]} | ${row["Sujet"]} | ${row["Pts"]} | ${row["Prio"]} | ${row["Statut"]}")
+        }
+        sb.appendLine("|===")
+        world.writeIndexAdoc("foundry/${borough.lowercase()}/INDEX.adoc", sb.toString())
+    }
+
     @Given("a foundry directory with INDEX.adoc and SESSIONS_HISTORY.adoc for {string}")
     fun givenFoundryWithSessions(borough: String) {
         world.writeIndexAdoc(
@@ -144,6 +162,18 @@ class CrawlSteps(private val world: DashboardWorld) {
     fun thenDashboardSiteContainsStylesheet() {
         val html = world.readHtmlOutput() ?: error("No dashboard HTML output")
         assertThat(html).contains("styles.css")
+    }
+
+    @Then("the build log should contain {string}")
+    fun thenBuildLogContains(message: String) {
+        val output = world.buildResult?.output ?: error("No build result")
+        assertThat(output).contains(message)
+    }
+
+    @Then("the dashboard site should be published at {string}")
+    fun thenDashboardSitePublishedAt(path: String) {
+        val published = world.projectDir.resolve(path)
+        assertThat(published).exists()
     }
 
     companion object {

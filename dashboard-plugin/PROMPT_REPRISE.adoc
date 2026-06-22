@@ -1,16 +1,17 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 006
+:session: 007
 :date: 2026-06-22
 
-== Mission accomplie (S005)
+== Mission accomplie (S006)
 
-*Implémentation DSH-3 — Theme JBake + EPIC Matrix + Activity Stream* :
-1. ✅ `DashboardRenderer` génère `index.html` + `styles.css` depuis `DashboardData`
-2. ✅ Template Thymeleaf `dashboard.thyme` avec EPIC Matrix et Activity Stream
-3. ✅ CSS statut embarqué (`status-done`, `status-in-progress`, `status-planned`, `status-blocked`)
-4. ✅ Tâche `generateDashboard` câblée sur `crawlDashboard`
-5. ✅ `publishToMavenLocal` OK — plugin consommable par runner-gradle
-6. ✅ Tests : 13 unit + 4 functional + 6 Cucumber = 23 PASS
+*DSH-4 EPIC Matrix par borough + DSH-7 dogfood* :
+1. ✅ `BoroughGrouper` groupe les EPICs par borough trié par DAG
+2. ✅ `IndexCrawler` assigne le borough via colonne `Borough` ou matching de chemin
+3. ✅ Template `dashboard.thyme` affiche les EPICs groupés par borough
+4. ✅ Tâche `publishDashboard` copie `build/dashboard` → `build/dashboard-publish`
+5. ✅ Root `dashboard-gradle/build.gradle.kts` dogfood minimal (plugin + config)
+6. ✅ Tests : 17 unit + 5 functional + 8 Cucumber = 30 PASS
+7. ✅ Dogfood `./gradlew generateDashboard publishDashboard` OK — 1 borough, 10 epics, 6 sessions
 
 == Statut
 
@@ -18,14 +19,14 @@
 - DSH-1 (Plugin scaffold) : 8/8 pts ✅
 - DSH-2 (IndexCrawler) : 13/13 pts ✅
 - DSH-3 (Dashboard theme + vues) : 13/13 pts ✅
+- DSH-4 (EPIC Matrix par borough) : 8/8 pts ✅
+- DSH-7 (Intégration runner-gradle + déploiement) : 3/5 pts 🔄 (publishDashboard OK, gh-pages N+1)
 
-== Prochaine session (006) — DSH-4 / DSH-7
+== Prochaine session (007)
 
-*Priorite P0* : Affiner la vue EPIC Matrix (borough × statut groupé) et préparer l'intégration runner-gradle dogfood.
+*Priorité P1* : Finaliser DSH-7 (déploiement gh-pages via runner-gradle) OU DSH-5 (DAG visualization).
 
-1. EPIC Matrix par borough : regroupement des EPICs sous chaque borough
-2. Backlog dans la matrice : inclure les items P0/P1/P2 du BACKLOG.adoc
-3. Tâche `publishDashboard` rapatriée ou alignée avec runner-gradle
-4. Root `dashboard-gradle/build.gradle.kts` dogfood minimal (3 lignes)
-5. Tests unitaires + fonctionnels + Cucumber
-6. Vérification — `./gradlew test` + `cucumberTest`
+1. Intégration runner-gradle : consommer `publishDir` pour déployer gh-pages
+2. Alternative : DSH-5 DAG visualization — graphe N0→N4 dans le dashboard
+3. Tests unitaires + fonctionnels + Cucumber
+4. Vérification — `./gradlew test` + `cucumberTest`
