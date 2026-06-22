@@ -24,9 +24,9 @@
 - DSH-4 EPIC matrix par borough ✅
 - DSH-5 DAG visualization ✅
 - DSH-6 Timeline MVP0 ✅
+- DSH-7 Intégration runner-gradle + déploiement ✅
 
 == Points ouverts à reporter
 
-- DSH-7 Déploiement gh-pages via runner-gradle (3/5)
-- DSH-8 GitHub Sync
+- DSH-8 Git Sync (clone/pull des boroughs)
 - PUB Maven Central

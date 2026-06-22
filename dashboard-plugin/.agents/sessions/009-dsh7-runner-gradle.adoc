@@ -1,0 +1,51 @@
+= Session 009 — DSH-7 Intégration runner-gradle
+:date: 2026-06-23
+:status: TERMINÉ
+
+== Objectif
+
+Finaliser DSH-7 (déploiement gh-pages via runner-gradle) en transformant `publishDashboard` en tâche Gradle typée avec inputs/outputs consommables par un orchestrateur N3.
+
+== Décisions
+
+* Le dashboard reste un N3 *producteur* de site statique ; il ne fait pas de git push.
+* `publishDashboard` devient `PublishDashboardTask` (`dashboard.publish`) avec `@InputDirectory` et `@OutputDirectory` pour exposer un répertoire publiable.
+* Le dogfood root `dashboard-gradle/build.gradle.kts` continue de configurer `publishDir` ; runner-gradle peut désormais dépendre de la tâche et consommer son output directory.
+* Groupe de tâches `dashboard` factorisé dans `DashboardConstants`.
+
+== Fichiers créés / modifiés
+
+[cols="3,5,2"]
+|===
+| Fichier | Rôle | Lignes
+| `src/main/kotlin/dashboard/DashboardConstants.kt` | Constantes groupe de tâches | 7
+| `src/main/kotlin/dashboard/publish/PublishDashboardTask.kt` | Tâche typée `@CacheableTask` avec I/O Gradle | 44
+| `src/main/kotlin/dashboard/DashboardPlugin.kt` | Refactor `publishDashboard` → `PublishDashboardTask`, utilisation `DashboardConstants` | -17
+| `src/test/kotlin/dashboard/publish/PublishDashboardTaskTest.kt` | TDD unitaire (4 tests) | 60
+| `src/test/kotlin/dashboard/PublishDashboardFunctionalTest.kt` | Test fonctionnel consommation par une autre tâche | +34
+| `src/test/scenarios/dashboard/scenarios/DashboardWorld.kt` | Helper projet consommateur | +22
+| `src/test/scenarios/dashboard/scenarios/CrawlSteps.kt` | Steps Cucumber consommation | +11
+| `src/test/features/dashboard_generate.feature` | Scénario "Publish dashboard output is consumable by runner-gradle" | +8
+|===
+
+== Validation
+
+* `./gradlew -p dashboard-plugin publishToMavenLocal` ✅
+* `./gradlew -p dashboard-plugin test` ✅ 51/51 PASS (avant 48 + 4 nouveaux - 1 refactoré = 51)
+* `./gradlew -p dashboard-plugin cucumberTest` ✅ 10/10 scenarios PASS (9 + 1 nouveau)
+* `./gradlew -p dashboard-plugin check` ✅
+
+== Métriques post-session
+
+|===
+| Métrique | Valeur
+| Tests unitaires | 31
+| Tests fonctionnels | 6
+| Scénarios Cucumber | 10
+| Total PASS | 47 unit/functional + 10 Cucumber
+|===
+
+== Prochaine session
+
+* DSH-8 GitHub Sync — refresh depuis raw API (P2, 8 pts) OU
+* PUB Maven Central nmcp (P1, 5 pts)

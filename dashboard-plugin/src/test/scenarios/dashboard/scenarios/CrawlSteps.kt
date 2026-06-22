@@ -204,6 +204,17 @@ class CrawlSteps(private val world: DashboardWorld) {
         assertThat(published).exists()
     }
 
+    @Given("a Gradle project with the dashboard plugin applied as a publishable artifact")
+    fun givenGradleProjectAsPublishableArtifact() {
+        world.createConsumerGradleProject()
+    }
+
+    @Then("the publishDashboard task should be consumable by another task")
+    fun thenPublishDashboardConsumable() {
+        val output = world.buildResult?.output ?: error("No build result")
+        assertThat(output).contains("Consumed dashboard index.html")
+    }
+
     companion object {
         val mapper = jacksonObjectMapper()
     }

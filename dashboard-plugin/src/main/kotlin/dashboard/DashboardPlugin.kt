@@ -2,6 +2,7 @@ package dashboard
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dashboard.publish.PublishDashboardTask
 import dashboard.render.DashboardRenderer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,7 +22,7 @@ class DashboardPlugin : Plugin<Project> {
         val extension = project.extensions.create("dashboard", DashboardExtension::class.java)
 
         project.tasks.register("crawlDashboard") { task ->
-            task.group = "dashboard"
+            task.group = DashboardConstants.DASHBOARD_GROUP
             task.description = "Crawls INDEX.adoc and SESSIONS_HISTORY.adoc from all boroughs."
             task.doLast {
                 val configPath = extension.configPath.get()
@@ -51,7 +52,7 @@ class DashboardPlugin : Plugin<Project> {
         }
 
         project.tasks.register("generateDashboard") { task ->
-            task.group = "dashboard"
+            task.group = DashboardConstants.DASHBOARD_GROUP
             task.description = "Generates the static dashboard site from crawled data."
             task.dependsOn("crawlDashboard")
             task.doLast {
@@ -69,24 +70,10 @@ class DashboardPlugin : Plugin<Project> {
             }
         }
 
-        project.tasks.register("publishDashboard") { task ->
-            task.group = "dashboard"
-            task.description = "Publishes the generated dashboard site to the publish directory."
+        project.tasks.register("publishDashboard", PublishDashboardTask::class.java) { task ->
             task.dependsOn("generateDashboard")
-            task.doLast {
-                val outputDir = project.projectDir.toPath().resolve(extension.outputDir.get())
-                val publishDir = project.projectDir.toPath().resolve(extension.publishDir.get())
-
-                if (!Files.exists(outputDir)) {
-                    project.logger.warn("Dashboard output not found: $outputDir. Run generateDashboard first.")
-                    return@doLast
-                }
-
-                project.logger.lifecycle("Publishing dashboard from $outputDir to $publishDir")
-                Files.createDirectories(publishDir)
-                outputDir.toFile().copyRecursively(publishDir.toFile(), overwrite = true)
-                project.logger.lifecycle("Dashboard published: ${publishDir.resolve("index.html")}")
-            }
+            task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
+            task.publishDir.set(project.layout.projectDirectory.dir(extension.publishDir))
         }
     }
 }
