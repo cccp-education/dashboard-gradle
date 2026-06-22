@@ -4,10 +4,10 @@
 
 |===
 | Metrique | Valeur
-| Tests unitaires (JUnit5 + AssertJ) | 28
-| Tests fonctionnels (Gradle TestKit) | 5
-| Tests Cucumber BDD | 9 scenarios
-| Total | 42 PASS
+| Tests unitaires (JUnit5 + AssertJ) | 31
+| Tests fonctionnels (Gradle TestKit) | 6
+| Tests Cucumber BDD | 10 scenarios
+| Total | 57 PASS
 |===
 
 == Details des tests
@@ -28,6 +28,13 @@
 . `tasks should belong to dashboard group`
 . `extension should have default values`
 . `extension should accept custom values`
+
+=== Unitaires — PublishDashboardTaskTest (4) — S009
+
+. `task should belong to dashboard group and have description`
+. `task should expose outputDir as input and publishDir as output`
+. `task should copy generated dashboard output to publish directory`
+. `task should skip copy when output directory does not exist`
 
 === Unitaires — DashboardRendererTest (6) — S008
 
@@ -85,11 +92,12 @@
 . `generateDashboard should produce index html with epic matrix`
 . `generateDashboard should include activity stream from sessions history`
 
-=== Fonctionnels — PublishDashboardFunctionalTest (1) — S006
+=== Fonctionnels — PublishDashboardFunctionalTest (2) — S006/S009
 
 . `publishDashboard should copy generated dashboard to publish directory`
+. `publishDashboard output directory should be consumable by another Gradle task` (S009)
 
-=== Cucumber BDD (9 scenarios)
+=== Cucumber BDD (10 scenarios)
 
 . `Crawl INDEX.adoc files in a foundry directory`
 . `Crawl with missing config directory`
@@ -100,6 +108,7 @@
 . `Generate dashboard site with epic matrix grouped by borough` (S006)
 . `Generate dashboard site with timeline` (S008)
 . `Publish dashboard site copies generated output to publish directory` (S006)
+. `Publish dashboard output is consumable by runner-gradle` (S009)
 
 == Notes
 
@@ -112,3 +121,4 @@
 *Session 006* : 30 tests PASS — EPIC Matrix groupée par borough + tâche publishDashboard + dogfood root.
 *Session 007* : 31 tests PASS — Renommage packages, DSH-5 DAG visualization, traduction anglaise.
 *Session 008* : 42 tests PASS + 9 Cucumber scenarios — DSH-6 Timeline MVP0 (domaine `dashboard.timeline`, intégration renderer/template, parsing session).
+*Session 009* : 47 tests PASS + 10 Cucumber scenarios — DSH-7 Intégration runner-gradle (`dashboard.publish.PublishDashboardTask` typée avec I/O Gradle, consommable N3).

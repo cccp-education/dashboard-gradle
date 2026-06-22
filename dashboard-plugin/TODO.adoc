@@ -6,7 +6,7 @@
 - [x] Voir si graphify-gradle peut fournir le DAG tout prete — non, DAG simplifié extrait du portefeuille INDEX.adoc — S004 ✅
 - [x] Ajouter SessionActivity au modèle pivot + crawler SESSIONS_HISTORY.adoc — S004 ✅
 - [ ] Ajouter une page "Sante du workspace" (builds qui cassent, versions) — P2
-- [ ] Finaliser DSH-7 déploiement gh-pages via runner-gradle — S009
+- [x] Finaliser DSH-7 déploiement gh-pages via runner-gradle — S009 ✅
 - [ ] Implémenter theme JBake dashboard.thyme — S005
 - [ ] Implémenter vue EPIC Matrix — S005
 - [ ] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005

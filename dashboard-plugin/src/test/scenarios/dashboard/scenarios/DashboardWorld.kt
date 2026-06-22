@@ -22,6 +22,28 @@ class DashboardWorld {
         """.trimIndent())
     }
 
+    fun createConsumerGradleProject() {
+        projectDir = Files.createTempDirectory("dashboard-consumer-test-")
+        Files.writeString(projectDir.resolve("settings.gradle.kts"), "rootProject.name = \"${projectDir.fileName}\"")
+        Files.writeString(projectDir.resolve("build.gradle.kts"), """
+            plugins { id("education.cccp.dashboard") }
+            dashboard {
+                configPath = "foundry"
+                outputDir = "build/dashboard"
+                publishDir = "build/dashboard-publish"
+            }
+
+            val consumeDashboard by tasks.registering {
+                dependsOn(tasks.named("publishDashboard"))
+                doLast {
+                    val published = file("build/dashboard-publish/index.html")
+                    require(published.exists()) { "published dashboard index.html not found" }
+                    println("Consumed dashboard index.html")
+                }
+            }
+        """.trimIndent())
+    }
+
     fun executeGradle(vararg args: String): BuildResult {
         return try {
             GradleRunner.create()

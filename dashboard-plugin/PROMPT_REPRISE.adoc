@@ -1,15 +1,14 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 009
+:session: 010
 :date: 2026-06-23
 
-== Mission accomplie (S008)
+== Mission accomplie (S009)
 
-*DSH-6 Timeline MVP0* :
-1. Domaine `dashboard.timeline` — `Milestone`, `Timeline`, `TimelineBuilder`
-2. `EpicData` enrichi du champ `session` ; `IndexCrawler` extrait le numéro de session
-3. `DashboardRenderer` intègre la timeline dans `DashboardPage`
-4. Template `dashboard.thyme` affiche la timeline verticale avec marqueurs de statut
-5. Tests : 28 unit + 5 functional + 9 Cucumber = 42/42 JUnit PASS + 9/9 Cucumber PASS
+*DSH-7 Intégration runner-gradle* :
+1. Domaine `dashboard.publish` — `PublishDashboardTask` (`@InputDirectory`, `@OutputDirectory`, `@CacheableTask`)
+2. `DashboardConstants` factorise le groupe de tâches `dashboard`
+3. `DashboardPlugin` expose `publishDashboard` comme tâche typée consommable par un orchestrateur N3
+4. Tests : 31 unit + 6 functional + 10 Cucumber = 47/47 JUnit PASS + 10/10 Cucumber PASS
 
 == Statut
 
@@ -20,15 +19,17 @@
 - DSH-4 (EPIC Matrix par borough) : 8/8 pts ✅
 - DSH-5 (DAG visualization) : 8/8 pts ✅
 - DSH-6 (Timeline MVP0) : 5/5 pts ✅
-- DSH-7 (Intégration runner-gradle) : 3/5 pts 🔄 (publishDashboard OK, gh-pages N+1)
+- DSH-7 (Intégration runner-gradle) : 5/5 pts ✅
 - DSH-8 (GitHub Sync) : 0/8 pts PLANIFIE
 - PUB (Maven Central) : 0/5 pts PLANIFIE
 
-== Prochaine session (009)
+== Prochaine session (010)
 
-*Priorité P1* : Finaliser DSH-7 (déploiement gh-pages via runner-gradle).
+*Priorité P1* : PUB — Publication Maven Central nmcp.
 
-1. Consommer `publishDir` pour déploiement gh-pages via runner-gradle
-2. Vérifier le wiring avec le dogfood root `build.gradle.kts`
-3. Tests unitaires + fonctionnels + Cucumber
-4. Vérification — `./gradlew test` + `cucumberTest`
+1. Vérifier la configuration nmcp (settings + build.gradle.kts)
+2. S'assurer que toutes les dépendances sont des releases (pas de SNAPSHOT)
+3. `./gradlew build -x test` puis `./gradlew publishAggregationToCentralPortal --no-daemon` (sur demande explicite)
+4. Mettre à jour la documentation et le portefeuille
+
+*Alternative P2* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc / BACKLOG.adoc par clone/pull git des boroughs (pas d'API GitHub spécifique).

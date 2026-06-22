@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-23 — Session 008
-_Session terminee_ : 008
-_Prochaine session_ : 009 — DSH-7 gh-pages via runner-gradle
+_Derniere mise a jour_ : 2026-06-23 — Session 009
+_Session terminee_ : 009
+_Prochaine session_ : 010 — PUB Maven Central nmcp
 
 '''
 
@@ -10,7 +10,7 @@ _Prochaine session_ : 009 — DSH-7 gh-pages via runner-gradle
 
 |===
 | Borough | Project | DAG | Role in MVP0 | Session
-| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S008
+| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
 |===
 
 == Regles Absolues
@@ -48,6 +48,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 005 | 2026-06-22 | implementation | **DSH-3 Theme + EPIC Matrix** — DashboardRenderer, Thymeleaf, CSS, generateDashboard wiring, 23/23 tests PASS | 10/10
 | 007 | 2026-06-23 | refactoring + implementation | **Renommage packages + DSH-5 DAG visualization + traduction anglaise** — packages `dashboard.*`, `DagGraphBuilder`, vis.js, README/Gherkin anglais, 31/31 tests PASS | 10/10
 | 008 | 2026-06-23 | implementation | **DSH-6 Timeline MVP0** — domaine `dashboard.timeline`, `Milestone`, `Timeline`, `TimelineBuilder`, section template, 42/42 PASS + 9/9 Cucumber PASS | 10/10
+| 009 | 2026-06-23 | refactoring + implementation | **DSH-7 Intégration runner-gradle** — `dashboard.publish.PublishDashboardTask` (@InputDirectory/@OutputDirectory/@CacheableTask), `DashboardConstants`, wiring consommable N3, 47/47 JUnit PASS + 10/10 Cucumber PASS | 10/10
 |===
 
 '''
@@ -63,8 +64,8 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | DSH-4 | EPIC matrix — tableau borough × statut | 8 | P1 | ✅ S006 (8/8 pts) | Dashboard
 | DSH-5 | DAG visualization — graphe N0→N4 | 8 | P1 | ✅ S007 (8/8 pts) | Dashboard
 | DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | ✅ S008 (5/5 pts) | Dashboard
-| DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | 🔄 S006 (3/5 pts) | Dashboard
-| DSH-8 | GitHub Sync — refresh depuis raw API | 8 | P2 | PLANIFIE | Dashboard
+| DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | ✅ S009 (5/5 pts) | Dashboard
+| DSH-8 | Git Sync — refresh par clone/pull git des boroughs | 8 | P2 | PLANIFIE | Dashboard
 | PUB | Publication Maven Central nmcp | 5 | P1 | PLANIFIE | Dashboard
 |===
 
@@ -101,5 +102,5 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | HTOWN | plantuml-gradle | N2 | Diagrammes LLM | —
 | Grand Central | graphify-gradle | N0 | Graphe connaissance | —
 | Liberty | api-key-pool-gradle | N0 | Pool cles API LLM | —
-| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S008
+| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
 |===

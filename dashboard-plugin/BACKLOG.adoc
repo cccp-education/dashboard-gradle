@@ -29,18 +29,25 @@
 | Vue timeline dans dashboard.thyme | DSH-6 | 2 | S008 ✅
 |===
 
-== P0 / P1 — Planifie
+== P0 / P1 — Terminé
+
+|===
+| Item | EPIC | Pts | Session
+| Deploiement gh-pages via runner-gradle | DSH-7 | 2 | S009 ✅
+|===
+
+== P1 — Planifie
 
 |===
 | Item | EPIC | Pts
-| Deploiement gh-pages via runner-gradle | DSH-7 | 2
+| Publication Maven Central nmcp | PUB | 5
 |===
 
 == P2 — Planifie
 
 |===
 | Item | EPIC | Pts
-| Bouton Sync GitHub raw API | DSH-8 | 3
+| Sync git des boroughs (clone/pull INDEX.adoc / BACKLOG.adoc) | DSH-8 | 3
 | Filtres / recherche tableau | DSH-8 | 2
 | Export JSON dashboard data | DSH-8 | 1
 | Mode sombre | DSH-8 | 2
