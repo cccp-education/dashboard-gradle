@@ -22,15 +22,17 @@
 | EPIC Matrix groupée par borough | DSH-4 | 3 | S006 ✅
 | Tâche publishDashboard | DSH-7 | 2 | S006 ✅
 | Root build.gradle.kts dogfood | DSH-7 | 1 | S006 ✅
+| DAG graph builder + vis.js rendering | DSH-5 | 3 | S007 ✅
+| DAG graph section in dashboard template | DSH-5 | 3 | S007 ✅
+| Modèle de domaine timeline (Milestone, Timeline, TimelineBuilder) | DSH-6 | 2 | S008 ✅
+| Parsing numéro de session dans IndexCrawler | DSH-6 | 1 | S008 ✅
+| Vue timeline dans dashboard.thyme | DSH-6 | 2 | S008 ✅
 |===
 
 == P0 / P1 — Planifie
 
 |===
 | Item | EPIC | Pts
-| DAG graph builder + vis.js rendering | DSH-5 | 3 | S007 ✅
-| DAG graph section in dashboard template | DSH-5 | 3 | S007 ✅
-| Vue timeline | DSH-6 | 2
 | Deploiement gh-pages via runner-gradle | DSH-7 | 2
 |===
 

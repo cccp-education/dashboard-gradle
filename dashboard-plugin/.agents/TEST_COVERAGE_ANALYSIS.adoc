@@ -4,10 +4,10 @@
 
 |===
 | Metrique | Valeur
-| Tests unitaires (JUnit5 + AssertJ) | 17
+| Tests unitaires (JUnit5 + AssertJ) | 28
 | Tests fonctionnels (Gradle TestKit) | 5
-| Tests Cucumber BDD | 8 scenarios
-| Total | 30 PASS
+| Tests Cucumber BDD | 9 scenarios
+| Total | 42 PASS
 |===
 
 == Details des tests
@@ -29,13 +29,14 @@
 . `extension should have default values`
 . `extension should accept custom values`
 
-=== Unitaires — DashboardRendererTest (5)
+=== Unitaires — DashboardRendererTest (6) — S008
 
 . `render should produce index html with epic matrix`
 . `render should include activity stream section when sessions present`
 . `render should copy dashboard css to output directory`
 . `epic status should map to css class`
 . `render should group epics by borough in html table`
+. `render should include timeline section with milestone entries`
 
 === Unitaires — BoroughGroupTest (4) — S006
 
@@ -43,6 +44,36 @@
 . `should sort epics inside borough by priority then id`
 . `should expose borough status as string`
 . `should create UNASSIGNED group for epics without borough`
+
+=== Unitaires — DagGraphBuilderTest (5) — S007
+
+. `build should create nodes from borough data`
+. `build should create edges between consecutive DAG levels`
+. `build should create multiple edges when several nodes depend on all previous level nodes`
+. `build should fallback to dagNodes when boroughs are empty`
+. `build should handle empty data`
+
+=== Unitaires — Timeline domaine (11) — S008
+
+==== MilestoneTest (3)
+
+. `milestone should expose its properties`
+. `milestones should be ordered by date then by id`
+. `milestones with same date should be ordered by id`
+
+==== TimelineTest (3)
+
+. `timeline should keep milestones sorted by date`
+. `milestonesUpTo should return only milestones before or on the given date`
+. `byType should filter milestones by type`
+
+==== TimelineBuilderTest (5)
+
+. `build should create a milestone for each done epic dated by its session`
+. `build should use planned future date when no session matches`
+. `build should map in-progress epic to milestone status in progress`
+. `build should skip epics without borough`
+. `build should include borough dag level in milestone`
 
 === Fonctionnels — CrawlDashboardFunctionalTest (2)
 
@@ -58,7 +89,7 @@
 
 . `publishDashboard should copy generated dashboard to publish directory`
 
-=== Cucumber BDD (8 scenarios)
+=== Cucumber BDD (9 scenarios)
 
 . `Crawl INDEX.adoc files in a foundry directory`
 . `Crawl with missing config directory`
@@ -67,6 +98,7 @@
 . `Generate dashboard site from crawled data`
 . `Generate dashboard site with activity stream`
 . `Generate dashboard site with epic matrix grouped by borough` (S006)
+. `Generate dashboard site with timeline` (S008)
 . `Publish dashboard site copies generated output to publish directory` (S006)
 
 == Notes
@@ -78,3 +110,5 @@
 *Session 004* : 13 tests PASS (+2 tests unitaires SessionActivity).
 *Session 005* : 23 tests PASS — pipeline DDD/TDD/BDD complète pour le rendu statique.
 *Session 006* : 30 tests PASS — EPIC Matrix groupée par borough + tâche publishDashboard + dogfood root.
+*Session 007* : 31 tests PASS — Renommage packages, DSH-5 DAG visualization, traduction anglaise.
+*Session 008* : 42 tests PASS + 9 Cucumber scenarios — DSH-6 Timeline MVP0 (domaine `dashboard.timeline`, intégration renderer/template, parsing session).

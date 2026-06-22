@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dashboard.model.DashboardData
 import dashboard.model.EpicStatus
+import dashboard.timeline.TimelineBuilder
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.thymeleaf.templatemode.TemplateMode
@@ -43,7 +44,8 @@ class DashboardRenderer {
             stats = computeStats(data),
             boroughGroups = BoroughGrouper.groupByBorough(data),
             dagGraph = dagGraph,
-            dagGraphJson = mapper.writeValueAsString(dagGraph)
+            dagGraphJson = mapper.writeValueAsString(dagGraph),
+            timeline = TimelineBuilder.build(data)
         )
 
         val context = Context().apply {

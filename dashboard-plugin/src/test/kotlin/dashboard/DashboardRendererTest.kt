@@ -92,6 +92,32 @@ class DashboardRendererTest {
     }
 
     @Test
+    fun `render should include timeline section with milestone entries`(@TempDir tempDir: Path) {
+        val data = DashboardData(
+            boroughs = listOf(
+                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S008")
+            ),
+            epics = listOf(
+                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE, "000"),
+                EpicData("DSH-7", "Integration", "Dashboard", 5, "P1", EpicStatus.EN_COURS, "008")
+            ),
+            dagNodes = emptyList(),
+            sessions = listOf(
+                SessionActivity("000", "2026-06-18", "gouvernance", "Bootstrap", "Dashboard", ""),
+                SessionActivity("008", "2026-06-23", "implementation", "Integration", "Dashboard", "")
+            )
+        )
+
+        DashboardRenderer().render(data, tempDir)
+
+        val html = Files.readString(tempDir.resolve("index.html"))
+        assertThat(html).contains("Timeline")
+        assertThat(html).contains("2026-06-18")
+        assertThat(html).contains("2026-06-23")
+        assertThat(html).contains("Bootstrap")
+    }
+
+    @Test
     fun `render should copy dashboard css to output directory`(@TempDir tempDir: Path) {
         val data = DashboardData(
             boroughs = listOf(BoroughData("X", "x-gradle", "N0", "Test", "S000")),

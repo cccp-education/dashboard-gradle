@@ -136,13 +136,15 @@ class IndexCrawler {
 
         return rows.drop(1).map { row ->
             val rawStatus = row.getOrElse(statusIdx.takeIf { it >= 0 && it < row.size } ?: -1) { "" }
+            val sessionNumber = extractSessionNumber(rawStatus)
             EpicData(
                 id = row.getOrElse(epicIdx) { "" },
                 title = subjectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 borough = boroughIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
-                status = parseEpicStatus(rawStatus)
+                status = parseEpicStatus(rawStatus),
+                session = sessionNumber
             )
         }
     }
@@ -178,5 +180,10 @@ class IndexCrawler {
                 raw.contains("BLOCKED", ignoreCase = true) -> EpicStatus.BLOQUE
             else -> EpicStatus.PLANIFIE
         }
+    }
+
+    private fun extractSessionNumber(raw: String): String {
+        val match = Regex("""S?(\d{3})""").find(raw)
+        return match?.groupValues?.get(1) ?: ""
     }
 }

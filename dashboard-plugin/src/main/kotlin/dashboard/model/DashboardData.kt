@@ -34,7 +34,8 @@ data class EpicData(
     val borough: String,
     val points: Int = 0,
     val priority: String = "P2",
-    val status: EpicStatus = EpicStatus.PLANIFIE
+    val status: EpicStatus = EpicStatus.PLANIFIE,
+    val session: String = ""
 )
 
 enum class EpicStatus {
