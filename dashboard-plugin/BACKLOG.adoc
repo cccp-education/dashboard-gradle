@@ -20,7 +20,7 @@
 | Vue EPIC matrix (Thymeleaf) | DSH-3 / DSH-4 | 3 | S005 ✅
 | Vue Activity Stream (sessions) | DSH-3 | 2 | S005 ✅
 | EPIC Matrix groupée par borough | DSH-4 | 3 | S006 ✅
-| Tâche publishDashboard | DSH-7 | 2 | S006 ✅
+| Tâche publishDashboardSite | DSH-7 | 2 | S006 ✅
 | Root build.gradle.kts dogfood | DSH-7 | 1 | S006 ✅
 | DAG graph builder + vis.js rendering | DSH-5 | 3 | S007 ✅
 | DAG graph section in dashboard template | DSH-5 | 3 | S007 ✅

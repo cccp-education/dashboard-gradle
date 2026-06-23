@@ -209,10 +209,10 @@ class CrawlSteps(private val world: DashboardWorld) {
         world.createConsumerGradleProject()
     }
 
-    @Then("the publishDashboard task should be consumable by another task")
+    @Then("the publishDashboardSite task should be consumable by another task")
     fun thenPublishDashboardConsumable() {
         val output = world.buildResult?.output ?: error("No build result")
-        assertThat(output).contains("Consumed dashboard index.html")
+        assertThat(output).contains("Consumed dashboard JBake site")
     }
 
     companion object {

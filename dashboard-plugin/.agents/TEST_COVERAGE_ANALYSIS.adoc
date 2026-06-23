@@ -94,8 +94,8 @@
 
 === Fonctionnels — PublishDashboardFunctionalTest (2) — S006/S009
 
-. `publishDashboard should copy generated dashboard to publish directory`
-. `publishDashboard output directory should be consumable by another Gradle task` (S009)
+. `publishDashboardSite should copy generated dashboard JBake site to publish directory` (S010)
+. `publishDashboardSite output directory should be consumable by another Gradle task` (S009/S010)
 
 === Cucumber BDD (10 scenarios)
 
@@ -121,4 +121,4 @@
 *Session 006* : 30 tests PASS — EPIC Matrix groupée par borough + tâche publishDashboard + dogfood root.
 *Session 007* : 31 tests PASS — Renommage packages, DSH-5 DAG visualization, traduction anglaise.
 *Session 008* : 42 tests PASS + 9 Cucumber scenarios — DSH-6 Timeline MVP0 (domaine `dashboard.timeline`, intégration renderer/template, parsing session).
-*Session 009* : 47 tests PASS + 10 Cucumber scenarios — DSH-7 Intégration runner-gradle (`dashboard.publish.PublishDashboardTask` typée avec I/O Gradle, consommable N3).
+*Session 010* : 47 tests PASS + 10 Cucumber scenarios — site JBake-compatible consommable par bakery-gradle `serve` (`jbake/`, `publishDashboardSite`, template `[(${content.body})]`, CSS path `css/styles.css`, serve OK localhost:8820).

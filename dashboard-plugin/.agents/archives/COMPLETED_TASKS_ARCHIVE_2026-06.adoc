@@ -13,6 +13,7 @@
 | 006 | 2026-06-22 | DSH-4 EPIC Matrix par borough + DSH-7 dogfood | BoroughGrouper, publishDashboard, root dogfood, 30/30 tests PASS
 | 007 | 2026-06-23 | Renommage packages + DSH-5 DAG visualization + traduction anglaise | packages `dashboard.*`, DagGraphBuilder, vis.js, 31/31 tests PASS
 | 008 | 2026-06-23 | DSH-6 Timeline MVP0 | domaine `dashboard.timeline`, Milestone, Timeline, TimelineBuilder, section template Thymeleaf, 42/42 PASS + 9/9 Cucumber PASS
+| 010 | 2026-06-23 | Site JBake-compatible pour bakery-gradle | DashboardRenderer émet `jbake/`, `publishDashboard` → `publishDashboardSite`, template `jbake-index.thyme`, site.yml pointe vers dashboard-gradle build, serve OK
 |===
 
 == EPICs terminés ce mois
@@ -25,6 +26,7 @@
 - DSH-5 DAG visualization ✅
 - DSH-6 Timeline MVP0 ✅
 - DSH-7 Intégration runner-gradle + déploiement ✅
+- DSH-10 Site JBake-compatible consommable par bakery-gradle ✅
 
 == Points ouverts à reporter
 

@@ -1,14 +1,17 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 010
+:session: 011
 :date: 2026-06-23
 
-== Mission accomplie (S009)
+== Mission accomplie (S010)
 
-*DSH-7 Intégration runner-gradle* :
-1. Domaine `dashboard.publish` — `PublishDashboardTask` (`@InputDirectory`, `@OutputDirectory`, `@CacheableTask`)
-2. `DashboardConstants` factorise le groupe de tâches `dashboard`
-3. `DashboardPlugin` expose `publishDashboard` comme tâche typée consommable par un orchestrateur N3
-4. Tests : 31 unit + 6 functional + 10 Cucumber = 47/47 JUnit PASS + 10/10 Cucumber PASS
+*Site JBake-compatible consommable par bakery-gradle* :
+1. `DashboardRenderer` émet une structure JBake complète (`jbake.properties`, `content/index.html`, `templates/index.thyme`, `assets/css/styles.css`, `assets/js/dashboard-data.json`) en plus du site plat legacy.
+2. Renommage `publishDashboard` → `publishDashboardSite` pour éviter l'ambigüité avec les tâches Maven.
+3. `publishDashboardSite` copie `outputDir/jbake/` à plat dans `publishDir`.
+4. Template JBake minimal `[(${content.body})]` ; CSS référencé sous `css/styles.css` pour la sortie JBake.
+5. `office/sites/dashboard/site.yml` pointe vers `dashboard-gradle/build/dashboard-publish`.
+6. Tests : 31 unit + 6 functional + 10 Cucumber = 47/47 JUnit PASS + 10/10 Cucumber PASS.
+7. Validation end-to-end : `./gradlew -p runner-gradle -PsiteName=dashboard serve` OK sur `localhost:8820`.
 
 == Statut
 
@@ -20,10 +23,11 @@
 - DSH-5 (DAG visualization) : 8/8 pts ✅
 - DSH-6 (Timeline MVP0) : 5/5 pts ✅
 - DSH-7 (Intégration runner-gradle) : 5/5 pts ✅
+- DSH-10 (Site JBake-compatible bakery) : 5/5 pts ✅
 - DSH-8 (GitHub Sync) : 0/8 pts PLANIFIE
 - PUB (Maven Central) : 0/5 pts PLANIFIE
 
-== Prochaine session (010)
+== Prochaine session (011)
 
 *Priorité P1* : PUB — Publication Maven Central nmcp.
 
@@ -32,4 +36,4 @@
 3. `./gradlew build -x test` puis `./gradlew publishAggregationToCentralPortal --no-daemon` (sur demande explicite)
 4. Mettre à jour la documentation et le portefeuille
 
-*Alternative P2* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc / BACKLOG.adoc par clone/pull git des boroughs (pas d'API GitHub spécifique).
+*Alternative P2* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc / BACKLOG.adoc par clone/pull git des boroughs.

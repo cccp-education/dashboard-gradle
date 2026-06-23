@@ -34,11 +34,11 @@ class DashboardWorld {
             }
 
             val consumeDashboard by tasks.registering {
-                dependsOn(tasks.named("publishDashboard"))
+                dependsOn(tasks.named("publishDashboardSite"))
                 doLast {
-                    val published = file("build/dashboard-publish/index.html")
-                    require(published.exists()) { "published dashboard index.html not found" }
-                    println("Consumed dashboard index.html")
+                    val published = file("build/dashboard-publish/jbake.properties")
+                    require(published.exists()) { "published dashboard JBake site not found" }
+                    println("Consumed dashboard JBake site")
                 }
             }
         """.trimIndent())

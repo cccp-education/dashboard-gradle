@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-23 — Session 009
-_Session terminee_ : 009
-_Prochaine session_ : 010 — PUB Maven Central nmcp
+_Derniere mise a jour_ : 2026-06-23 — Session 010
+_Session terminee_ : 010
+_Prochaine session_ : 011 — PUB Maven Central nmcp ou DSH-8 Git Sync
 
 '''
 
@@ -49,6 +49,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 007 | 2026-06-23 | refactoring + implementation | **Renommage packages + DSH-5 DAG visualization + traduction anglaise** — packages `dashboard.*`, `DagGraphBuilder`, vis.js, README/Gherkin anglais, 31/31 tests PASS | 10/10
 | 008 | 2026-06-23 | implementation | **DSH-6 Timeline MVP0** — domaine `dashboard.timeline`, `Milestone`, `Timeline`, `TimelineBuilder`, section template, 42/42 PASS + 9/9 Cucumber PASS | 10/10
 | 009 | 2026-06-23 | refactoring + implementation | **DSH-7 Intégration runner-gradle** — `dashboard.publish.PublishDashboardTask` (@InputDirectory/@OutputDirectory/@CacheableTask), `DashboardConstants`, wiring consommable N3, 47/47 JUnit PASS + 10/10 Cucumber PASS | 10/10
+| 010 | 2026-06-23 | refactoring + integration | **JBake-compatible site** — site JBake consommable par bakery-gradle `serve`, renommage `publishDashboard` → `publishDashboardSite`, template `[(${content.body})]`, chemins CSS `css/styles.css`, 47/47 JUnit PASS + 10/10 Cucumber PASS, serve OK localhost:8820 | 10/10
 |===
 
 '''
@@ -67,6 +68,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | ✅ S009 (5/5 pts) | Dashboard
 | DSH-8 | Git Sync — refresh par clone/pull git des boroughs | 8 | P2 | PLANIFIE | Dashboard
 | PUB | Publication Maven Central nmcp | 5 | P1 | PLANIFIE | Dashboard
+| DSH-10 | Site JBake-compatible consommable par bakery-gradle | 5 | P1 | ✅ S010 | Dashboard
 |===
 
 '''

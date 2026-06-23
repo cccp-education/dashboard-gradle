@@ -37,7 +37,7 @@ cd .. && ./gradlew tasks
 
 - `crawlDashboard` — crawls all `INDEX.adoc` and `SESSIONS_HISTORY.adoc` files and produces `build/dashboard/dashboard-data.json`
 - `generateDashboard` — renders the static dashboard site (`index.html`, `styles.css`, DAG graph)
-- `publishDashboard` — copies the generated site to `build/dashboard-publish`
+- `publishDashboardSite` — copies the generated JBake-compatible site to `build/dashboard-publish`
 
 == Testing
 

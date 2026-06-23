@@ -14,7 +14,7 @@ import java.nio.file.Files
  * Registers three tasks:
  * - `crawlDashboard`: scans INDEX.adoc / SESSIONS_HISTORY.adoc and writes dashboard-data.json
  * - `generateDashboard`: renders the static HTML/CSS dashboard from the JSON data
- * - `publishDashboard`: copies the generated site to the configured publish directory
+ * - `publishDashboardSite`: copies the generated site to the configured publish directory
  */
 class DashboardPlugin : Plugin<Project> {
 
@@ -70,7 +70,7 @@ class DashboardPlugin : Plugin<Project> {
             }
         }
 
-        project.tasks.register("publishDashboard", PublishDashboardTask::class.java) { task ->
+        project.tasks.register("publishDashboardSite", PublishDashboardTask::class.java) { task ->
             task.dependsOn("generateDashboard")
             task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
             task.publishDir.set(project.layout.projectDirectory.dir(extension.publishDir))

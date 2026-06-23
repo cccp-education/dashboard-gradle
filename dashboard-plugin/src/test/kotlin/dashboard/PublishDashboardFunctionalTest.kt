@@ -22,29 +22,30 @@ class PublishDashboardFunctionalTest {
     }
 
     @Test
-    fun `publishDashboard should copy generated dashboard to publish directory`() {
+    fun `publishDashboardSite should copy generated dashboard JBake site to publish directory`() {
         writePluginProject()
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
         val result = GradleRunner.create()
             .withProjectDir(testDir.toFile())
-            .withArguments("publishDashboard", "--stacktrace")
+            .withArguments("publishDashboardSite", "--stacktrace")
             .withPluginClasspath()
             .build()
 
-        assertThat(result.task(":publishDashboard")?.outcome).isIn(
+        assertThat(result.task(":publishDashboardSite")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
             org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
         )
         assertThat(result.output).contains("Dashboard published")
 
         val publishDir = testDir.resolve("build/dashboard-publish")
-        assertThat(publishDir.resolve("index.html")).exists()
-        assertThat(publishDir.resolve("styles.css")).exists()
+        assertThat(publishDir.resolve("jbake.properties")).exists()
+        assertThat(publishDir.resolve("content/index.html")).exists()
+        assertThat(publishDir.resolve("assets/css/styles.css")).exists()
     }
 
     @Test
-    fun `publishDashboard output directory should be consumable by another Gradle task`() {
+    fun `publishDashboardSite output directory should be consumable by another Gradle task`() {
         writePluginProjectWithConsumer()
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
@@ -54,16 +55,16 @@ class PublishDashboardFunctionalTest {
             .withPluginClasspath()
             .build()
 
-        assertThat(result.task(":publishDashboard")?.outcome).isIn(
+        assertThat(result.task(":publishDashboardSite")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
             org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
         )
         assertThat(result.task(":consumeDashboard")?.outcome).isEqualTo(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS
         )
-        assertThat(result.output).contains("Consumed dashboard index.html")
+        assertThat(result.output).contains("Consumed dashboard JBake site")
 
-        assertThat(testDir.resolve("build/dashboard-publish/index.html")).exists()
+        assertThat(testDir.resolve("build/dashboard-publish/jbake.properties")).exists()
     }
 
     private fun writePluginProject() {
@@ -92,11 +93,11 @@ class PublishDashboardFunctionalTest {
             }
 
             val consumeDashboard by tasks.registering {
-                dependsOn(tasks.named("publishDashboard"))
+                dependsOn(tasks.named("publishDashboardSite"))
                 doLast {
-                    val published = file("build/dashboard-publish/index.html")
-                    require(published.exists()) { "published dashboard index.html not found" }
-                    println("Consumed dashboard index.html")
+                    val published = file("build/dashboard-publish/jbake.properties")
+                    require(published.exists()) { "published dashboard JBake site not found" }
+                    println("Consumed dashboard JBake site")
                 }
             }
         """.trimIndent())
