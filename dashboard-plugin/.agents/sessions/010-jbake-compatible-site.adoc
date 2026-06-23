@@ -1,0 +1,68 @@
+= Session 010 — Dashboard site JBake-compatible pour serveur bakery
+:date: 2026-06-23
+:status: TERMINÉ
+
+== Objectif
+
+Permettre à runner-gradle/bakery-gradle de servir le dashboard via sa tâche `serve`,
+en transformant l'output du plugin dashboard en site JBake valide.
+
+== Décisions
+
+* Le dashboard émet désormais *deux* structures dans `build/dashboard` :
+  - site plat (legacy) : `index.html` + `styles.css` + `dashboard-data.json`
+  - site JBake : `jbake/` avec `jbake.properties`, `content/index.html`, `templates/index.thyme`,
+    `assets/css/styles.css`, `assets/js/dashboard-data.json`
+* `publishDashboard` est renommé en `publishDashboardSite` pour éviter l'ambigüité
+  avec les tâches Maven `publishDashboardPluginMarker...` du plugin `maven-publish`.
+* `publishDashboardSite` publie le sous-répertoire `jbake/` à plat dans `build/dashboard-publish`.
+* Le template JBake `index.thyme` est minimal (`[(${content.body})]`) pour ne pas écraser le HTML.
+* `site.yml` de `office/sites/dashboard/` pointe vers `dashboard-gradle/build/dashboard-publish`.
+* Le CSS est référencé sous `css/styles.css` dans le contenu JBake car JBake déplace
+  `assets/css/...` vers `css/...` dans le répertoire de sortie.
+
+== Fichiers créés / modifiés
+
+[cols="3,5,2"]
+|===
+| Fichier | Rôle | Lignes
+| `src/main/kotlin/dashboard/render/DashboardRenderer.kt` | Émission site JBake + `jbake.properties` + template + assets | +35
+| `src/main/resources/templates/jbake-index.thyme` | Template JBake minimal `[(${content.body})]` | 1
+| `src/main/kotlin/dashboard/publish/PublishDashboardTask.kt` | Copie `outputDir/jbake/` vers `publishDir` | ~10
+| `src/main/kotlin/dashboard/DashboardPlugin.kt` | Renommage `publishDashboard` → `publishDashboardSite` | 1
+| `src/test/kotlin/dashboard/publish/PublishDashboardTaskTest.kt` | MAJ assertions JBake | ~8
+| `src/test/kotlin/dashboard/PublishDashboardFunctionalTest.kt` | MAJ assertions JBake | ~10
+| `src/test/scenarios/dashboard/scenarios/DashboardWorld.kt` | MAJ consumer task JBake | ~4
+| `src/test/scenarios/dashboard/scenarios/CrawlSteps.kt` | MAJ message attendu JBake | ~2
+| `src/test/features/dashboard_generate.feature` | MAJ scénarios JBake | ~2
+| `src/test/kotlin/dashboard/DashboardPluginTest.kt` | Renommage tâche | 1
+| `README.adoc` | Documentation tâches | 1
+| `PROMPT_REPRISE.adoc` | Contexte mission accomplie | 1
+| `BACKLOG.adoc` | Renommage tâche | 1
+| `.agents/TEST_COVERAGE_ANALYSIS.adoc` | Noms tests mis à jour | 2
+| `office/sites/dashboard/site.yml` | Pointe vers `dashboard-gradle/build/dashboard-publish` | 1
+|===
+
+== Validation
+
+* `./gradlew -p dashboard-plugin build -q publishToMavenLocal -q` ✅
+* `./gradlew -p dashboard-plugin check -q` ✅ 47/47 JUnit + 10/10 Cucumber PASS
+* `./gradlew publishDashboardSite -q` ✅ génère `dashboard-gradle/build/dashboard-publish/jbake.properties`
+* `./gradlew -p runner-gradle -PsiteName=dashboard bake` ✅ produit `runner-gradle/build/bake/index.html`
+* `./gradlew -p runner-gradle -PsiteName=dashboard serve` ✅ serveur JBake actif sur `localhost:8820`,
+  HTML + CSS servis correctement
+
+== Métriques post-session
+
+|===
+| Métrique | Valeur
+| Tests unitaires | 31
+| Tests fonctionnels | 6
+| Scénarios Cucumber | 10
+| Total PASS | 47 unit/functional + 10 Cucumber
+|===
+
+== Prochaine session
+
+* DSH-8 GitHub Sync — refresh depuis raw API (P2, 8 pts) OU
+* PUB Maven Central nmcp (P1, 5 pts)

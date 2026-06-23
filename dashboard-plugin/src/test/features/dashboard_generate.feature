@@ -52,10 +52,10 @@ Feature: Dashboard static site generation
     And a foundry directory with INDEX.adoc containing epics:
       | EPIC  | Subject   | Pts | Prio | Status  |
       | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
-    When I execute the "publishDashboard" task
+    When I execute the "publishDashboardSite" task
     Then the build should succeed
     And the build log should contain "Dashboard published"
-    And the dashboard site should be published at "build/dashboard-publish/index.html"
+    And the dashboard site should be published at "build/dashboard-publish/jbake.properties"
 
   Scenario: Publish dashboard output is consumable by runner-gradle
     Given a Gradle project with the dashboard plugin applied as a publishable artifact
@@ -64,4 +64,4 @@ Feature: Dashboard static site generation
       | DSH-0 | Bootstrap | 3   | P0   | TERMINE |
     When I execute the "consumeDashboard" task
     Then the build should succeed
-    And the publishDashboard task should be consumable by another task
+    And the publishDashboardSite task should be consumable by another task

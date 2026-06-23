@@ -15,7 +15,7 @@ class DashboardPluginTest {
 
         assertThat(project.tasks.findByName("crawlDashboard")).isNotNull
         assertThat(project.tasks.findByName("generateDashboard")).isNotNull
-        assertThat(project.tasks.findByName("publishDashboard")).isNotNull
+        assertThat(project.tasks.findByName("publishDashboardSite")).isNotNull
     }
 
     @Test

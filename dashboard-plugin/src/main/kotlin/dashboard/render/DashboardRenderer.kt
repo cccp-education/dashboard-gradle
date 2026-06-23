@@ -54,9 +54,23 @@ class DashboardRenderer {
         }
 
         val html = templateEngine.process("dashboard", context)
-        Files.writeString(outputDir.resolve("index.html"), html)
 
+        // ── Flat site (legacy, consumed by direct preview)
+        Files.writeString(outputDir.resolve("index.html"), html)
         copyStaticAsset("static/styles.css", outputDir.resolve("styles.css"))
+
+        // ── JBake-compatible site structure, consumable by bakery-gradle serve/bake
+        val jbakeDir = outputDir.resolve("jbake")
+        Files.createDirectories(jbakeDir)
+        writeJbakeProperties(jbakeDir.resolve("jbake.properties"))
+        Files.createDirectories(jbakeDir.resolve("content"))
+        Files.writeString(jbakeDir.resolve("content/index.html"), wrapAsJbakeContent(html.replace("href=\"styles.css\"", "href=\"css/styles.css\"")))
+        Files.createDirectories(jbakeDir.resolve("templates"))
+        copyStaticAsset("templates/jbake-index.thyme", jbakeDir.resolve("templates/index.thyme"))
+        Files.createDirectories(jbakeDir.resolve("assets/css"))
+        copyStaticAsset("static/styles.css", jbakeDir.resolve("assets/css/styles.css"))
+        Files.createDirectories(jbakeDir.resolve("assets/js"))
+        Files.writeString(jbakeDir.resolve("assets/js/dashboard-data.json"), mapper.writeValueAsString(data))
     }
 
     /**
@@ -83,6 +97,29 @@ class DashboardRenderer {
         javaClass.classLoader.getResourceAsStream(resourcePath)?.use { input ->
             Files.copy(input, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         } ?: throw IllegalStateException("Static asset not found: $resourcePath")
+    }
+
+    private fun writeJbakeProperties(target: Path) {
+        val props = listOf(
+            "site.host=https://cccp.education/dashboard/",
+            "render.index=false",
+            "template.page.file=index.thyme",
+            "render.archive=false",
+            "render.tags=false",
+            "render.sitemap=false",
+            "render.feed=false"
+        )
+        Files.writeString(target, props.joinToString("\n", postfix = "\n"))
+    }
+
+    private fun wrapAsJbakeContent(html: String): String {
+        return """title=Dashboard Workspace CCCP
+type=page
+status=published
+date=2026-06-23
+~~~~~~
+$html
+""".trimEnd()
     }
 
     private fun createTemplateEngine(): TemplateEngine {
