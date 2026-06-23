@@ -4,6 +4,9 @@ _Derniere mise a jour_ : 2026-06-23 — Session 010
 _Session terminee_ : 010
 _Prochaine session_ : 011 — PUB Maven Central nmcp ou DSH-8 Git Sync
 
+NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
+Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).
+
 '''
 
 == Borough
@@ -11,6 +14,7 @@ _Prochaine session_ : 011 — PUB Maven Central nmcp ou DSH-8 Git Sync
 |===
 | Borough | Project | DAG | Role in MVP0 | Session
 | Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
+| Brooklin Flow | dashboard-flow-gradle | N3 | Dashboard React Flow interactif | S000
 |===
 
 == Regles Absolues
@@ -75,7 +79,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 
 == Portefeuille
 
-=== Projets gouvernes (extrait — 26 boroughs)
+=== Projets gouvernes (extrait — 28 boroughs)
 
 |===
 | Borough | Projet | DAG | Role | Session
@@ -105,4 +109,5 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | Grand Central | graphify-gradle | N0 | Graphe connaissance | —
 | Liberty | api-key-pool-gradle | N0 | Pool cles API LLM | —
 | Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
+| Brooklin Flow | dashboard-flow-gradle | N3 | Dashboard React Flow interactif | S000
 |===
