@@ -1,0 +1,34 @@
+= Session 011 — Nettoyage historique git ALGER + portfolio dashboard-flow-gradle
+
+Date : 2026-06-28
+Score : 10/10
+
+== Objectif
+
+- Nettoyer les références ALGER dans l'historique git (filter-branch)
+- Ajouter dashboard-flow-gradle au portefeuille
+- Finaliser la création de KINSHASA (container-provision-gradle N0)
+
+== Actions réalisées
+
+1. git filter-branch — remplacement ALGER → dashboard-plugin (SESSION_CHECKLIST.adoc, git log)
+2. Ajout commit `S000 — Ajout dashboard-flow-gradle au portefeuille (Brooklin Flow N3)`
+3. Force push vers origin/main
+4. Création borough KINSHASA (container-provision-gradle, N0) dans `foundry/public/`
+5. Référencement KINSHASA dans AGENTS.adoc racine
+
+== Fichiers modifiés
+
+- `.git/` — historique réécrit (filter-branch)
+- `dashboard-plugin/.agents/SESSION_CHECKLIST.adoc` — contenu ALGER → dashboard-plugin (via filter-branch)
+- INDEX.adoc (dashboard-plugin/.agents/) — mise à jour portefeuille (28→29 boroughs)
+- (hors scope dashboard) AGENTS.adoc racine — ajout KINSHASA
+
+== Tests
+
+Aucun test modifié — opération purement git/gouvernance
+
+== Prochaine session (012)
+
+- PUB : Publication Maven Central nmcp
+- DSH-8 : Git Sync

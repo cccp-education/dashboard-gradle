@@ -28,6 +28,12 @@
 - DSH-7 Intégration runner-gradle + déploiement ✅
 - DSH-10 Site JBake-compatible consommable par bakery-gradle ✅
 
+=== S011 — Nettoyage historique git ALGER + portfolio dashboard-flow-gradle
+- git filter-branch ALGER → dashboard-plugin
+- Ajout commit S000 Ajout dashboard-flow-gradle au portefeuille
+- Force push origin/main
+- Zéro nouveau test
+
 == Points ouverts à reporter
 
 - DSH-8 Git Sync (clone/pull des boroughs)

@@ -1,8 +1,8 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-06-23 — Session 010
-_Session terminee_ : 010
-_Prochaine session_ : 011 — PUB Maven Central nmcp ou DSH-8 Git Sync
+_Derniere mise a jour_ : 2026-06-28 — Session 011
+_Session terminee_ : 011
+_Prochaine session_ : 012 — PUB Maven Central nmcp ou DSH-8 Git Sync
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).
@@ -13,7 +13,7 @@ Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Fl
 
 |===
 | Borough | Project | DAG | Role in MVP0 | Session
-| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
+| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S011
 | Brooklin Flow | dashboard-flow-gradle | N3 | Dashboard React Flow interactif | S000
 |===
 
@@ -54,6 +54,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | 008 | 2026-06-23 | implementation | **DSH-6 Timeline MVP0** — domaine `dashboard.timeline`, `Milestone`, `Timeline`, `TimelineBuilder`, section template, 42/42 PASS + 9/9 Cucumber PASS | 10/10
 | 009 | 2026-06-23 | refactoring + implementation | **DSH-7 Intégration runner-gradle** — `dashboard.publish.PublishDashboardTask` (@InputDirectory/@OutputDirectory/@CacheableTask), `DashboardConstants`, wiring consommable N3, 47/47 JUnit PASS + 10/10 Cucumber PASS | 10/10
 | 010 | 2026-06-23 | refactoring + integration | **JBake-compatible site** — site JBake consommable par bakery-gradle `serve`, renommage `publishDashboard` → `publishDashboardSite`, template `[(${content.body})]`, chemins CSS `css/styles.css`, 47/47 JUnit PASS + 10/10 Cucumber PASS, serve OK localhost:8820 | 10/10
+| 011 | 2026-06-28 | gouvernance | **Nettoyage historique git ALGER + portfolio dashboard-flow-gradle** — filter-branch, référencement KINSHASA dans AGENTS.adoc | 10/10
 |===
 
 '''
@@ -108,6 +109,7 @@ _L'agent NE DOIT JAMAIS_ executer de commit, push, merge SANS permission explici
 | HTOWN | plantuml-gradle | N2 | Diagrammes LLM | —
 | Grand Central | graphify-gradle | N0 | Graphe connaissance | —
 | Liberty | api-key-pool-gradle | N0 | Pool cles API LLM | —
-| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S009
+| Dashboard | dashboard-gradle | N3 | Dashboard vision/avancement | S011
 | Brooklin Flow | dashboard-flow-gradle | N3 | Dashboard React Flow interactif | S000
+| container-provision | container-provision-gradle | N0 | Container provision Playwright/Colab | S000
 |===
