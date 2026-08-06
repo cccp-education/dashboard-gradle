@@ -9,7 +9,7 @@ plugins {
 
 group = "education.cccp"
 version = "0.0.1"
-kotlin.jvmToolchain(24)
+kotlin.jvmToolchain(25)
 
 repositories {
     mavenLocal()
