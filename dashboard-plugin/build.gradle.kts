@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "education.cccp"
-version = "0.0.1"
+version = ws.versions.dashboard.plugin.get()
 kotlin.jvmToolchain(25)
 
 repositories {

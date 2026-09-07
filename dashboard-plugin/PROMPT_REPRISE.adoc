@@ -1,28 +1,40 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 012
-:date: 2026-06-28
+:session: 216
+:date: 2026-09-07
 
-== Mission accomplie (S011)
+== Session accomplie (S-215, cross-borough MEMPHIS)
 
-*Nettoyage historique git ALGER + portfolio dashboard-flow-gradle* :
-1. git filter-branch — remplacement ALGER → dashboard-plugin dans SESSION_CHECKLIST.adoc et git log
-2. Ajout commit S000 — Ajout dashboard-flow-gradle au portefeuille
-3. Force push vers origin/main
-4. Référencement container-provision-gradle (KINSHASA N0) dans AGENTS.adoc racine
+*1re release Maven Central + adoption version catalog ws (ROLLOUT-6)* :
+1. Fix creds nmcp settings (pattern graphify — chargement explicite
+   `~/.gradle/gradle.properties`)
+2. dashboard-plugin 0.0.1 publié Central (bundle `e0619a49`, repo1 200)
+3. Adoption pin ws : settings `from("education.cccp:workspace-catalog:0.0.34")`
+   + `version = ws.versions.dashboard.plugin.get()`
+4. Gate : check VERT 58 tests 0 FAIL (baseline exacte)
 
 == Statut
 
 - DSH-0→DSH-7, DSH-10 : ✅ TERMINÉS
-- DSH-8 (GitHub Sync) : 0/8 pts PLANIFIÉ
-- PUB (Maven Central) : 0/5 pts PLANIFIÉ
+- PUB (Maven Central) : ✅ TERMINÉ (S-215 — 0.0.1 sur Central)
+- DSH-8 (GitHub Sync) : 0/8 pts PLANIFIÉ (optionnel)
 
-== Prochaine session (012)
+== Règle à retenir (piège #13 MEMPHIS)
 
-*Priorité P1* : PUB — Publication Maven Central nmcp.
+Le block `nmcpSettings { centralPortal { ... } }` n'hérite PAS des
+credentials globaux — chargement explicite `~/.gradle/gradle.properties`
+requis (pattern graphify/dashboard).
 
-1. Vérifier la configuration nmcp (settings + build.gradle.kts)
-2. S'assurer que toutes les dépendances sont des releases (pas de SNAPSHOT)
-3. `./gradlew build -x test` puis `./gradlew publishAggregationToCentralPortal --no-daemon` (sur demande explicite)
-4. Mettre à jour la documentation et le portefeuille
+== Prochaine session (216) — à la demande
 
-*Alternative P2* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc / BACKLOG.adoc par clone/pull git des boroughs.
+*Priorité P1* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc /
+BACKLOG.adoc des 30 boroughs par clone/pull git.
+
+*Alternative P2* : maintenance (audit adoption catalog MEMPHIS, dette
+bakery BKY-TEST-FLAKY).
+
+== Vérifications ouverture
+
+. `git status` — dashboard-gradle committé/poussé ?
+. Central `<latest>` dashboard-plugin 0.0.1
+. `./gradlew check` VERT (58/0, version dérivée ws — nécessite mavenLocal
+   ou Central catalog 0.0.34)

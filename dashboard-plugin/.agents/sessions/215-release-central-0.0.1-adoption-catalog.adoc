@@ -1,0 +1,38 @@
+= Rapport Session 215 — dashboard-gradle : 1re release Central + adoption version catalog (cross-borough MEMPHIS)
+
+== Contexte
+
+Session pilotée depuis MEMPHIS (workspace-bom S-215). La release Central
+BOM 0.0.33 + graphify 0.0.3 a levé le prérequis DAG de ROLLOUT-6 : le
+dashboard-plugin n'était jamais publié Central → pas d'entrée catalog
+(D8) → adoption impossible.
+
+== Déroulement
+
+1. *Baseline* : `check` VERT 58 tests 0 FAIL (baseline S-011 préservée,
+   plugin inchangé depuis 3 mois).
+2. *Fix creds nmcp settings* : `publishAggregationToCentralPortal` →
+   BUILD FAILED « Nmcp: Central Portal 'username' is missing ». Le block
+   `nmcpSettings` ne charge pas tout seul `~/.gradle/gradle.properties`.
+   Fix : pattern graphify (`java.util.Properties` chargé explicitement).
+3. *Publication Central* : bundle `e0619a49` (AUTOMATIC), repo1 HTTP 200
+   après ~12 min. mavenLocal 0.0.1 signée préalable (pom/jar/module .asc).
+4. *Adoption ROLLOUT-6* : settings pin
+   `from("education.cccp:workspace-catalog:0.0.34")` (D4 pin unique) +
+   `version = ws.versions.dashboard.plugin.get()` remplace le hardcode
+   `version = "0.0.1"` dans `dashboard-plugin/build.gradle.kts`
+   (pattern graphify S-214).
+5. *Gates* : `check` VERT 58/0 (baseline exacte), mavenLocal re-signée
+   0.0.1, BOM 0.0.34 publié Central (bundle `b2189fa6`) avec entrée
+   `dashboard-plugin = "0.0.1"` transportée (D12 Maven only).
+
+== Fichiers modifiés
+
+- `settings.gradle.kts` — creds nmcp + pin ws 0.0.34
+- `dashboard-plugin/build.gradle.kts` — version dérivée ws
+
+== Règle à retenir
+
+Le block `nmcpSettings { centralPortal { ... } }` de `nmcp.settings` 1.5.0
+n'hérite PAS des credentials globaux : chargement explicite
+`~/.gradle/gradle.properties` requis (mêmes clés `ossrhUsername`/`ossrhPassword`).

@@ -2,6 +2,7 @@
 
 |===
 | # | Date | Objet | Fichiers
+| 215 | 2026-09-07 | 1re release Maven Central dashboard-plugin 0.0.1 (bundle `e0619a49`, repo1 200) + adoption version catalog ws 0.0.34 (ROLLOUT-6 MEMPHIS) — fix creds nmcp settings, check 58/0 baseline | settings.gradle.kts, dashboard-plugin/build.gradle.kts, .agents/sessions/215-release-central-0.0.1-adoption-catalog.adoc, PROMPT_REPRISE.adoc, INDEX.adoc
 | 000 | 2026-06-18 | Bootstrap gouvernance Dashboard — AGENT.adoc, INDEX.adoc, PROMPT_REPRISE, BACKLOG, TODO, SESSIONS_HISTORY, TEST_COVERAGE_ANALYSIS, structure repertoire | 8 fichiers crees
 | 001 | 2026-06-18 | DSH-1 Plugin scaffold — settings.gradle.kts, build.gradle.kts, gradle/libs.versions.toml, DashboardPlugin.kt, DashboardExtension.kt, consumer root, 4/4 tests PASS | 7 fichiers crees
 | 002 | 2026-06-19 | DSH-2 IndexCrawler — DDD DashboardData, TDD IndexCrawler, crawlDashboard JSON, Cucumber BDD, 14/14 tests PASS | 12 fichiers crees

@@ -1,5 +1,7 @@
 = BACKLOG — dashboard-gradle
 
+_Dernière mise à jour : 2026-09-07 (S-215 — PUB Maven Central TERMINÉ : dashboard-plugin 0.0.1 sur Central + adoption version catalog ws 0.0.34. Reste DSH-8 P2 optionnel.)_
+
 == P0 — Terminé
 
 |===
@@ -40,7 +42,7 @@
 
 |===
 | Item | EPIC | Pts
-| Publication Maven Central nmcp | PUB | 5
+| Publication Maven Central nmcp | PUB | ✅ TERMINÉ (S-215 — 0.0.1 sur Central bundle `e0619a49` + adoption version catalog ws 0.0.34)
 |===
 
 == P2 — Planifie
