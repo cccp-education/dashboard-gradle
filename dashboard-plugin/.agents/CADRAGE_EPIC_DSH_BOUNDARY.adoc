@@ -1,0 +1,388 @@
+= CADRAGE EPIC DSH-BOUNDARY — Frontière Dashboard : ALGER / Brooklin Flow / Edster
+
+:toc: macro
+:sectnums:
+:date: 2026-09-14
+:source: Session 216 (gouvernance pure, pattern S-057/S-063)
+
+toc::[]
+
+== Contexte — L'arbitrage du pilote
+
+Le pilote a tranché (session 216) sur le repositionnement de la couche
+d'observation du workspace :
+
+. *Edster reste fermé* (privé). Exposer le métier riche (gestion de
+  contenus + orchestration interactif) au travers d'un serveur JHipster
+  OSS *dépasse le cadre de la vision OSS* — c'est donner le fond de
+  commerce. L'edster de paiement (Stripe + Orange Money, MVP1) sera un
+  *plugin JHipster interne non-OSS*.
+
+. *Les dashboards portent la vitrine OSS.* ALGER (dashboard-gradle) et
+  Brooklin Flow (dashboard-flow-gradle) restent publics (Apache 2.0),
+  statiques, sans serveur, sans auth — lisibles par un contributeur
+  externe sans compte.
+
+. *Les dashboards doivent trouver le bon équilibre UX/UI* entre
+  avancement, vision, structure, et une navigabilité *sans profondeur*.
+
+Ce document fige la frontière entre les trois surfaces et l'architecture
+d'information cible. *Zéro code modifié* — cadrage pur.
+
+== Audit — 6 constats
+
+[cols="1,3,3", options="header"]
+|===
+| # | Constat | Preuve
+
+| 1
+| ALGER empiète sur le territoire de Brooklin Flow (graphe interactif)
+| `dashboard.thyme:160-220` — canvas vis.js `new vis.Network(...)` : ALGER
+dessine un graphe navigable alors que la structure appartient à Brooklin Flow.
+Chevauchement direct.
+
+| 2
+| Le dogfood d'ALGER est tronqué — il ne crawle que ses propres `.adoc`
+| `build.gradle.kts` (racine) — `configPath = "dashboard-plugin"`. Les 30
+boroughs de `foundry/` ne sont pas agrégés. Le `BACKLOG.adoc` racine (EPICs
+GBL transverse) n'est jamais lu.
+
+| 3
+| Le crawler ignore le `BACKLOG.adoc` et les points détaillés
+| `IndexCrawler.kt:126-150` — ne parse que les tables EPIC des `INDEX.adoc`
+(avec `Pts` + `Statut`). Le détail US/points des `BACKLOG.adoc` est ignoré.
+
+| 4
+| Les tâches ALGER ne sont pas incrémentales
+| `DashboardPlugin.kt:24-71` — `crawlDashboard`/`generateDashboard` sont des
+`task.doLast` sans `@InputFiles`/`@OutputDirectory`/`@CacheableTask`. Gradle
+les rejoue systématiquement (l'inverse de « reconstruire en cas de
+changement »). `PublishDashboardTask` est déjà incrémental (S-009).
+
+| 5
+| Brooklin Flow est un borough vide (gouvernance seule)
+| `dashboard-flow-gradle/dashboard-plugin/` — zéro code Kotlin/React, seul
+DFL-0 (bootstrap) est terminé. Les données du graphe existent pourtant :
+`office/graph.json` (21 174 nœuds) et `office/metiers/FPA/graph-content.json`
+(4 202 nœuds).
+
+| 6
+| Le besoin interactif (lancer des tâches Gradle depuis l'UI) n'a pas de
+  place dans un site statique
+| Un site statique ne peut pas lancer de processus. Un « serveur d'actions »
+au pied de bakery/dashboard serait un combat contre le médium. Edster (déjà
+serveur Spring Boot + PostgreSQL + JWT) est le foyer naturel de l'interactif
+— mais il reste *privé*.
+
+|===
+
+== Décisions architecturales (cadrage S-216)
+
+. *Trois surfaces, trois rôles, zéro chevauchement.*
+
+[cols="2,2,4", options="header"]
+|===
+| Surface | Statut | Rôle
+
+| *ALGER* (dashboard-gradle)
+| OSS (Apache 2.0), statique
+| Lit la *gouvernance* (`.adoc`) et mesure le *temps/quantités* : avancement,
+vision (critical path + jalons), structure en couches.
+
+| *Brooklin Flow* (dashboard-flow-gradle)
+| OSS (Apache 2.0), statique
+| Lit le *graphe* (`graph.json`) et expose la *structure/relations* :
+navigation interactive, coloration par statut, diff structurel.
+
+| *Edster* (foundry/private)
+| *Privé*, serveur
+| L'interactif avec état : gestion de contenus, actions Gradle (Tooling API),
+auth, persistance. *Hors périmètre OSS* — ingère les pivots JSON d'ALGER.
+|===
+
+. *Source de données exclusive* — la règle qui rend le chevauchement
+  impossible :
+
+[source]
+----
+.adoc gouvernance ──crawlDashboard (ALGER)──► dashboard-data.json
+                                                  (métriques SEULEMENT, jamais de structure)
+graphify (N0) ─────extract────────────────────► graph.json
+                                                  (structure SEULEMENT, jamais de métriques)
+
+ALGER          : rend ses pages à partir de dashboard-data.json (+ sa table DAG en couches)
+Brooklin Flow  : rend le graphe depuis graph.json + dashboard-data.json (overlay coloration)
+Edster (privé) : ingère les 2 pivots (read-only) ; actions via Tooling API
+----
+
+. *Boundary rule — ALGER s'interdit* : tout canvas/graphe interactif
+  (structure = Brooklin Flow), toute logique LLM/RAG, toute action serveur.
+
+. *Boundary rule — Brooklin Flow s'interdit* : tout calcul de
+  métrique/agrégation (avancement = ALGER), tout parsing des `.adoc`
+  gouvernance, toute logique LLM dans le front (l'enrichissement est
+  pré-calculé par Gradle).
+
+. *Retrait vis.js d'ALGER* (constat #1). La structure profonde est cédée
+  à Brooklin Flow. ALGER conserve une *table ordonnée N0→N4* (texte,
+  statut par borough) — pas de canvas.
+
+. *Le pivot `dashboard-data.json` est un contrat public* (N3→N0 de fait) :
+  ALGER le produit, Brooklin Flow et Edster le consomment. Toute évolution
+  de schéma est versionnée.
+
+. *L'interactif (lancer une tâche Gradle stricto local) vit dans Edster
+  privé*, pas dans les dashboards. Le flux « le site demande → Gradle
+  exécute » passe par Edster (endpoint REST + Gradle Tooling API), bindé
+  sur la machine locale, avec whitelist de tâches. ALGER/Brooklin Flow
+  restent *read-only* — un simple export JSON réingéré par Edster suffit.
+
+. *Zéro nouvelle dépendance cross-borough* : ALGER n'importe rien de
+  Brooklin Flow ni d'Edster. Le couplage est le *fichier JSON*, pas une
+  dépendance Gradle.
+
+. *Edster = cadrage séparé (privé)*. Ce document ne cadre que les
+  dashboards OSS. La spec Edster (pilotage + plugin paiement JHipster)
+  est un livrable privé hors gouvernance `foundry/public`.
+
+. *Templating JBake = Thymeleaf uniquement* (portée : *production*). Le
+  site ALGER est rendu par le moteur Thymeleaf embarqué (`TemplateEngine`
+  + `ClassLoaderTemplateResolver` pointant sur `templates/*.thyme`), puis
+  exposé dans la structure `jbake/` consommable par bakery/JBake
+  (`index.thyme`). *Aucun autre moteur de template* (Freemarker, Mustache,
+  Velocity, Pebble) n'est autorisé, ni aucune génération HTML ad hoc dans
+  le code Kotlin. Toute vue nouvelle (homepage Panorama, fiche borough)
+  est un template Thymeleaf. Contrainte transverse à toutes les US de
+  production. *Exception* : la Phase 0 (prototype UX) ci-dessous, hors
+  chaîne de rendu, cf. décision 11.
+
+. *Phase 0 — Prototype UX en pur HTML/CSS/JS/mock, AVANT toute
+  implémentation*. La première phase de l'EPIC produit un *prototype de
+  navigation jetable* (fichiers HTML/CSS/JS statiques + données mock)
+  dont l'unique but est de *fixer une expérience de scénario de navigation
+  cohérente* : le Panorama à 3 zones, la fiche borough, la coquille du
+  graphe, les états (vide / chargé / surchargé) et les transitions entre
+  niveaux. Ce prototype :
++
+  * *n'est pas* rendu par Thymeleaf, *n'est pas* du React Flow, *ne lit
+    aucune donnée réelle* (mock JSON en dur) — c'est un artefact de design ;
+  * vit dans un répertoire `prototype/` dédié, *n'est jamais publié* ni
+    déployé sur gh-pages ;
+  * sert de *référence visuelle contractuelle* que la Phase 1 reproduit
+    (ALGER en Thymeleaf, Brooklin Flow en React Flow) ;
+  * évite de figer l'UX dans le marbre d'un moteur de rendu avant de
+    l'avoir validée à moindre coût.
++
+  *Aucune US de production ne démarre avant que la Phase 0 ne soit validée
+  par le pilote.*
+
+. *English only* — code, commentaires, Gherkin (règle transverse).
+
+. *Méthode* : baby-step DDD/TDD/BDD strict RED → GREEN → REFACTOR,
+  3 niveaux (unit → functional → Cucumber). La Phase 0 (prototype)
+  échappe à TDD (artefact jetable) mais ses enseignements sont encodés
+  en scénarios BDD lors de la Phase 1.
+
+== Architecture d'information cible (UX/UI)
+
+*Règle d'or* : aucune information à plus de *2 clics*. Le détail profond
+vit dans les `.adoc` source — il se *lie*, il ne se *réplique* pas
+(zéro niveau 3).
+
+*Deux temps* : la Phase 0 *fixe* l'expérience (prototype HTML/CSS/JS/mock,
+jetable) ; la Phase 1 *implémente* la référence validée (Thymeleaf pour
+ALGER, React Flow pour Brooklin Flow). On ne code pas un moteur de rendu
+avant d'avoir validé le parcours.
+
+[source]
+----
+NIVEAU 0 ─ HOMEPAGE « Panorama » (une seule page, 3 zones équilibrées ~35/35/30)
+    ├─ Zone VISION     : chaîne critical path A1→A4 + jalons MVP0
+    │                    → répond « où est le goulot aujourd'hui »
+    ├─ Zone AVANCEMENT : progression par borough (points faits/total),
+    │                    statuts EPIC, sessions, santé versions
+    └─ Zone STRUCTURE  : couches N0→N4 (table simple) + 2 accès :
+                         « fiches borough » (ALGER) / « graphe » (Brooklin Flow)
+
+NIVEAU 1 ─ 2 pages secondaires (1 clic depuis la home, 0 sous-niveau)
+    ├─ Fiche borough (ALGER) : position DAG, ring critical path (A1/A2/A3/A4/hors),
+    │     % avancement, statuts EPIC en chips, dernières sessions, liens .adoc
+    └─ Graphe (Brooklin Flow) : structure navigable, filtres (couche N / borough /
+         statut), recherche, clic nœud → panneau récap (overlay dashboard-data.json)
+----
+
+*Équilibre avancement ⇄ vision* :
+
+* *Vision* — pas un graphique de plus : une composition unique
+  « chaîne A1→A4 + jalons » qui place chaque borough dans la séquence du
+  Graal MVP0. C'est la vue qui manque aujourd'hui (ALGER n'a qu'une
+  timeline plate).
+* *Avancement* — un agrégat lisible en 5 secondes (barres, %, chips),
+  jamais une table brute. Bascule sur les points (pas le décompte d'EPICs).
+* *Structure* — ALGER la *résume* en couches texte ; Brooklin Flow la
+  *déploie* en graphe navigable. Zéro concurrence visuelle.
+
+== Découpage US (~31 pts)
+
+*Phase 0 — Prototype UX (jetable, HTML/CSS/JS/mock)*
+
+[cols="1,3,2,1", options="header"]
+|===
+| US | Description | Statut | Pts
+
+| DSH-BOUNDARY-0
+| Cadrage EPIC (gouvernance pure, zéro code — cette session)
+| ✅ TERMINÉ (S-216)
+| 1
+
+| DSH-BOUNDARY-0P
+| *Phase 0 — Prototype de navigation* : maquette interactive en *pur
+  HTML/CSS/JS* avec *données mock* (JSON en dur), dans `prototype/`.
+  Fixe le scénario de navigation cohérent : Panorama 3 zones, fiche
+  borough, coquille du graphe, états (vide/chargé/surchargé), transitions
+  niveau 0 → niveau 1, responsive. *Aucune donnée réelle, aucun Thymeleaf,
+  aucun React Flow, jamais publié.* Livrable = référence visuelle
+  contractuelle validée par le pilote.
+| 🔲 À FAIRE
+| 3
+|===
+
+*Phase 1 — Implémentation (production)*
+
+[cols="1,3,2,1", options="header"]
+|===
+| US | Description | Statut | Pts
+
+| DSH-BOUNDARY-1
+| *ALGER — frontière structure* : retrait du canvas vis.js
+  (`dashboard.thyme`) + remplacement par une table ordonnée N0→N4
+  (borough, DAG, statut). La structure profonde est cédée à Brooklin Flow.
+  ~3 unit + 1 functional.
+| 🔲 À FAIRE
+| 3
+
+| DSH-BOUNDARY-2
+| *ALGER — avancement réel* : `configPath` → `foundry/` (agrégation des
+  30 boroughs) + parsing du `BACKLOG.adoc` racine (EPICs GBL transverse) +
+  calcul du % d'avancement par *points* (terminés/total) par borough.
+  Enrichissement du schéma `dashboard-data.json` (champ `progress`).
+  ~8 unit + 1 functional.
+| 🔲 À FAIRE
+| 5
+
+| DSH-BOUNDARY-3
+| *ALGER — incrémentalité* : `crawlDashboard`/`generateDashboard` passent
+  de `doLast` à `@TaskAction` avec `@InputFiles` (les `.adoc` crawés) +
+  `@OutputDirectory` + `@CacheableTask`. Gradle UP-TO-DATE seulement si
+  aucun `.adoc` (contenu ou structure) n'a changé. ~4 unit.
+| 🔲 À FAIRE
+| 3
+
+| DSH-BOUNDARY-4
+| *ALGER — homepage Panorama* : 3 zones équilibrées
+  (vision/avancement/structure) + page fiche borough (niveau 1).
+  Template Thymeleaf + CSS. ~2 functional + 2 Cucumber.
+| 🔲 À FAIRE
+| 5
+
+| DSH-BOUNDARY-5
+| *Brooklin Flow — graphe + overlay* : React Flow chargeant `graph.json`,
+  filtres (couche N / borough / statut), coloration par `dashboard-data.json`,
+  panneau récap au clic (niveau 1). Absorbe DFL-1 + DFL-2 (partiel).
+| 🔲 À FAIRE
+| 5
+
+| DSH-BOUNDARY-6
+| *Brooklin Flow — diff structurel* : comparaison de deux `graph.json`
+  (nœuds/arêtes ajoutés/supprimés) → vue de diff. Absorbe DFL-3.
+| 🔲 À FAIRE
+| 5
+
+| DSH-BOUNDARY-7
+| *Publication* : déploiement gh-pages des 2 sites (ALGER + Brooklin Flow)
+  via runner-gradle + entrée backlog. Absorbe DFL-7 + une partie de DSH-8.
+| 🔲 À FAIRE
+| 1
+|===
+
+== Devenir des EPICs existants
+
+[cols="2,3,2", options="header"]
+|===
+| EPIC | Devenir | Raison
+
+| DSH-8 (Git Sync, filtres, JSON export, dark mode)
+| *Réduit* — reste ALGER : Git Sync (refresh des 30 repos), filtres table,
+  mode sombre. « Export JSON » est déjà fondationnel (contrat public).
+| Affordances de tableau de bord — territoire ALGER.
+
+| DFL-1 (React Flow base)
+| *Absorbé* par DSH-BOUNDARY-5
+| Recadré sous la frontière (overlay + panneau, pas d'agrégation).
+
+| DFL-2 (enrichissement schéma graphify)
+| *Reste* — EPIC graphify
+| La structure du schéma est produite par graphify (N0), pas par le dashboard.
+
+| DFL-3 (diff impact)
+| *Absorbé* par DSH-BOUNDARY-6
+| Le diff structurel est le cœur du territoire Brooklin Flow.
+
+| DFL-4 (guided tours)
+| *Garde* — Brooklin Flow P2
+| Navigation structurelle, cohérent avec le graphe.
+
+| DFL-5 (fingerprinting incremental)
+| *Reste* — EPIC graphify
+| Optimisation de production du graphe (N0).
+
+| DFL-6 (RAG + persona + wiki)
+| *Garde* — Brooklin Flow P2/P3, RAG côté codebase
+| Hors frontière core ; la RAG est actionnée par codebase (N1).
+
+| DFL-7 (déploiement)
+| *Absorbé* par DSH-BOUNDARY-7
+| Publication commune des 2 sites.
+|===
+
+== Ordre d'exécution (baby-step)
+
+*Phase 0 — prototype (gate de validation pilote)*
+
+. *DSH-BOUNDARY-0P (prototype HTML/CSS/JS/mock)* — fixe l'expérience de
+   navigation. *Gate bloquant* : aucune US de la Phase 1 ne démarre avant
+   validation pilote du prototype.
+
+*Phase 1 — implémentation (production)*
+
+. DSH-BOUNDARY-1 (ALGER, retrait vis.js) — clarifie la frontière visuelle.
+. DSH-BOUNDARY-2 (ALGER, avancement réel) — débloque le contenu des 3 zones.
+. DSH-BOUNDARY-3 (ALGER, incrémentalité) — « rebuild on change ».
+. DSH-BOUNDARY-4 (ALGER, Panorama + fiche borough) — reproduit le
+   prototype validé en Thymeleaf.
+. DSH-BOUNDARY-5 (Brooklin Flow, graphe + overlay) — reproduit la
+   coquille du prototype en React Flow, consomme le pivot.
+. DSH-BOUNDARY-6 (Brooklin Flow, diff structurel).
+. DSH-BOUNDARY-7 (publication gh-pages) — gate final.
+
+== Gates et risques
+
+* *Contrat JSON* : `dashboard-data.json` doit être *versionné* avant que
+  Brooklin Flow et Edster ne le consomment (DSH-BOUNDARY-2). Un champ
+  `schemaVersion` est requis (décision d'implémentation US-2).
+* *Agrégation `foundry/`* : lire 30 boroughs = beaucoup d'I/O. Le walk
+  récursif existe déjà (`IndexCrawler.crawlDirectory`). Risque de crawler
+  des `build/` ou `.gradle/` — filtrer les répertoires techniques.
+* *Parsing `.adoc` hétérogène* : tous les `BACKLOG.adoc` n'ont pas un
+  schéma de table identique. Le parseur doit être tolérant (skip silencieux
+  + log), jamais planter.
+* *Incrémentalité* : déclarer les `@InputFiles` comme un `FileTree` filtrable
+  (`.adoc` uniquement) pour éviter que des artefacts de build ne cassent
+  l'UP-TO-DATE.
+* *Edster* : hors périmètre. Ne pas créer de dépendance Gradle ni de
+  gouvernance `foundry/public` pour Edster dans cet EPIC.
+* *Brooklin Flow reste statique* : React Flow produit un bundle JS statique,
+  pas de serveur. Le déploiement gh-pages est le même que les autres sites
+  bakery.
+* *Non-régression* : `./gradlew check` ALGER VERT (58 tests baseline).
+  Brooklin Flow démarre à zéro (DFL-0).

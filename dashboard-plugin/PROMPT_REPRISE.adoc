@@ -1,40 +1,44 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 216
-:date: 2026-09-07
+:session: 217
+:date: 2026-09-14
 
-== Session accomplie (S-215, cross-borough MEMPHIS)
+== Session accomplie (S-216, gouvernance pure)
 
-*1re release Maven Central + adoption version catalog ws (ROLLOUT-6)* :
-1. Fix creds nmcp settings (pattern graphify — chargement explicite
-   `~/.gradle/gradle.properties`)
-2. dashboard-plugin 0.0.1 publié Central (bundle `e0619a49`, repo1 200)
-3. Adoption pin ws : settings `from("education.cccp:workspace-catalog:0.0.34")`
-   + `version = ws.versions.dashboard.plugin.get()`
-4. Gate : check VERT 58 tests 0 FAIL (baseline exacte)
+*Cadrage EPIC DSH-BOUNDARY — frontière Dashboard* :
+
+1. Frontière actée : ALGER = pilotage (chiffres, gouvernance `.adoc`) /
+   Brooklin Flow = navigation (structure, `graph.json`) / Edster =
+   interactif privé (actions Gradle, contenus, auth).
+2. 6 constats audités (vis.js empiète sur BF, `configPath=dashboard-plugin`
+   tronque le dogfood, BACKLOG ignoré, tâches non incrémentales, BF vide,
+   interactif sans foyer statique).
+3. 13 décisions (dont templating Thymeleaf unique), 9 US ~31 pts.
+   Absorption de DFL-1/DFL-2(partiel)/DFL-3/DFL-7.
+4. Doc : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (copie côté BF).
+5. Zéro code modifié.
 
 == Statut
 
-- DSH-0→DSH-7, DSH-10 : ✅ TERMINÉS
-- PUB (Maven Central) : ✅ TERMINÉ (S-215 — 0.0.1 sur Central)
-- DSH-8 (GitHub Sync) : 0/8 pts PLANIFIÉ (optionnel)
+- DSH-0→DSH-7, DSH-10, PUB : ✅ TERMINÉS
+- DSH-BOUNDARY : ✅ CADRÉ (7 US à exécuter)
+- DSH-8 (Git Sync + filtres + mode sombre) : 🟡 reste ALGER
 
-== Règle à retenir (piège #13 MEMPHIS)
+== Prochaine session (217) — DSH-BOUNDARY-0P (Phase 0)
 
-Le block `nmcpSettings { centralPortal { ... } }` n'hérite PAS des
-credentials globaux — chargement explicite `~/.gradle/gradle.properties`
-requis (pattern graphify/dashboard).
+*Prototype de navigation en pur HTML/CSS/JS/mock* (`prototype/`) : Panorama
+3 zones, fiche borough, coquille graphe, états (vide/chargé/surcharge),
+transitions niveau 0 → 1, responsive. Aucune donnée réelle, aucun Thymeleaf,
+aucun React Flow, jamais publié.
 
-== Prochaine session (216) — à la demande
+*Gate bloquant* : aucune US de production (DSH-BOUNDARY-1→7) ne démarre
+avant validation pilote de ce prototype.
 
-*Priorité P1* : DSH-8 Git Sync — rafraîchissement des INDEX.adoc /
-BACKLOG.adoc des 30 boroughs par clone/pull git.
-
-*Alternative P2* : maintenance (audit adoption catalog MEMPHIS, dette
-bakery BKY-TEST-FLAKY).
+*Alternative* : DSH-BOUNDARY-1 (retrait vis.js + table N0→N4) si le pilote
+préfère commencer par la frontière structurelle. Baby-step TDD strict
+RED → GREEN → REFACTOR. Gate : `./gradlew check` VERT (baseline 58 tests).
 
 == Vérifications ouverture
 
 . `git status` — dashboard-gradle committé/poussé ?
-. Central `<latest>` dashboard-plugin 0.0.1
-. `./gradlew check` VERT (58/0, version dérivée ws — nécessite mavenLocal
-   ou Central catalog 0.0.34)
+. `./gradlew check` VERT (58/0, version dérivée ws 0.0.34)
+. Lire `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` § Ordre d'exécution

@@ -29,7 +29,7 @@ de build Gradle. TOUT le reste (code, tests, gouvernance, documentation agent) v
 **Nom** : dashboard-gradle (plugin Gradle pour le dashboard de vision et d'avancement du workspace)
 **Borough** : dashboard-gradle 🟡
 **DAG** : N3 (aggrégation transverse, consommation de tous les INDEX.adoc / BACKLOG.adoc)
-**Stack** : Kotlin, Gradle (plugin development), JBake, Thymeleaf, D3.js/vis.js, Jackson
+**Stack** : Kotlin, Gradle (plugin development), JBake, Thymeleaf (SEUL moteur de templating), Jackson
 **Documentation** : AsciiDoc + PlantUML + Gradle
 
 === Positionnement dans le DAG
@@ -66,6 +66,37 @@ L'agent NE DOIT JAMAIS lancer de tests (`./gradlew test`, etc.) lors de la proce
 === Fichiers personnels — Interdiction de modifier
 
 L'agent NE DOIT JAMAIS modifier, ecraser ou supprimer un fichier personnel de l'utilisateur (`~/.gitconfig`, `~/.bashrc`, etc.) SANS permission explicite.
+
+== Contrainte de templating (REGLE ABSOLUE)
+
+*Le rendu des vues ALGER est assure par Thymeleaf UNIQUEMENT.*
+
+* Moteur : `TemplateEngine` + `ClassLoaderTemplateResolver` pointant sur
+  `src/main/resources/templates/*.thyme` (existant : `dashboard.thyme`,
+  `jbake-index.thyme`).
+* Sortie JBake : les vues sont egalement exposees dans la structure
+  `jbake/` (`templates/index.thyme`) consommable par bakery/JBake.
+* *INTERDIT* : tout autre moteur de template (Freemarker, Mustache,
+  Velocity, Pebble, Handlebars), et toute generation HTML ad hoc par
+  concatenation de chaines dans le code Kotlin.
+* Toute nouvelle vue (homepage Panorama, fiche borough) est un template
+  Thymeleaf. Voir `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` decision 10.
+
+=== Phase 0 — Prototype UX (exception, jetable)
+
+*Avant toute implementation*, la premiere phase de DSH-BOUNDARY est un
+*prototype de navigation en pur HTML/CSS/JS avec donnees mock*, dans
+`prototype/`. Objet : fixer une experience de scenario de navigation
+coherente (Panorama 3 zones, fiche borough, coquille graphe, etats,
+transitions niveau 0 -> 1).
+
+* Le prototype n'est PAS rendu par Thymeleaf, n'utilise PAS React Flow,
+  ne lit AUCUNE donnee reelle.
+* Il n'est JAMAIS publie ni deploye sur gh-pages.
+* C'est une reference visuelle contractuelle jetable, que la Phase 1
+  reproduit (ALGER en Thymeleaf, Brooklin Flow en React Flow).
+* *Gate* : aucune US de production ne demarre avant validation pilote
+  du prototype. Voir `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` decision 11.
 
 == Architecture
 
@@ -154,7 +185,26 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 | 1 | Dashboard sans donnees reelles | Toujours crawler les vrais INDEX.adoc, jamais de fixtures
 | 2 | Theme JBake sans dogfood | La racine consommatrice doit deployer le dashboard
 | 3 | DAG N3 qui fait du LLM | dashboard-gradle ne doit jamais contenir de logique LLM/RAG
+| 4 | Canvas / graphe interactif dans ALGER | La structure profonde appartient a Brooklin Flow (dashboard-flow-gradle). ALGER se resume a une table en couches N0->N4 (frontiere DSH-BOUNDARY, S-216)
+| 5 | Action serveur / lancement de tache Gradle depuis l'UI | Les dashboards sont read-only et statiques. L'interactif avec etat (actions Tooling API, auth) vit dans Edster (prive), hors gouvernance publique
+| 6 | Autre moteur de template que Thymeleaf / HTML concatene en Kotlin | Tout le rendu passe par Thymeleaf (`templates/*.thyme`). Aucun Freemarker/Mustache/Velocity/Pebble/Handlebars
 |===
+
+=== Frontiere Dashboard (S-216)
+
+*ALGER = pilotage (les chiffres)* : lit la gouvernance `.adoc`, mesure le
+temps/quantites (avancement, vision, structure en couches). Produit le
+contrat public `dashboard-data.json`.
+
+*Brooklin Flow = navigation (le spatial)* : lit `graph.json` (graphify) et
+`dashboard-data.json` (overlay), expose la structure/relations. Ne calcule
+jamais de metrique.
+
+*Edster (prive)* : l'interactif avec etat (contenus, actions Gradle,
+auth). Ingere les pivots JSON d'ALGER. Ne jamais creer de dependance
+Gradle vers Edster ni de gouvernance `foundry/public` pour lui.
+
+Reference complete : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`.
 
 == References — Codebases LAZY
 

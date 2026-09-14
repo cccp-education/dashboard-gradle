@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-09-07 (S-215 — PUB Maven Central TERMINÉ : dashboard-plugin 0.0.1 sur Central + adoption version catalog ws 0.0.34. Reste DSH-8 P2 optionnel.)_
+_Dernière mise à jour : 2026-09-14 (S-216 — Cadrage EPIC DSH-BOUNDARY : frontière ALGER / Brooklin Flow / Edster. Redécoupage des EPICs, retrait vis.js, avancement réel, incrémentalité, homepage Panorama. Zéro code modifié.)_
 
 == P0 — Terminé
 
@@ -51,6 +51,47 @@ _Dernière mise à jour : 2026-09-07 (S-215 — PUB Maven Central TERMINÉ : das
 | Item | EPIC | Pts
 | Sync git des boroughs (clone/pull INDEX.adoc / BACKLOG.adoc) | DSH-8 | 3
 | Filtres / recherche tableau | DSH-8 | 2
-| Export JSON dashboard data | DSH-8 | 1
 | Mode sombre | DSH-8 | 2
+|===
+
+== EPIC DSH-BOUNDARY — Frontière Dashboard (cadré S-216)
+
+_Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
+(pilotage/chiffres) / Brooklin Flow (navigation/structure) / Edster
+(interactif privé). 9 US ~31 pts._
+
+=== Phase 0 — Prototype UX (jetable, HTML/CSS/JS/mock)
+
+|===
+| US | Description | Statut | Pts
+| DSH-BOUNDARY-0P | Prototype de navigation pur HTML/CSS/JS + mock JSON (`prototype/`) : Panorama 3 zones, fiche borough, coquille graphe, états, transitions niveau 0→1. Aucune donnée réelle, jamais publié. Gate bloquant avant Phase 1 | 🟡 À FAIRE | 3
+|===
+
+=== Phase 1 — ALGER (territoire pilotage)
+
+|===
+| US | Description | Statut | Pts
+| DSH-BOUNDARY-1 | Retrait canvas vis.js + table ordonnée N0→N4 (structure cedee a Brooklin Flow) | 🟡 À FAIRE | 3
+| DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | 🟡 À FAIRE | 5
+| DSH-BOUNDARY-3 | Incrémentalité : `@TaskAction` + `@InputFiles`/`@OutputDirectory`/`@CacheableTask` (UP-TO-DATE si contenu/structure inchanges) | 🟡 À FAIRE | 3
+| DSH-BOUNDARY-4 | Homepage Panorama (3 zones vision/avancement/structure) + page fiche borough (niveau 1) | 🟡 À FAIRE | 5
+|===
+
+=== Écosystème — publication + Brooklin Flow
+
+|===
+| US | Description | Statut | Pts
+| DSH-BOUNDARY-5 | Brooklin Flow : graphe React Flow + overlay `dashboard-data.json` + panneau recapitulatif (absorbe DFL-1/DFL-2 partiel) | 🟡 À FAIRE | 5
+| DSH-BOUNDARY-6 | Brooklin Flow : diff structurel entre deux `graph.json` (absorbe DFL-3) | 🟡 À FAIRE | 5
+| DSH-BOUNDARY-7 | Publication gh-pages des 2 sites via runner-gradle (absorbe DFL-7) | 🟡 À FAIRE | 1
+|===
+
+== Devenir des anciens items DSH-8
+
+|===
+| Item | Statut
+| Sync git des boroughs | 🟡 À FAIRE (reste ALGER DSH-8)
+| Filtres / recherche tableau | 🟡 À FAIRE (reste ALGER DSH-8)
+| Export JSON dashboard data | ✅ CADUQUE — `dashboard-data.json` est le contrat public fondationnel depuis S-002, versionné DSH-BOUNDARY-2
+| Mode sombre | 🟡 À FAIRE (reste ALGER DSH-8)
 |===
