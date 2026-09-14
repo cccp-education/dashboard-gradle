@@ -166,7 +166,12 @@ Edster (privé) : ingère les 2 pivots (read-only) ; actions via Tooling API
 +
   * *n'est pas* rendu par Thymeleaf, *n'est pas* du React Flow, *ne lit
     aucune donnée réelle* (mock JSON en dur) — c'est un artefact de design ;
-  * vit dans un répertoire `prototype/` dédié, *n'est jamais publié* ni
+  * vit dans `dashboard-plugin/src/main/resources/prototype/` (structure :
+    `index.html`, `borough.html`, `graph.html`, `styles.css`, `app.js`,
+    `mock/*.json`) ;
+  * *n'est jamais publié* : exclu explicitement de `processResources`
+    (`exclude("prototype/**")` dans `build.gradle.kts`) — sans quoi
+    `src/main/resources` l'embarquerait dans le JAR Maven Central. Ni
     déployé sur gh-pages ;
   * sert de *référence visuelle contractuelle* que la Phase 1 reproduit
     (ALGER en Thymeleaf, Brooklin Flow en React Flow) ;

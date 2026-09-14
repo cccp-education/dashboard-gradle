@@ -1,0 +1,35 @@
+= Prototype UX — Phase 0 (DSH-BOUNDARY-0P)
+
+WARNING: *Artefact de design jetable*. Jamais rendu par Thymeleaf, jamais
+utilise par le plugin en production, *jamais publie* sur Maven Central ni
+deploye sur gh-pages.
+
+== Objet
+
+Fixer une experience de scenario de navigation coherente *avant* toute
+implementation : Panorama 3 zones (vision / avancement / structure),
+fiche borough, coquille du graphe, etats (vide / charge / surcharge),
+transitions niveau 0 -> niveau 1, responsive.
+
+== Contenu attendu
+
+* `index.html` — Panorama (niveau 0), 3 zones equilibrees
+* `borough.html` — fiche borough (niveau 1)
+* `graph.html` — coquille du graphe (niveau 1)
+* `styles.css` — mise en page
+* `app.js` — interactions de navigation
+* `mock/*.json` — donnees mockees en dur (aucune donnee reelle)
+
+== Regles
+
+* *Pur HTML/CSS/JS* — aucun framework, aucun moteur de template.
+* *Donnees mock uniquement* — ne lit jamais `dashboard-data.json` ni
+  `graph.json`.
+* *Non publie* — exclu de `processResources` (cf. `build.gradle.kts`).
+* *Gate bloquant* — aucune US de production (DSH-BOUNDARY-1 -> 7) ne
+  demarre avant validation pilote de cette maquette.
+
+== Reference
+
+`.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` — decision 11 (Phase 0) et
+section « Architecture d'information cible ».

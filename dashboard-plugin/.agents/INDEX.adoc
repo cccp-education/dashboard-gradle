@@ -2,7 +2,7 @@
 
 _Derniere mise a jour_ : 2026-09-14 — Session 216 (cadrage, gouvernance pure)
 _session terminee_ : 216 — Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster). 9 US ~31 pts. Redécoupage : retrait vis.js, avancement réel (foundry + BACKLOG), incrémentalité, homepage Panorama, absorption DFL-1/2/3/7. Zéro code modifié.
-_prochaine session_ : 217 — DSH-BOUNDARY-0P (Phase 0 : prototype HTML/CSS/JS/mock, gate bloquant) OU DSH-BOUNDARY-1 (retrait vis.js + table N0→N4).
+_prochaine session_ : 217 — DSH-BOUNDARY-0P (Phase 0 : maquette HTML/CSS/JS/mock — `src/main/resources/prototype/`, gate bloquant).
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).

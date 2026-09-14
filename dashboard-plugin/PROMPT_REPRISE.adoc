@@ -23,19 +23,25 @@
 - DSH-BOUNDARY : ✅ CADRÉ (7 US à exécuter)
 - DSH-8 (Git Sync + filtres + mode sombre) : 🟡 reste ALGER
 
-== Prochaine session (217) — DSH-BOUNDARY-0P (Phase 0)
+== Prochaine session (217) — DSH-BOUNDARY-0P (Phase 0 — maquette)
 
-*Prototype de navigation en pur HTML/CSS/JS/mock* (`prototype/`) : Panorama
-3 zones, fiche borough, coquille graphe, états (vide/chargé/surcharge),
-transitions niveau 0 → 1, responsive. Aucune donnée réelle, aucun Thymeleaf,
-aucun React Flow, jamais publié.
+*Mission unique : la maquette de navigation.*
+
+Emplacement : `dashboard-plugin/src/main/resources/prototype/`
+(README.adoc + mock/ déjà en place). À produire : `index.html` (Panorama
+3 zones), `borough.html` (fiche borough), `graph.html` (coquille graphe),
+`styles.css`, `app.js`, `mock/*.json`.
+
+Périmètre : Panorama 3 zones (vision critical path A1→A4 / avancement par
+points / structure N0→N4), fiche borough, coquille graphe, états
+(vide/chargé/surcharge), transitions niveau 0 → 1, responsive.
+
+*Interdits* : Thymeleaf, React Flow, données réelles (mock en dur
+uniquement), publication (exclu de `processResources`).
 
 *Gate bloquant* : aucune US de production (DSH-BOUNDARY-1→7) ne démarre
-avant validation pilote de ce prototype.
-
-*Alternative* : DSH-BOUNDARY-1 (retrait vis.js + table N0→N4) si le pilote
-préfère commencer par la frontière structurelle. Baby-step TDD strict
-RED → GREEN → REFACTOR. Gate : `./gradlew check` VERT (baseline 58 tests).
+avant validation pilote de cette maquette. Pas d'alternative — la maquette
+est la mission de la session.
 
 == Vérifications ouverture
 

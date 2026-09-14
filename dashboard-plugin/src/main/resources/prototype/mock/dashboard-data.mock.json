@@ -1,0 +1,43 @@
+{
+  "_comment": "MOCK Phase 0 — donnees fictives, aucune donnee reelle. Ne jamais publier.",
+  "schemaVersion": "0.0.0-mock",
+  "timestamp": "2026-09-14T00:00:00Z",
+  "stats": {
+    "boroughCount": 30,
+    "epicCount": 142,
+    "doneCount": 88,
+    "inProgressCount": 21,
+    "plannedCount": 31,
+    "blockedCount": 2,
+    "pointsDone": 612,
+    "pointsTotal": 984
+  },
+  "criticalPath": [
+    { "ring": "A1", "label": "Corpus metier", "borough": "Tombouctou", "state": "in-progress", "progress": 62 },
+    { "ring": "A2", "label": "Generation pedagogique", "borough": "Newark + Manhattan", "state": "blocked", "progress": 35 },
+    { "ring": "A3", "label": "Consommateurs N2", "borough": "MIAMI / New Orleans / Detroit / The Bronx", "state": "ready", "progress": 90 },
+    { "ring": "A4", "label": "Site + commerce", "borough": "Bushwick / New Jersey / Compton", "state": "ready", "progress": 80 }
+  ],
+  "boroughs": [
+    { "name": "Newark", "project": "training-gradle", "dag": "N2", "state": "active", "pointsDone": 84, "pointsTotal": 130 },
+    { "name": "Manhattan", "project": "planner-gradle", "dag": "N2", "state": "active", "pointsDone": 61, "pointsTotal": 92 },
+    { "name": "Brooklyn", "project": "codex-gradle", "dag": "N2", "state": "active", "pointsDone": 73, "pointsTotal": 96 },
+    { "name": "Queens", "project": "codebase-gradle", "dag": "N1", "state": "active", "pointsDone": 122, "pointsTotal": 140 },
+    { "name": "The Bronx", "project": "quizz-benchmark-gradle", "dag": "N2", "state": "active", "pointsDone": 18, "pointsTotal": 24 },
+    { "name": "Detroit", "project": "capsule-gradle", "dag": "N2", "state": "active", "pointsDone": 96, "pointsTotal": 140 },
+    { "name": "New Jersey", "project": "runner-gradle", "dag": "N3", "state": "dormant", "pointsDone": 29, "pointsTotal": 29 },
+    { "name": "Bushwick", "project": "bakery-gradle", "dag": "N2", "state": "active", "pointsDone": 58, "pointsTotal": 72 },
+    { "name": "MIAMI", "project": "slider-gradle", "dag": "N2", "state": "active", "pointsDone": 88, "pointsTotal": 110 },
+    { "name": "New Orleans", "project": "document-gradle", "dag": "N2", "state": "active", "pointsDone": 74, "pointsTotal": 86 },
+    { "name": "Memphis", "project": "workspace-bom", "dag": "N0", "state": "active", "pointsDone": 34, "pointsTotal": 38 },
+    { "name": "Grand Central", "project": "graphify-gradle", "dag": "N0", "state": "active", "pointsDone": 24, "pointsTotal": 30 },
+    { "name": "ALGER", "project": "dashboard-gradle", "dag": "N3", "state": "active", "pointsDone": 47, "pointsTotal": 58 },
+    { "name": "Brooklin Flow", "project": "dashboard-flow-gradle", "dag": "N3", "state": "active", "pointsDone": 3, "pointsTotal": 14 }
+  ],
+  "sessions": [
+    { "number": "216", "date": "2026-09-14", "borough": "ALGER", "subject": "Cadrage EPIC DSH-BOUNDARY" },
+    { "number": "215", "date": "2026-09-07", "borough": "ALGER", "subject": "Release Maven Central 0.0.1" },
+    { "number": "214", "date": "2026-09-07", "borough": "Queens", "subject": "CB-FPA-RAG ingestion pgvector" },
+    { "number": "218", "date": "2026-09-10", "borough": "HTOWN", "subject": "PUB 0.0.5 Maven Central" }
+  ]
+}

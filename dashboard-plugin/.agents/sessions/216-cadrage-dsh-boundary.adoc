@@ -99,18 +99,21 @@ Session de gouvernance pure (pattern S-057/S-063). *Zéro code modifié.*
 | Fichier | État
 | `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (ALGER) | ✅ créé
 | `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (Brooklin Flow, copie) | ✅ créé
-| `AGENT.adoc` (ALGER — anti-patterns + frontière) | ✅ modifié
+| `AGENT.adoc` (ALGER — anti-patterns + frontière + templating + Phase 0) | ✅ modifié
 | `BACKLOG.adoc` (ALGER — EPIC DSH-BOUNDARY) | ✅ modifié
 | `.agents/INDEX.adoc` (ALGER) | ✅ modifié
-| `PROMPT_REPRISE.adoc` (ALGER → 217) | ✅ modifié
+| `PROMPT_REPRISE.adoc` (ALGER → 217, maquette verrouillée) | ✅ modifié
 | `.agents/SESSIONS_HISTORY.adoc` (ALGER) | ✅ modifié
+| `src/main/resources/prototype/README.adoc` (scaffold Phase 0) | ✅ créé
+| `src/main/resources/prototype/mock/dashboard-data.mock.json` (mock) | ✅ créé
+| `build.gradle.kts` (exclusion `processResources` prototype/**) | ✅ modifié
 | `AGENT.adoc` (Brooklin Flow — anti-patterns + frontière) | ✅ modifié
 | `BACKLOG.adoc` (Brooklin Flow — absorption DFL) | ✅ modifié
 | `.agents/INDEX.adoc` (Brooklin Flow) | ✅ modifié
 | `PROMPT_REPRISE.adoc` (Brooklin Flow → 002) | ✅ modifié
 | `.agents/SESSIONS_HISTORY.adoc` (Brooklin Flow) | ✅ modifié
 | `BACKLOG.adoc` (racine — GBL-004) | ✅ modifié
-| `AGENTS.adoc` (racine — table boroughs) | ✅ modifié
+| `AGENTS.adoc` (racine — table boroughs + architecture edster) | ✅ modifié
 |===
 
 == Gates et risques
@@ -121,7 +124,20 @@ Session de gouvernance pure (pattern S-057/S-063). *Zéro code modifié.*
 * Edster hors périmètre : aucune dépendance Gradle ni gouvernance publique.
 * Non-régression : `./gradlew check` ALGER VERT (58 tests baseline).
 
-== Zéro code
+== Scaffold Phase 0 (prototype)
 
-Aucun fichier Kotlin/React/Gradle modifié. Session de gouvernance pure,
-conforme au pattern S-057/S-063.
+Le répertoire `src/main/resources/prototype/` est amorcé (`README.adoc` +
+`mock/dashboard-data.mock.json`). `src/main/resources` étant empaqueté
+dans le JAR Maven Central, le prototype est exclu de la publication via
+`processResources { exclude("prototype/**") }` — *validé par build* :
+`./gradlew :dashboard-plugin:jar --rerun-tasks` → 0 entrée `prototype`/`mock`
+dans le JAR. La maquette (HTML/CSS/JS) est produite en session 217.
+
+== Code modifié (minimum)
+
+* `build.gradle.kts` — exclusion de publication du prototype (nécessaire
+  à la règle « jamais publié »).
+* `src/main/resources/prototype/**` — scaffold + mock (artefact de design).
+
+Aucun fichier Kotlin de production modifié. La gouvernance et le scaffold
+respectent le pattern de cadrage S-057/S-063.

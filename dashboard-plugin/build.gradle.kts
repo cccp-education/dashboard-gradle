@@ -30,6 +30,13 @@ dependencies {
     testImplementation(libs.bundles.cucumber)
 }
 
+// ── Phase 0 prototype (DSH-BOUNDARY-0P) — NEVER published ────
+// `src/main/resources/prototype/` is a throwaway design artefact.
+// It must not be packaged into the jar nor shipped to Maven Central.
+tasks.processResources {
+    exclude("prototype/**")
+}
+
 // ── Unit tests — exclude Cucumber scenarios ─────────────────
 tasks.named<Test>("test") {
     filter { excludeTestsMatching("dashboard.scenarios.**") }

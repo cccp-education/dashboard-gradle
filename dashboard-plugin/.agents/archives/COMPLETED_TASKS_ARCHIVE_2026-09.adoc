@@ -5,7 +5,7 @@
 |===
 | # | Date | Sujet | Livrables clés
 | 215 | 2026-09-07 | 1re release Maven Central + adoption version catalog | dashboard-plugin 0.0.1 Central (bundle `e0619a49`), catalog ws 0.0.34 (ROLLOUT-6), check 58/0
-| 216 | 2026-09-14 | Cadrage EPIC DSH-BOUNDARY (frontière Dashboard) | `CADRAGE_EPIC_DSH_BOUNDARY.adoc`, 6 constats, 13 décisions (dont templating Thymeleaf unique), 9 US ~31 pts, absorption DFL-1/3/7, zéro code
+| 216 | 2026-09-14 | Cadrage EPIC DSH-BOUNDARY (frontière Dashboard) + scaffold Phase 0 | `CADRAGE_EPIC_DSH_BOUNDARY.adoc`, 6 constats, 13 décisions (dont templating Thymeleaf unique + Phase 0), 9 US ~31 pts, absorption DFL-1/3/7, scaffold `prototype/` + exclusion publication (JAR : 0 entrée prototype)
 |===
 
 == EPICs / livrables clés

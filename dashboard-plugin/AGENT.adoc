@@ -86,13 +86,16 @@ L'agent NE DOIT JAMAIS modifier, ecraser ou supprimer un fichier personnel de l'
 
 *Avant toute implementation*, la premiere phase de DSH-BOUNDARY est un
 *prototype de navigation en pur HTML/CSS/JS avec donnees mock*, dans
-`prototype/`. Objet : fixer une experience de scenario de navigation
-coherente (Panorama 3 zones, fiche borough, coquille graphe, etats,
-transitions niveau 0 -> 1).
+`src/main/resources/prototype/`. Objet : fixer une experience de scenario
+de navigation coherente (Panorama 3 zones, fiche borough, coquille graphe,
+etats, transitions niveau 0 -> 1).
 
 * Le prototype n'est PAS rendu par Thymeleaf, n'utilise PAS React Flow,
   ne lit AUCUNE donnee reelle.
-* Il n'est JAMAIS publie ni deploye sur gh-pages.
+* Il n'est JAMAIS publie ni deploye sur gh-pages : exclu de
+  `processResources` (`exclude("prototype/**")` dans `build.gradle.kts`).
+  *Ne jamais retirer cette exclusion* — `src/main/resources` est empaquete
+  dans le JAR Maven Central.
 * C'est une reference visuelle contractuelle jetable, que la Phase 1
   reproduit (ALGER en Thymeleaf, Brooklin Flow en React Flow).
 * *Gate* : aucune US de production ne demarre avant validation pilote
