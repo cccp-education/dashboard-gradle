@@ -116,3 +116,4 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 | Brooklin Flow | dashboard-flow-gradle | N3 | Dashboard React Flow interactif | S000
 | container-provision | container-provision-gradle | N0 | Container provision Playwright/Colab | S000
 |===
+
