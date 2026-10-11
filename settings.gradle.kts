@@ -27,11 +27,11 @@ rootProject.name = "dashboard-gradle"
 include("dashboard-plugin")
 
 // ── MEM-CAT-ROLLOUT-6 — Catalog workspace published (MEMPHIS): single pin per borough (D4) ──
-// education.cccp:workspace-catalog:0.0.34 — cross-borough source of truth for plugin versions.
+// education.cccp:workspace-catalog:0.0.76 — cross-borough source of truth for plugin versions.
 dependencyResolutionManagement {
     versionCatalogs {
         create("ws") {
-            from("education.cccp:workspace-catalog:0.0.34")
+            from("education.cccp:workspace-catalog:0.0.76")
         }
     }
 }
