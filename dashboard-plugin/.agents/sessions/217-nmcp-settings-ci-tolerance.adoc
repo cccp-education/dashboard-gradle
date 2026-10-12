@@ -1,0 +1,41 @@
+= Session 217 — Tolérance CI des credentials nmcp (settings)
+:session: 217
+:date: 2026-10-12
+:type: fix (cross-borough)
+
+== Contexte / symptôme
+
+Le job **cross-borough** `runAllTests` de MEMPHIS (`workspace-bom`) exécute
+`./gradlew check` dans la racine dashboard et échoue **à la configuration** :
+
+----
+* What went wrong:
+ossrhUsername not found
+----
+
+== Cause racine
+
+`settings.gradle.kts` résolvait les credentials nmcp avec
+`?: error("ossrhUsername not found")` / `?: error("ossrhPassword not found")`.
+En CI (runner sans `~/.gradle/gradle.properties`), il n'y a **aucun credential** →
+`error(...)` bloque la configuration, avant même toute tâche. C'est exactement la
+classe de bug corrigée ailleurs (capsule, etc.) par le fallback `?: ""` : nmcp n'a
+besoin de vraies valeurs **que** lorsqu'on publie réellement sur Central.
+
+== Correctif
+
+`settings.gradle.kts` (bloc `nmcpSettings.centralPortal`) :
+`?: error(...)` → **`?: ""`** (username + password). Message commenté.
+
+== Vérification
+
+* `./gradlew help` depuis `dashboard-gradle/` : **exit 0** (JDK 25) — configuration
+  tolérante sans credentials (échouait `ossrhUsername not found`).
+
+== Note
+
+Aucune modification du plugin dashboard ni de la logique métier. Seule la
+tolérance CI du bloc settings est ajustée. `workspace-catalog:0.0.78` (pin settings)
+laissé tel quel (hors périmètre, résolvable).
+
+_Score : 8/10._

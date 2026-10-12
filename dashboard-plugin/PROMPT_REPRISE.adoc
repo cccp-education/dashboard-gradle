@@ -1,6 +1,13 @@
 = PROMPT_REPRISE — dashboard-gradle
-:session: 217
-:date: 2026-09-14
+:session: 218
+:date: 2026-10-12
+
+== Session accomplie (S-217, fix cross-borough)
+
+* **Tolérance CI des credentials nmcp** : `settings.gradle.kts`
+  `?: error("ossrhUsername/password not found")` → `?: ""` (fix du job
+  `runAllTests` MEMPHIS qui échoue à la configuration faute de credentials).
+  `./gradlew help` VERT. Rapport `.agents/sessions/217-nmcp-settings-ci-tolerance.adoc`.
 
 == Session accomplie (S-216, gouvernance pure)
 

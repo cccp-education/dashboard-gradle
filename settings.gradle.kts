@@ -38,8 +38,10 @@ dependencyResolutionManagement {
 
 nmcpSettings {
     centralPortal {
-        username = globalProps.getProperty("ossrhUsername") ?: error("ossrhUsername not found")
-        password = globalProps.getProperty("ossrhPassword") ?: error("ossrhPassword not found")
+        // CI tolerance — empty creds must not block configuration (mirror capsule/others):
+        // nmcp only needs real values when actually publishing to Central.
+        username = globalProps.getProperty("ossrhUsername") ?: ""
+        password = globalProps.getProperty("ossrhPassword") ?: ""
         publishingType = "AUTOMATIC"
     }
 }
