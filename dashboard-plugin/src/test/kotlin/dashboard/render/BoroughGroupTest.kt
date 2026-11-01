@@ -9,20 +9,22 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class BoroughGroupTest {
-
     @Test
     fun `groupByBorough should group epics by borough sorted by dag level`() {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
-                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")
-            ),
-            epics = listOf(
-                EpicData("BKY-1", "Bakery task", "BAKERY", 5, "P1", EpicStatus.EN_COURS),
-                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE)
-            ),
-            dagNodes = emptyList()
-        )
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005"),
+                    ),
+                epics =
+                    listOf(
+                        EpicData("BKY-1", "Bakery task", "BAKERY", 5, "P1", EpicStatus.EN_COURS),
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE),
+                    ),
+                dagNodes = emptyList(),
+            )
 
         val groups = BoroughGrouper.groupByBorough(data)
 
@@ -34,15 +36,17 @@ class BoroughGroupTest {
 
     @Test
     fun `groupByBorough should sort epics inside borough by priority then id`() {
-        val data = DashboardData(
-            boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
-            epics = listOf(
-                EpicData("DSH-2", "Crawler", "Dashboard", 13, "P0", EpicStatus.PLANIFIE),
-                EpicData("DSH-1", "Scaffold", "Dashboard", 8, "P0", EpicStatus.EN_COURS),
-                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE)
-            ),
-            dagNodes = emptyList()
-        )
+        val data =
+            DashboardData(
+                boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
+                epics =
+                    listOf(
+                        EpicData("DSH-2", "Crawler", "Dashboard", 13, "P0", EpicStatus.PLANIFIE),
+                        EpicData("DSH-1", "Scaffold", "Dashboard", 8, "P0", EpicStatus.EN_COURS),
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE),
+                    ),
+                dagNodes = emptyList(),
+            )
 
         val groups = BoroughGrouper.groupByBorough(data)
 
@@ -52,11 +56,12 @@ class BoroughGroupTest {
 
     @Test
     fun `groupByBorough should expose borough status as string`() {
-        val data = DashboardData(
-            boroughs = listOf(BoroughData("Nashville", "newpipe-gradle", "N2", "VESTIGE", "S001", BoroughStatus.VESTIGE)),
-            epics = listOf(EpicData("NP-1", "Auth", "Nashville", 5, "P2", EpicStatus.TERMINE)),
-            dagNodes = emptyList()
-        )
+        val data =
+            DashboardData(
+                boroughs = listOf(BoroughData("Nashville", "newpipe-gradle", "N2", "VESTIGE", "S001", BoroughStatus.VESTIGE)),
+                epics = listOf(EpicData("NP-1", "Auth", "Nashville", 5, "P2", EpicStatus.TERMINE)),
+                dagNodes = emptyList(),
+            )
 
         val groups = BoroughGrouper.groupByBorough(data)
 
@@ -65,14 +70,16 @@ class BoroughGroupTest {
 
     @Test
     fun `groupByBorough should create UNASSIGNED group for epics without borough`() {
-        val data = DashboardData(
-            boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
-            epics = listOf(
-                EpicData("ORP-1", "Orphan epic", "", 2, "P2", EpicStatus.PLANIFIE),
-                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE)
-            ),
-            dagNodes = emptyList()
-        )
+        val data =
+            DashboardData(
+                boroughs = listOf(BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")),
+                epics =
+                    listOf(
+                        EpicData("ORP-1", "Orphan epic", "", 2, "P2", EpicStatus.PLANIFIE),
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE),
+                    ),
+                dagNodes = emptyList(),
+            )
 
         val groups = BoroughGrouper.groupByBorough(data)
 

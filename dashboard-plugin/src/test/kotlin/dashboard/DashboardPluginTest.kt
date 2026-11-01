@@ -5,7 +5,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Test
 
 class DashboardPluginTest {
-
     @Test
     fun `plugin should register extension and tasks`() {
         val project = ProjectBuilder.builder().build()

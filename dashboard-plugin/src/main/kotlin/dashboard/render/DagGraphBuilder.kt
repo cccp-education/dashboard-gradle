@@ -11,7 +11,6 @@ import dashboard.model.DashboardData
  * - every node at level k is connected to every node at level k+1
  */
 object DagGraphBuilder {
-
     fun build(data: DashboardData): DagGraph {
         val nodes = extractNodes(data)
         if (nodes.isEmpty()) return DagGraph(emptyList(), emptyList())
@@ -32,16 +31,17 @@ object DagGraphBuilder {
     }
 
     private fun extractNodes(data: DashboardData): List<DagNodeView> {
-        val boroughNodes = data.boroughs.map { borough ->
-            val level = parseDagLevel(borough.dagLevel)
-            DagNodeView(
-                id = borough.name,
-                label = "${borough.name} (${borough.dagLevel})",
-                level = level,
-                project = borough.project,
-                group = borough.dagLevel
-            )
-        }
+        val boroughNodes =
+            data.boroughs.map { borough ->
+                val level = parseDagLevel(borough.dagLevel)
+                DagNodeView(
+                    id = borough.name,
+                    label = "${borough.name} (${borough.dagLevel})",
+                    level = level,
+                    project = borough.project,
+                    group = borough.dagLevel,
+                )
+            }
         if (boroughNodes.isNotEmpty()) return boroughNodes
 
         return data.dagNodes.map { node ->
@@ -51,12 +51,10 @@ object DagGraphBuilder {
                 label = "${node.borough} (${node.dagLevel})",
                 level = level,
                 project = node.project,
-                group = node.dagLevel
+                group = node.dagLevel,
             )
         }
     }
 
-    internal fun parseDagLevel(raw: String): Int {
-        return raw.trim().filter { it.isDigit() }.toIntOrNull() ?: 99
-    }
+    internal fun parseDagLevel(raw: String): Int = raw.trim().filter { it.isDigit() }.toIntOrNull() ?: 99
 }

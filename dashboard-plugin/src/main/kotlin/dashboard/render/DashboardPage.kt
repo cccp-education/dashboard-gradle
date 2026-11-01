@@ -20,7 +20,7 @@ data class DashboardPage(
     val boroughGroups: List<BoroughGroup>,
     val dagGraph: DagGraph,
     val dagGraphJson: String,
-    val timeline: Timeline
+    val timeline: Timeline,
 )
 
 data class DashboardStats(
@@ -29,7 +29,7 @@ data class DashboardStats(
     val doneCount: Int,
     val inProgressCount: Int,
     val plannedCount: Int,
-    val blockedCount: Int
+    val blockedCount: Int,
 )
 
 data class BoroughGroup(
@@ -37,5 +37,5 @@ data class BoroughGroup(
     val dagLevel: String,
     val project: String,
     val status: String,
-    val epics: List<EpicData>
+    val epics: List<EpicData>,
 )

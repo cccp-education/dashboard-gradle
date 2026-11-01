@@ -9,7 +9,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class CrawlDashboardFunctionalTest {
-
     @TempDir
     lateinit var testDir: Path
 
@@ -27,17 +26,19 @@ class CrawlDashboardFunctionalTest {
         writeIndexAdoc(foundryDir.resolve("bakery/INDEX.adoc"), "BAKERY", "bakery-gradle", "N2", "Site statique")
         writeIndexAdoc(foundryDir.resolve("newark/INDEX.adoc"), "Newark", "training-gradle", "N2", "Pipeline")
 
-        val result = GradleRunner.create()
-            .withProjectDir(testDir.toFile())
-            .withArguments("crawlDashboard", "--stacktrace")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner
+                .create()
+                .withProjectDir(testDir.toFile())
+                .withArguments("crawlDashboard", "--stacktrace")
+                .withPluginClasspath()
+                .build()
 
         assertThat(result.output).contains("Dashboard data written to")
         assertThat(result.output).contains("2 boroughs")
         assertThat(result.task(":crawlDashboard")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
-            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE,
         )
 
         val jsonFile = testDir.resolve("build/dashboard/dashboard-data.json")
@@ -51,18 +52,22 @@ class CrawlDashboardFunctionalTest {
     fun `crawlDashboard should warn when config path does not exist`() {
         writePluginProjectWithCustomConfig("nonexistent")
 
-        val result = GradleRunner.create()
-            .withProjectDir(testDir.toFile())
-            .withArguments("crawlDashboard", "--stacktrace")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner
+                .create()
+                .withProjectDir(testDir.toFile())
+                .withArguments("crawlDashboard", "--stacktrace")
+                .withPluginClasspath()
+                .build()
 
         assertThat(result.output).contains("Config path does not exist")
     }
 
     private fun writePluginProject() {
         Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard\"")
-        Files.writeString(testDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
             plugins {
                 id("education.cccp.dashboard")
             }
@@ -70,12 +75,15 @@ class CrawlDashboardFunctionalTest {
                 configPath = "foundry"
                 outputDir = "build/dashboard"
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
     private fun writePluginProjectWithCustomConfig(configPath: String) {
         Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard\"")
-        Files.writeString(testDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
             plugins {
                 id("education.cccp.dashboard")
             }
@@ -83,16 +91,26 @@ class CrawlDashboardFunctionalTest {
                 configPath = "$configPath"
                 outputDir = "build/dashboard"
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
-    private fun writeIndexAdoc(path: Path, borough: String, project: String, dag: String, role: String) {
+    private fun writeIndexAdoc(
+        path: Path,
+        borough: String,
+        project: String,
+        dag: String,
+        role: String,
+    ) {
         Files.createDirectories(path.parent)
-        Files.writeString(path, """
+        Files.writeString(
+            path,
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | $borough | $project | $dag | $role | S001
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 }

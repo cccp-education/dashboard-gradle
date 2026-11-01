@@ -8,18 +8,21 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import io.cucumber.java.en.And
 import org.assertj.core.api.Assertions.assertThat
 
-class CrawlSteps(private val world: DashboardWorld) {
-
+class CrawlSteps(
+    private val world: DashboardWorld,
+) {
     @Given("a Gradle project with the dashboard plugin applied")
     fun givenGradleProject() {
         world.createGradleProject()
     }
 
     @Given("a foundry directory with INDEX.adoc files for {string} and {string}")
-    fun givenFoundryDirWithTwoBoroughs(b1: String, b2: String) {
+    fun givenFoundryDirWithTwoBoroughs(
+        b1: String,
+        b2: String,
+    ) {
         world.writeIndexAdoc("foundry/${b1.lowercase()}/INDEX.adoc", boroughTable(b1, "${b1.lowercase()}-gradle", "N2"))
         world.writeIndexAdoc("foundry/${b2.lowercase()}/INDEX.adoc", boroughTable(b2, "${b2.lowercase()}-gradle", "N3"))
     }
@@ -48,7 +51,12 @@ class CrawlSteps(private val world: DashboardWorld) {
     }
 
     @Given("a foundry directory with INDEX.adoc for borough {string} project {string} dag {string} containing epics:")
-    fun givenFoundryWithBoroughEpics(borough: String, project: String, dag: String, table: DataTable) {
+    fun givenFoundryWithBoroughEpics(
+        borough: String,
+        project: String,
+        dag: String,
+        table: DataTable,
+    ) {
         val rows = table.asMaps()
         val sb = StringBuilder()
         sb.appendLine("= Index — $borough")
@@ -79,7 +87,7 @@ class CrawlSteps(private val world: DashboardWorld) {
             | EPIC | Subject | Pts | Priority | Status
             | DSH-0 | Bootstrap | 3 | P0 | ✅ S000
             |===
-            """.trimIndent()
+            """.trimIndent(),
         )
         world.writeIndexAdoc(
             "foundry/$lower/.agents/SESSIONS_HISTORY.adoc",
@@ -89,7 +97,7 @@ class CrawlSteps(private val world: DashboardWorld) {
             | # | Date | Subject | Files
             | 000 | 2026-06-18 | Bootstrap | 8 files
             |===
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -102,7 +110,7 @@ class CrawlSteps(private val world: DashboardWorld) {
             | Borough | Project | DAG | Role in MVP0 | Session
             | $borough | ${borough.lowercase()}-gradle | N3 | Test role | S000
             |===
-            """.trimIndent()
+            """.trimIndent(),
         )
         world.writeIndexAdoc(
             "foundry/${borough.lowercase()}/.agents/SESSIONS_HISTORY.adoc",
@@ -113,7 +121,7 @@ class CrawlSteps(private val world: DashboardWorld) {
             | 000 | 2026-06-18 | Bootstrap gouvernance | 8 fichiers
             | 001 | 2026-06-18 | Plugin scaffold | 7 fichiers
             |===
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -156,11 +164,15 @@ class CrawlSteps(private val world: DashboardWorld) {
     }
 
     @Then("epic {string} should have status {string}")
-    fun thenEpicHasStatus(epicId: String, statusRaw: String) {
+    fun thenEpicHasStatus(
+        epicId: String,
+        statusRaw: String,
+    ) {
         val json = world.readJsonOutput() ?: error("No dashboard JSON output")
         val data = mapper.readValue(json, DashboardData::class.java)
-        val epic = data.epics.find { it.id == epicId }
-            ?: error("Epic $epicId not found")
+        val epic =
+            data.epics.find { it.id == epicId }
+                ?: error("Epic $epicId not found")
         assertThat(epic.status.name).isEqualTo(statusRaw)
     }
 
@@ -172,11 +184,15 @@ class CrawlSteps(private val world: DashboardWorld) {
     }
 
     @Then("session {string} should have subject {string}")
-    fun thenSessionHasSubject(number: String, subject: String) {
+    fun thenSessionHasSubject(
+        number: String,
+        subject: String,
+    ) {
         val json = world.readJsonOutput() ?: error("No dashboard JSON output")
         val data = mapper.readValue(json, DashboardData::class.java)
-        val session = data.sessions.find { it.number == number }
-            ?: error("Session $number not found")
+        val session =
+            data.sessions.find { it.number == number }
+                ?: error("Session $number not found")
         assertThat(session.subject).isEqualTo(subject)
     }
 
@@ -219,10 +235,15 @@ class CrawlSteps(private val world: DashboardWorld) {
         val mapper = jacksonObjectMapper()
     }
 
-    private fun boroughTable(name: String, project: String, dag: String): String = """
+    private fun boroughTable(
+        name: String,
+        project: String,
+        dag: String,
+    ): String =
+        """
         |===
         | Borough | Project | DAG | Role in MVP0 | Session
         | $name | $project | $dag | Test role | S001
         |===
-    """.trimIndent()
+        """.trimIndent()
 }

@@ -24,7 +24,6 @@ import java.nio.file.Files
  */
 @CacheableTask
 abstract class PublishDashboardTask : DefaultTask() {
-
     init {
         group = DashboardConstants.DASHBOARD_GROUP
         description = "Publishes the generated dashboard site to the publish directory."

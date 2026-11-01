@@ -1,13 +1,11 @@
 package dashboard
 
-import dashboard.render.DashboardRenderer
 import dashboard.model.BoroughData
-import dashboard.model.BoroughStatus
 import dashboard.model.DashboardData
-import dashboard.model.DagNode
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
 import dashboard.model.SessionActivity
+import dashboard.render.DashboardRenderer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -15,21 +13,25 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class DashboardRendererTest {
-
     @Test
-    fun `render should produce index html with epic matrix`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("Newark", "training-gradle", "N2", "Pipeline", "010 ✅"),
-                BoroughData("BAKERY", "bakery-gradle", "N2", "Site statique", "S001")
-            ),
-            epics = listOf(
-                EpicData("DSH-0", "Bootstrap", "Newark", 3, "P0", EpicStatus.TERMINE),
-                EpicData("DSH-1", "Plugin scaffold", "BAKERY", 8, "P0", EpicStatus.EN_COURS),
-                EpicData("DSH-2", "Crawler", "Newark", 13, "P0", EpicStatus.PLANIFIE)
-            ),
-            dagNodes = emptyList()
-        )
+    fun `render should produce index html with epic matrix`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("Newark", "training-gradle", "N2", "Pipeline", "010 ✅"),
+                        BoroughData("BAKERY", "bakery-gradle", "N2", "Site statique", "S001"),
+                    ),
+                epics =
+                    listOf(
+                        EpicData("DSH-0", "Bootstrap", "Newark", 3, "P0", EpicStatus.TERMINE),
+                        EpicData("DSH-1", "Plugin scaffold", "BAKERY", 8, "P0", EpicStatus.EN_COURS),
+                        EpicData("DSH-2", "Crawler", "Newark", 13, "P0", EpicStatus.PLANIFIE),
+                    ),
+                dagNodes = emptyList(),
+            )
 
         val renderer = DashboardRenderer()
         renderer.render(data, tempDir)
@@ -46,18 +48,23 @@ class DashboardRendererTest {
     }
 
     @Test
-    fun `render should group epics by borough in html table`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("BAKERY", "bakery-gradle", "N2", "Site statique", "S001"),
-                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")
-            ),
-            epics = listOf(
-                EpicData("BKY-1", "Bakery task", "BAKERY", 5, "P1", EpicStatus.EN_COURS),
-                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE)
-            ),
-            dagNodes = emptyList()
-        )
+    fun `render should group epics by borough in html table`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("BAKERY", "bakery-gradle", "N2", "Site statique", "S001"),
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005"),
+                    ),
+                epics =
+                    listOf(
+                        EpicData("BKY-1", "Bakery task", "BAKERY", 5, "P1", EpicStatus.EN_COURS),
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE),
+                    ),
+                dagNodes = emptyList(),
+            )
 
         DashboardRenderer().render(data, tempDir)
 
@@ -70,17 +77,22 @@ class DashboardRendererTest {
     }
 
     @Test
-    fun `render should include activity stream section when sessions present`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S004")
-            ),
-            epics = emptyList(),
-            dagNodes = emptyList(),
-            sessions = listOf(
-                SessionActivity("004", "2026-06-22", "vision", "Cadrage DSH-3", "Dashboard", "4 fichiers")
+    fun `render should include activity stream section when sessions present`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S004"),
+                    ),
+                epics = emptyList(),
+                dagNodes = emptyList(),
+                sessions =
+                    listOf(
+                        SessionActivity("004", "2026-06-22", "vision", "Cadrage DSH-3", "Dashboard", "4 fichiers"),
+                    ),
             )
-        )
 
         val renderer = DashboardRenderer()
         renderer.render(data, tempDir)
@@ -92,21 +104,27 @@ class DashboardRendererTest {
     }
 
     @Test
-    fun `render should include timeline section with milestone entries`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S008")
-            ),
-            epics = listOf(
-                EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE, "000"),
-                EpicData("DSH-7", "Integration", "Dashboard", 5, "P1", EpicStatus.EN_COURS, "008")
-            ),
-            dagNodes = emptyList(),
-            sessions = listOf(
-                SessionActivity("000", "2026-06-18", "gouvernance", "Bootstrap", "Dashboard", ""),
-                SessionActivity("008", "2026-06-23", "implementation", "Integration", "Dashboard", "")
+    fun `render should include timeline section with milestone entries`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S008"),
+                    ),
+                epics =
+                    listOf(
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 3, "P0", EpicStatus.TERMINE, "000"),
+                        EpicData("DSH-7", "Integration", "Dashboard", 5, "P1", EpicStatus.EN_COURS, "008"),
+                    ),
+                dagNodes = emptyList(),
+                sessions =
+                    listOf(
+                        SessionActivity("000", "2026-06-18", "gouvernance", "Bootstrap", "Dashboard", ""),
+                        SessionActivity("008", "2026-06-23", "implementation", "Integration", "Dashboard", ""),
+                    ),
             )
-        )
 
         DashboardRenderer().render(data, tempDir)
 
@@ -118,12 +136,15 @@ class DashboardRendererTest {
     }
 
     @Test
-    fun `render should copy dashboard css to output directory`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(BoroughData("X", "x-gradle", "N0", "Test", "S000")),
-            epics = emptyList(),
-            dagNodes = emptyList()
-        )
+    fun `render should copy dashboard css to output directory`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs = listOf(BoroughData("X", "x-gradle", "N0", "Test", "S000")),
+                epics = emptyList(),
+                dagNodes = emptyList(),
+            )
 
         DashboardRenderer().render(data, tempDir)
 
@@ -131,15 +152,19 @@ class DashboardRendererTest {
     }
 
     @Test
-    fun `render should include DAG graph section with embedded graph json`(@TempDir tempDir: Path) {
-        val data = DashboardData(
-            boroughs = listOf(
-                BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
-                BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005")
-            ),
-            epics = emptyList(),
-            dagNodes = emptyList()
-        )
+    fun `render should include DAG graph section with embedded graph json`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("BAKERY", "bakery-gradle", "N2", "Site", "S001"),
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005"),
+                    ),
+                epics = emptyList(),
+                dagNodes = emptyList(),
+            )
 
         DashboardRenderer().render(data, tempDir)
 

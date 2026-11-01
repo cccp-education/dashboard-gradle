@@ -5,7 +5,10 @@ data class DashboardData(
     val epics: List<EpicData>,
     val dagNodes: List<DagNode>,
     val sessions: List<SessionActivity> = emptyList(),
-    val timestamp: String = java.time.Instant.now().toString()
+    val timestamp: String =
+        java.time.Instant
+            .now()
+            .toString(),
 )
 
 data class SessionActivity(
@@ -14,7 +17,7 @@ data class SessionActivity(
     val type: String,
     val subject: String,
     val borough: String = "",
-    val files: String = ""
+    val files: String = "",
 )
 
 data class BoroughData(
@@ -23,7 +26,7 @@ data class BoroughData(
     val dagLevel: String,
     val role: String,
     val session: String,
-    val status: BoroughStatus = BoroughStatus.ACTIVE
+    val status: BoroughStatus = BoroughStatus.ACTIVE,
 )
 
 enum class BoroughStatus { ACTIVE, VESTIGE, DORMANT }
@@ -35,19 +38,19 @@ data class EpicData(
     val points: Int = 0,
     val priority: String = "P2",
     val status: EpicStatus = EpicStatus.PLANIFIE,
-    val session: String = ""
+    val session: String = "",
 )
 
 enum class EpicStatus {
     TERMINE,
     EN_COURS,
     PLANIFIE,
-    BLOQUE
+    BLOQUE,
 }
 
 data class DagNode(
     val borough: String,
     val project: String,
     val dagLevel: String,
-    val children: List<String> = emptyList()
+    val children: List<String> = emptyList(),
 )

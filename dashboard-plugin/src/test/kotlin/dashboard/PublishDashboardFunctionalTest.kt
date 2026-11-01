@@ -9,7 +9,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class PublishDashboardFunctionalTest {
-
     @TempDir
     lateinit var testDir: Path
 
@@ -26,15 +25,17 @@ class PublishDashboardFunctionalTest {
         writePluginProject()
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
-        val result = GradleRunner.create()
-            .withProjectDir(testDir.toFile())
-            .withArguments("publishDashboardSite", "--stacktrace")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner
+                .create()
+                .withProjectDir(testDir.toFile())
+                .withArguments("publishDashboardSite", "--stacktrace")
+                .withPluginClasspath()
+                .build()
 
         assertThat(result.task(":publishDashboardSite")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
-            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.output).contains("Dashboard published")
 
@@ -49,18 +50,20 @@ class PublishDashboardFunctionalTest {
         writePluginProjectWithConsumer()
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
-        val result = GradleRunner.create()
-            .withProjectDir(testDir.toFile())
-            .withArguments("consumeDashboard", "--stacktrace")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner
+                .create()
+                .withProjectDir(testDir.toFile())
+                .withArguments("consumeDashboard", "--stacktrace")
+                .withPluginClasspath()
+                .build()
 
         assertThat(result.task(":publishDashboardSite")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
-            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.task(":consumeDashboard")?.outcome).isEqualTo(
-            org.gradle.testkit.runner.TaskOutcome.SUCCESS
+            org.gradle.testkit.runner.TaskOutcome.SUCCESS,
         )
         assertThat(result.output).contains("Consumed dashboard JBake site")
 
@@ -69,7 +72,9 @@ class PublishDashboardFunctionalTest {
 
     private fun writePluginProject() {
         Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard\"")
-        Files.writeString(testDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
             plugins {
                 id("education.cccp.dashboard")
             }
@@ -77,12 +82,15 @@ class PublishDashboardFunctionalTest {
                 configPath = "foundry"
                 outputDir = "build/dashboard"
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
     private fun writePluginProjectWithConsumer() {
         Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard-consumer\"")
-        Files.writeString(testDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
             plugins {
                 id("education.cccp.dashboard")
             }
@@ -100,12 +108,15 @@ class PublishDashboardFunctionalTest {
                     println("Consumed dashboard JBake site")
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
     private fun writeEpicIndex(path: Path) {
         Files.createDirectories(path.parent)
-        Files.writeString(path, """
+        Files.writeString(
+            path,
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Dashboard | dashboard-gradle | N3 | Vision | S004
@@ -114,6 +125,7 @@ class PublishDashboardFunctionalTest {
             | EPIC | Sujet | Pts | Priorite | Statut
             | DSH-0 | Bootstrap | 3 | P0 | ✅ S000
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 }

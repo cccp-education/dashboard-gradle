@@ -1,6 +1,5 @@
 package dashboard.render
 
-import dashboard.model.BoroughData
 import dashboard.model.BoroughStatus
 import dashboard.model.DashboardData
 import dashboard.model.EpicData
@@ -14,32 +13,34 @@ import dashboard.model.EpicData
  * - EPICs without a borough are grouped under "UNASSIGNED"
  */
 object BoroughGrouper {
-
     fun groupByBorough(data: DashboardData): List<BoroughGroup> {
         val epicsByBorough = data.epics.groupBy { it.borough }
-        val groups = data.boroughs.sortedBy { it.dagLevel }.map { borough ->
-            BoroughGroup(
-                name = borough.name,
-                dagLevel = borough.dagLevel,
-                project = borough.project,
-                status = borough.status.name,
-                epics = sortEpics(epicsByBorough[borough.name] ?: emptyList())
-            )
-        }.toMutableList()
+        val groups =
+            data.boroughs
+                .sortedBy { it.dagLevel }
+                .map { borough ->
+                    BoroughGroup(
+                        name = borough.name,
+                        dagLevel = borough.dagLevel,
+                        project = borough.project,
+                        status = borough.status.name,
+                        epics = sortEpics(epicsByBorough[borough.name] ?: emptyList()),
+                    )
+                }.toMutableList()
 
         epicsByBorough[""]?.let { orphans ->
-            groups += BoroughGroup(
-                name = "UNASSIGNED",
-                dagLevel = "N?",
-                project = "",
-                status = BoroughStatus.ACTIVE.name,
-                epics = sortEpics(orphans)
-            )
+            groups +=
+                BoroughGroup(
+                    name = "UNASSIGNED",
+                    dagLevel = "N?",
+                    project = "",
+                    status = BoroughStatus.ACTIVE.name,
+                    epics = sortEpics(orphans),
+                )
         }
 
         return groups
     }
 
-    private fun sortEpics(epics: List<EpicData>): List<EpicData> =
-        epics.sortedWith(compareBy({ it.priority }, { it.id }))
+    private fun sortEpics(epics: List<EpicData>): List<EpicData> = epics.sortedWith(compareBy({ it.priority }, { it.id }))
 }

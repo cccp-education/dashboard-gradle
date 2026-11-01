@@ -23,35 +23,40 @@ import java.nio.file.Path
  * - `styles.css`: stylesheet with the status palette
  */
 class DashboardRenderer {
-
     private val templateEngine: TemplateEngine = createTemplateEngine()
 
-    private val mapper = jacksonObjectMapper().apply {
-        enable(SerializationFeature.INDENT_OUTPUT)
-        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-    }
+    private val mapper =
+        jacksonObjectMapper().apply {
+            enable(SerializationFeature.INDENT_OUTPUT)
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
 
-    fun render(data: DashboardData, outputDir: Path) {
+    fun render(
+        data: DashboardData,
+        outputDir: Path,
+    ) {
         Files.createDirectories(outputDir)
 
         val dagGraph = DagGraphBuilder.build(data)
 
-        val page = DashboardPage(
-            title = "Dashboard Workspace CCCP",
-            boroughs = data.boroughs.sortedBy { it.dagLevel },
-            epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
-            sessions = data.sessions.sortedByDescending { it.number.padStart(3, '0') },
-            stats = computeStats(data),
-            boroughGroups = BoroughGrouper.groupByBorough(data),
-            dagGraph = dagGraph,
-            dagGraphJson = mapper.writeValueAsString(dagGraph),
-            timeline = TimelineBuilder.build(data)
-        )
+        val page =
+            DashboardPage(
+                title = "Dashboard Workspace CCCP",
+                boroughs = data.boroughs.sortedBy { it.dagLevel },
+                epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
+                sessions = data.sessions.sortedByDescending { it.number.padStart(3, '0') },
+                stats = computeStats(data),
+                boroughGroups = BoroughGrouper.groupByBorough(data),
+                dagGraph = dagGraph,
+                dagGraphJson = mapper.writeValueAsString(dagGraph),
+                timeline = TimelineBuilder.build(data),
+            )
 
-        val context = Context().apply {
-            setVariable("page", page)
-            setVariable("statusHelper", StatusCssHelper)
-        }
+        val context =
+            Context().apply {
+                setVariable("page", page)
+                setVariable("statusHelper", StatusCssHelper)
+            }
 
         val html = templateEngine.process("dashboard", context)
 
@@ -76,7 +81,10 @@ class DashboardRenderer {
     /**
      * Loads JSON data produced by the `crawlDashboard` task and generates the site.
      */
-    fun renderFromJson(jsonPath: Path, outputDir: Path) {
+    fun renderFromJson(
+        jsonPath: Path,
+        outputDir: Path,
+    ) {
         val data: DashboardData = mapper.readValue(jsonPath.toFile())
         render(data, outputDir)
     }
@@ -89,46 +97,50 @@ class DashboardRenderer {
             doneCount = byStatus[EpicStatus.TERMINE] ?: 0,
             inProgressCount = byStatus[EpicStatus.EN_COURS] ?: 0,
             plannedCount = byStatus[EpicStatus.PLANIFIE] ?: 0,
-            blockedCount = byStatus[EpicStatus.BLOQUE] ?: 0
+            blockedCount = byStatus[EpicStatus.BLOQUE] ?: 0,
         )
     }
 
-    private fun copyStaticAsset(resourcePath: String, target: Path) {
+    private fun copyStaticAsset(
+        resourcePath: String,
+        target: Path,
+    ) {
         javaClass.classLoader.getResourceAsStream(resourcePath)?.use { input ->
             Files.copy(input, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         } ?: throw IllegalStateException("Static asset not found: $resourcePath")
     }
 
     private fun writeJbakeProperties(target: Path) {
-        val props = listOf(
-            "site.host=https://cccp.education/dashboard/",
-            "render.index=false",
-            "template.page.file=index.thyme",
-            "render.archive=false",
-            "render.tags=false",
-            "render.sitemap=false",
-            "render.feed=false"
-        )
+        val props =
+            listOf(
+                "site.host=https://cccp.education/dashboard/",
+                "render.index=false",
+                "template.page.file=index.thyme",
+                "render.archive=false",
+                "render.tags=false",
+                "render.sitemap=false",
+                "render.feed=false",
+            )
         Files.writeString(target, props.joinToString("\n", postfix = "\n"))
     }
 
-    private fun wrapAsJbakeContent(html: String): String {
-        return """title=Dashboard Workspace CCCP
+    private fun wrapAsJbakeContent(html: String): String =
+        """title=Dashboard Workspace CCCP
 type=page
 status=published
 date=2026-06-23
 ~~~~~~
 $html
 """.trimEnd()
-    }
 
     private fun createTemplateEngine(): TemplateEngine {
-        val resolver = ClassLoaderTemplateResolver().apply {
-            prefix = "templates/"
-            suffix = ".thyme"
-            templateMode = TemplateMode.HTML
-            isCacheable = false
-        }
+        val resolver =
+            ClassLoaderTemplateResolver().apply {
+                prefix = "templates/"
+                suffix = ".thyme"
+                templateMode = TemplateMode.HTML
+                isCacheable = false
+            }
         return TemplateEngine().apply {
             setTemplateResolver(resolver)
         }
@@ -146,10 +158,11 @@ $html
  * Instantiabable helper exposed to the Thymeleaf template.
  */
 object StatusCssHelper {
-    fun statusCssClass(status: EpicStatus): String = when (status) {
-        EpicStatus.TERMINE -> "status-done"
-        EpicStatus.EN_COURS -> "status-in-progress"
-        EpicStatus.PLANIFIE -> "status-planned"
-        EpicStatus.BLOQUE -> "status-blocked"
-    }
+    fun statusCssClass(status: EpicStatus): String =
+        when (status) {
+            EpicStatus.TERMINE -> "status-done"
+            EpicStatus.EN_COURS -> "status-in-progress"
+            EpicStatus.PLANIFIE -> "status-planned"
+            EpicStatus.BLOQUE -> "status-blocked"
+        }
 }

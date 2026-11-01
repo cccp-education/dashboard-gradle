@@ -4,15 +4,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class TimelineTest {
-
-    private fun milestone(id: String, date: String, type: MilestoneType = MilestoneType.EPIC_RELEASE) = Milestone(
+    private fun milestone(
+        id: String,
+        date: String,
+        type: MilestoneType = MilestoneType.EPIC_RELEASE,
+    ) = Milestone(
         id = id,
         label = "Label $id",
         date = date,
         borough = "Dashboard",
         dagLevel = "N3",
         type = type,
-        status = MilestoneStatus.DONE
+        status = MilestoneStatus.DONE,
     )
 
     @Test
@@ -42,15 +45,16 @@ class TimelineTest {
     @Test
     fun `byType should filter milestones by type`() {
         val epic = milestone("E1", "2026-06-18", MilestoneType.EPIC_RELEASE)
-        val session = Milestone(
-            id = "S1",
-            label = "Session 1",
-            date = "2026-06-18",
-            borough = "Dashboard",
-            dagLevel = "N3",
-            type = MilestoneType.SESSION,
-            status = MilestoneStatus.DONE
-        )
+        val session =
+            Milestone(
+                id = "S1",
+                label = "Session 1",
+                date = "2026-06-18",
+                borough = "Dashboard",
+                dagLevel = "N3",
+                type = MilestoneType.SESSION,
+                status = MilestoneStatus.DONE,
+            )
 
         val timeline = Timeline(listOf(epic, session))
 

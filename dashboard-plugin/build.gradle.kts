@@ -5,10 +5,14 @@ plugins {
     `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.publish)
+    // LINT-ADOPT-13 (S-336) — static analysis gate (ktlint in `check`).
+    id("education.cccp.build.lint") version "0.0.7"
 }
 
 group = "education.cccp"
-version = ws.versions.dashboard.plugin.get()
+version =
+    ws.versions.dashboard.plugin
+        .get()
 kotlin.jvmToolchain(25)
 
 repositories {
@@ -57,22 +61,26 @@ sourceSets {
 }
 
 // ── Cucumber test task ──────────────────────────────────────
-val cucumberTest = tasks.register<Test>("cucumberTest") {
-    description = "Runs Cucumber BDD tests."
-    group = "verification"
-    testClassesDirs = sourceSets.test.get().output.classesDirs
-    classpath = configurations.testRuntimeClasspath.get() +
+val cucumberTest =
+    tasks.register<Test>("cucumberTest") {
+        description = "Runs Cucumber BDD tests."
+        group = "verification"
+        testClassesDirs =
+            sourceSets.test
+                .get()
+                .output.classesDirs
+        classpath = configurations.testRuntimeClasspath.get() +
             sourceSets.test.get().output +
             sourceSets.main.get().output
-    useJUnitPlatform { excludeEngines("junit-jupiter") }
-    systemProperty("cucumber.junit-platform.naming-strategy", "long")
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStandardStreams = true
+        useJUnitPlatform { excludeEngines("junit-jupiter") }
+        systemProperty("cucumber.junit-platform.naming-strategy", "long")
+        testLogging {
+            events("passed", "skipped", "failed")
+            showStandardStreams = true
+        }
+        outputs.upToDateWhen { false }
+        dependsOn(tasks.classes)
     }
-    outputs.upToDateWhen { false }
-    dependsOn(tasks.classes)
-}
 
 tasks.check { dependsOn(cucumberTest) }
 

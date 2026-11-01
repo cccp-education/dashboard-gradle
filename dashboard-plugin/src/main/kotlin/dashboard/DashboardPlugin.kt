@@ -17,7 +17,6 @@ import java.nio.file.Files
  * - `publishDashboardSite`: copies the generated site to the configured publish directory
  */
 class DashboardPlugin : Plugin<Project> {
-
     override fun apply(project: Project) {
         val extension = project.extensions.create("dashboard", DashboardExtension::class.java)
 
@@ -41,13 +40,16 @@ class DashboardPlugin : Plugin<Project> {
                 val outPath = project.projectDir.toPath().resolve(outputDir)
                 Files.createDirectories(outPath)
 
-                val mapper = jacksonObjectMapper().apply {
-                    enable(SerializationFeature.INDENT_OUTPUT)
-                }
+                val mapper =
+                    jacksonObjectMapper().apply {
+                        enable(SerializationFeature.INDENT_OUTPUT)
+                    }
 
                 val jsonFile = outPath.resolve("dashboard-data.json")
                 mapper.writeValue(jsonFile.toFile(), data)
-                project.logger.lifecycle("Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions)")
+                project.logger.lifecycle(
+                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions)",
+                )
             }
         }
 

@@ -3,13 +3,13 @@ package dashboard.timeline
 enum class MilestoneType {
     EPIC_RELEASE,
     SESSION,
-    SPRINT_GATE
+    SPRINT_GATE,
 }
 
 enum class MilestoneStatus {
     DONE,
     IN_PROGRESS,
-    PLANNED
+    PLANNED,
 }
 
 /**
@@ -25,10 +25,7 @@ data class Milestone(
     val borough: String,
     val dagLevel: String,
     val type: MilestoneType,
-    val status: MilestoneStatus
+    val status: MilestoneStatus,
 ) : Comparable<Milestone> {
-
-    override fun compareTo(other: Milestone): Int {
-        return compareValuesBy(this, other, { it.date }, { it.id })
-    }
+    override fun compareTo(other: Milestone): Int = compareValuesBy(this, other, { it.date }, { it.id })
 }

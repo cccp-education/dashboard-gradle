@@ -8,7 +8,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 
 abstract class DashboardExtension {
-
     @get:Input
     abstract val configPath: Property<String>
 

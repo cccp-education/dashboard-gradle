@@ -2,8 +2,8 @@ package dashboard
 
 import dashboard.model.BoroughData
 import dashboard.model.BoroughStatus
-import dashboard.model.DashboardData
 import dashboard.model.DagNode
+import dashboard.model.DashboardData
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
 import dashboard.model.SessionActivity
@@ -18,19 +18,24 @@ import java.nio.file.attribute.BasicFileAttributes
  * workspace directory and produces a typed [DashboardData] model.
  */
 class IndexCrawler {
-
     fun crawlDirectory(root: Path): DashboardData {
         val indexFiles = mutableListOf<Path>()
         val sessionFiles = mutableListOf<Path>()
-        Files.walkFileTree(root, object : SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                when (file.fileName.toString()) {
-                    "INDEX.adoc" -> indexFiles.add(file)
-                    "SESSIONS_HISTORY.adoc" -> sessionFiles.add(file)
+        Files.walkFileTree(
+            root,
+            object : SimpleFileVisitor<Path>() {
+                override fun visitFile(
+                    file: Path,
+                    attrs: BasicFileAttributes,
+                ): FileVisitResult {
+                    when (file.fileName.toString()) {
+                        "INDEX.adoc" -> indexFiles.add(file)
+                        "SESSIONS_HISTORY.adoc" -> sessionFiles.add(file)
+                    }
+                    return FileVisitResult.CONTINUE
                 }
-                return FileVisitResult.CONTINUE
-            }
-        })
+            },
+        )
         val allBoroughs = mutableListOf<BoroughData>()
         val allNodes = mutableListOf<DagNode>()
         for (f in indexFiles) {
@@ -56,7 +61,7 @@ class IndexCrawler {
             boroughs = allBoroughs,
             epics = allEpics,
             dagNodes = allNodes,
-            sessions = allSessions
+            sessions = allSessions,
         )
     }
 
@@ -77,7 +82,10 @@ class IndexCrawler {
         return tables.firstNotNullOfOrNull { parseSessionsTable(it) } ?: emptyList()
     }
 
-    private fun extractBoroughFromPath(file: Path, boroughs: List<BoroughData>): String? {
+    private fun extractBoroughFromPath(
+        file: Path,
+        boroughs: List<BoroughData>,
+    ): String? {
         val segments = file.map { it.toString().lowercase() }
         return boroughs.find { segments.contains(it.project.lowercase()) }?.name
             ?: boroughs.find { segments.contains(it.name.lowercase()) }?.name
@@ -85,12 +93,20 @@ class IndexCrawler {
 
     private fun parseTables(content: String): List<List<List<String>>> {
         val tableRegex = """\|={3,}\n(.*?)\n\|={3,}""".toRegex(setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.MULTILINE))
-        return tableRegex.findAll(content).map { match ->
-            val body = match.groupValues[1].trim()
-            body.lines()
-                .map { line -> line.trim().trimStart('|').split('|').map { it.trim() } }
-                .filter { row -> row.isNotEmpty() && row.all { cell -> cell.isNotBlank() } }
-        }.toList()
+        return tableRegex
+            .findAll(content)
+            .map { match ->
+                val body = match.groupValues[1].trim()
+                body
+                    .lines()
+                    .map { line ->
+                        line
+                            .trim()
+                            .trimStart('|')
+                            .split('|')
+                            .map { it.trim() }
+                    }.filter { row -> row.isNotEmpty() && row.all { cell -> cell.isNotBlank() } }
+            }.toList()
     }
 
     private fun parseBoroughTable(rows: List<List<String>>): List<BoroughData>? {
@@ -107,18 +123,19 @@ class IndexCrawler {
             val project = projectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
             if (project.isBlank() || project.contains("==")) return@mapNotNull null
             val role = roleIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
-            val status = when {
-                role.contains("VESTIGE", ignoreCase = true) -> BoroughStatus.VESTIGE
-                role.contains("DORMANT", ignoreCase = true) -> BoroughStatus.DORMANT
-                else -> BoroughStatus.ACTIVE
-            }
+            val status =
+                when {
+                    role.contains("VESTIGE", ignoreCase = true) -> BoroughStatus.VESTIGE
+                    role.contains("DORMANT", ignoreCase = true) -> BoroughStatus.DORMANT
+                    else -> BoroughStatus.ACTIVE
+                }
             BoroughData(
                 name = row.getOrElse(boroughIdx) { "" }.replace("==", "").trim(),
                 project = project.replace("==", "").trim(),
                 dagLevel = dagIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 role = role,
                 session = sessionIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
-                status = status
+                status = status,
             )
         }
     }
@@ -144,7 +161,7 @@ class IndexCrawler {
                 points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
                 status = parseEpicStatus(rawStatus),
-                session = sessionNumber
+                session = sessionNumber,
             )
         }
     }
@@ -165,22 +182,23 @@ class IndexCrawler {
                 date = dateIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 type = typeIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 subject = row.getOrElse(subjectIdx) { "" },
-                files = filesIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: ""
+                files = filesIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
             )
         }
     }
 
-    private fun parseEpicStatus(raw: String): EpicStatus {
-        return when {
-            raw.contains("✅") || raw.contains("TERMINE", ignoreCase = true) ||
+    private fun parseEpicStatus(raw: String): EpicStatus =
+        when {
+            raw.contains("✅") ||
+                raw.contains("TERMINE", ignoreCase = true) ||
                 raw.contains("DONE", ignoreCase = true) -> EpicStatus.TERMINE
-            raw.contains("🔄") || raw.contains("EN COURS", ignoreCase = true) ||
+            raw.contains("🔄") ||
+                raw.contains("EN COURS", ignoreCase = true) ||
                 raw.contains("IN PROGRESS", ignoreCase = true) -> EpicStatus.EN_COURS
             raw.contains("BLOQUE", ignoreCase = true) ||
                 raw.contains("BLOCKED", ignoreCase = true) -> EpicStatus.BLOQUE
             else -> EpicStatus.PLANIFIE
         }
-    }
 
     private fun extractSessionNumber(raw: String): String {
         val match = Regex("""S?(\d{3})""").find(raw)

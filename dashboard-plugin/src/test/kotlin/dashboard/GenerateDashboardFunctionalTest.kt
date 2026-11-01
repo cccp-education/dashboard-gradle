@@ -9,7 +9,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class GenerateDashboardFunctionalTest {
-
     @TempDir
     lateinit var testDir: Path
 
@@ -27,15 +26,17 @@ class GenerateDashboardFunctionalTest {
         writeIndexAdoc(foundryDir.resolve("dashboard/INDEX.adoc"), "Dashboard", "dashboard-gradle", "N3", "Vision")
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
-        val result = GradleRunner.create()
-            .withProjectDir(testDir.toFile())
-            .withArguments("generateDashboard", "--stacktrace")
-            .withPluginClasspath()
-            .build()
+        val result =
+            GradleRunner
+                .create()
+                .withProjectDir(testDir.toFile())
+                .withArguments("generateDashboard", "--stacktrace")
+                .withPluginClasspath()
+                .build()
 
         assertThat(result.task(":generateDashboard")?.outcome).isIn(
             org.gradle.testkit.runner.TaskOutcome.SUCCESS,
-            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+            org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.output).contains("Dashboard site generated")
 
@@ -55,20 +56,27 @@ class GenerateDashboardFunctionalTest {
         writePluginProject()
         val dashboardDir = foundryDir.resolve("dashboard")
         Files.createDirectories(dashboardDir)
-        Files.writeString(dashboardDir.resolve("INDEX.adoc"), """
+        Files.writeString(
+            dashboardDir.resolve("INDEX.adoc"),
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Dashboard | dashboard-gradle | N3 | Vision | S004
             |===
-        """.trimIndent())
-        Files.writeString(dashboardDir.resolve("SESSIONS_HISTORY.adoc"), """
+            """.trimIndent(),
+        )
+        Files.writeString(
+            dashboardDir.resolve("SESSIONS_HISTORY.adoc"),
+            """
             |===
             | # | Date | Objet | Fichiers
             | 004 | 2026-06-22 | Cadrage DSH-3 | 4 fichiers
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
-        GradleRunner.create()
+        GradleRunner
+            .create()
             .withProjectDir(testDir.toFile())
             .withArguments("generateDashboard", "--stacktrace")
             .withPluginClasspath()
@@ -81,7 +89,9 @@ class GenerateDashboardFunctionalTest {
 
     private fun writePluginProject() {
         Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard\"")
-        Files.writeString(testDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
             plugins {
                 id("education.cccp.dashboard")
             }
@@ -89,22 +99,34 @@ class GenerateDashboardFunctionalTest {
                 configPath = "foundry"
                 outputDir = "build/dashboard"
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
-    private fun writeIndexAdoc(path: Path, borough: String, project: String, dag: String, role: String) {
+    private fun writeIndexAdoc(
+        path: Path,
+        borough: String,
+        project: String,
+        dag: String,
+        role: String,
+    ) {
         Files.createDirectories(path.parent)
-        Files.writeString(path, """
+        Files.writeString(
+            path,
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | $borough | $project | $dag | $role | S001
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
     private fun writeEpicIndex(path: Path) {
         Files.createDirectories(path.parent)
-        Files.writeString(path, """
+        Files.writeString(
+            path,
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Dashboard | dashboard-gradle | N3 | Vision | S004
@@ -115,6 +137,7 @@ class GenerateDashboardFunctionalTest {
             | DSH-1 | Plugin scaffold | 8 | P0 | 🔄 S001
             | DSH-2 | Crawler | 13 | P0 | PLANIFIE
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 }

@@ -8,7 +8,7 @@ package dashboard.render
  */
 data class DagGraph(
     val nodes: List<DagNodeView>,
-    val edges: List<DagEdgeView>
+    val edges: List<DagEdgeView>,
 )
 
 data class DagNodeView(
@@ -16,10 +16,10 @@ data class DagNodeView(
     val label: String,
     val level: Int,
     val project: String,
-    val group: String
+    val group: String,
 )
 
 data class DagEdgeView(
     val from: String,
-    val to: String
+    val to: String,
 )

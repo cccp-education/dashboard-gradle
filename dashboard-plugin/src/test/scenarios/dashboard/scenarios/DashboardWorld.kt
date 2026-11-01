@@ -16,16 +16,21 @@ class DashboardWorld {
         projectDir = Files.createTempDirectory("dashboard-test-")
         Files.writeString(projectDir.resolve("settings.gradle.kts"), "rootProject.name = \"${projectDir.fileName}\"")
         val configLine = if (configPath == "foundry") "" else """dashboard { configPath = "$configPath" }"""
-        Files.writeString(projectDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            projectDir.resolve("build.gradle.kts"),
+            """
             plugins { id("education.cccp.dashboard") }
             $configLine
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
     fun createConsumerGradleProject() {
         projectDir = Files.createTempDirectory("dashboard-consumer-test-")
         Files.writeString(projectDir.resolve("settings.gradle.kts"), "rootProject.name = \"${projectDir.fileName}\"")
-        Files.writeString(projectDir.resolve("build.gradle.kts"), """
+        Files.writeString(
+            projectDir.resolve("build.gradle.kts"),
+            """
             plugins { id("education.cccp.dashboard") }
             dashboard {
                 configPath = "foundry"
@@ -41,12 +46,14 @@ class DashboardWorld {
                     println("Consumed dashboard JBake site")
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
     }
 
-    fun executeGradle(vararg args: String): BuildResult {
-        return try {
-            GradleRunner.create()
+    fun executeGradle(vararg args: String): BuildResult =
+        try {
+            GradleRunner
+                .create()
                 .withProjectDir(projectDir.toFile())
                 .withArguments(*args, "--stacktrace")
                 .withPluginClasspath()
@@ -55,9 +62,11 @@ class DashboardWorld {
         } catch (e: UnexpectedBuildFailure) {
             e.buildResult.also { buildResult = it }
         }
-    }
 
-    fun writeIndexAdoc(path: String, content: String) {
+    fun writeIndexAdoc(
+        path: String,
+        content: String,
+    ) {
         val file = projectDir.resolve(path)
         Files.createDirectories(file.parent)
         Files.writeString(file, content)

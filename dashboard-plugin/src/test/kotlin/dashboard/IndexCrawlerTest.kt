@@ -11,7 +11,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class IndexCrawlerTest {
-
     @TempDir
     lateinit var tempDir: Path
 
@@ -24,7 +23,8 @@ class IndexCrawlerTest {
 
     @Test
     fun `crawlIndex should parse borough and epic tables`() {
-        val indexAdoc = """
+        val indexAdoc =
+            """
             = Index — BAKERY
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
@@ -37,7 +37,7 @@ class IndexCrawlerTest {
             | DSH-1 | Plugin scaffold | 8 | P0 | 🔄 S001
             | DSH-2 | Crawler | 13 | P0 | PLANIFIE
             |===
-        """.trimIndent()
+            """.trimIndent()
         val file = tempDir.resolve("INDEX.adoc")
         Files.writeString(file, indexAdoc)
 
@@ -71,12 +71,13 @@ class IndexCrawlerTest {
 
     @Test
     fun `crawlIndex should infer VESTIGE borough status from role`() {
-        val indexAdoc = """
+        val indexAdoc =
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Nashville | newpipe-gradle | N2 | VESTIGE | 001 ✅
             |===
-        """.trimIndent()
+            """.trimIndent()
         val file = tempDir.resolve("INDEX.adoc")
         Files.writeString(file, indexAdoc)
 
@@ -91,21 +92,27 @@ class IndexCrawlerTest {
     fun `crawlDirectory should collect all INDEX_adoc files`() {
         val bakeryDir = tempDir.resolve("bakery")
         Files.createDirectories(bakeryDir)
-        Files.writeString(bakeryDir.resolve("INDEX.adoc"), """
+        Files.writeString(
+            bakeryDir.resolve("INDEX.adoc"),
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | BAKERY | bakery-gradle | N2 | Site statique | S001
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val newarkDir = tempDir.resolve("newark")
         Files.createDirectories(newarkDir)
-        Files.writeString(newarkDir.resolve("INDEX.adoc"), """
+        Files.writeString(
+            newarkDir.resolve("INDEX.adoc"),
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Newark | training-gradle | N2 | Pipeline formation | 010 ✅
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val data = crawler.crawlDirectory(tempDir)
 
@@ -118,12 +125,15 @@ class IndexCrawlerTest {
         Files.writeString(tempDir.resolve("README.adoc"), "= Readme")
         val subDir = tempDir.resolve("sub")
         Files.createDirectories(subDir)
-        Files.writeString(subDir.resolve("INDEX.adoc"), """
+        Files.writeString(
+            subDir.resolve("INDEX.adoc"),
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Test | test-plugin | N0 | Testing | S000
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val data = crawler.crawlDirectory(tempDir)
 
@@ -133,14 +143,15 @@ class IndexCrawlerTest {
 
     @Test
     fun `crawlSessionsHistory should parse session activities`() {
-        val sessionsAdoc = """
+        val sessionsAdoc =
+            """
             = SESSIONS_HISTORY
             |===
             | # | Date | Subject | Files
             | 000 | 2026-06-18 | Bootstrap gouvernance | 8 fichiers
             | 001 | 2026-06-18 | Plugin scaffold | 7 fichiers
             |===
-        """.trimIndent()
+            """.trimIndent()
         val file = tempDir.resolve("SESSIONS_HISTORY.adoc")
         Files.writeString(file, sessionsAdoc)
 
@@ -155,18 +166,24 @@ class IndexCrawlerTest {
     fun `crawlDirectory should attach sessions to their borough`() {
         val dashboardDir = tempDir.resolve("dashboard-gradle/dashboard-plugin")
         Files.createDirectories(dashboardDir)
-        Files.writeString(dashboardDir.resolve("INDEX.adoc"), """
+        Files.writeString(
+            dashboardDir.resolve("INDEX.adoc"),
+            """
             |===
             | Borough | Project | DAG | Role in MVP0 | Session
             | Dashboard | dashboard-gradle | N3 | Dashboard vision | S003
             |===
-        """.trimIndent())
-        Files.writeString(dashboardDir.resolve("SESSIONS_HISTORY.adoc"), """
+            """.trimIndent(),
+        )
+        Files.writeString(
+            dashboardDir.resolve("SESSIONS_HISTORY.adoc"),
+            """
             |===
             | # | Date | Subject | Files
             | 003 | 2026-06-19 | Renommage ALGER | 15 fichiers
             |===
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val data = crawler.crawlDirectory(tempDir)
 
