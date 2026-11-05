@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     signing
     `java-library`
@@ -92,6 +94,12 @@ gradlePlugin {
             displayName = "Dashboard Plugin"
             description = "Gradle plugin for workspace vision and progress dashboard."
             tags.set(listOf("dashboard", "workspace", "visualization", "jbake", "thymeleaf"))
+            compatibility {
+                features {
+                    configurationCache.set(false)
+                    isolatedProjects.set(false)
+                }
+            }
         }
     }
     website = "https://github.com/cccp-education/dashboard-gradle"
