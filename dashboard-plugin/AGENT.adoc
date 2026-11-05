@@ -154,7 +154,7 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 | DSH-6 | Timeline roadmap — jalons MVP0 | P1 | PLANIFIE
 | DSH-7 | Integration runner-gradle + deploiement | P1 | PLANIFIE
 | DSH-8 | GitHub Sync — refresh depuis raw API | P2 | PLANIFIE
-| PUB | Publication Maven Central nmcp | P1 | PLANIFIE
+| PUB | Publication Gradle Plugin Portal (défaut jusqu'au 2026-12-01) | P1 | PLANIFIE (compatibilité déclarée S-036 ; bump + tag)
 |===
 
 == Gestion du Contexte
