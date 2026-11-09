@@ -17,3 +17,9 @@
 | 011 | 2026-06-28 | Nettoyage historique git ALGER + portfolio dashboard-flow-gradle — filter-branch ALGER→dashboard-plugin, ajout KINSHASA AGENTS.adoc | .agents/sessions/011-git-history-cleanup.adoc, SESSION_CHECKLIST.adoc, git filter-branch
 | 216 | 2026-09-14 | Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster) — 6 constats, 13 décisions (dont templating Thymeleaf unique + Phase 0), 9 US ~31 pts, absorption DFL-1/2/3/7, scaffold prototype/ + exclusion processResources | .agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc, .agents/sessions/216-cadrage-dsh-boundary.adoc, AGENT.adoc, BACKLOG.adoc, INDEX.adoc, PROMPT_REPRISE.adoc, SESSIONS_HISTORY.adoc, src/main/resources/prototype/README.adoc, src/main/resources/prototype/mock/dashboard-data.mock.json, build.gradle.kts
 |===
+
+== Session 218 — JitPack mirror (CNV-16) — 2026-11-09
+
+Publication JitPack de dashboard-plugin 0.0.1 + correctif signature conditionnelle. JitPack : 0.0.1 — POM HTTP 200. Shim `useModule` pour
+`education.cccp.build.*` (tag JitPack `0.0.15`). Rapport
+`dashboard-plugin/.agents/sessions/218-jitpack-mirror.adoc`.

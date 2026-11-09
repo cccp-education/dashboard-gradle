@@ -117,3 +117,7 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 | container-provision | container-provision-gradle | N0 | Container provision Playwright/Colab | S000
 |===
 
+
+== Session 218 — JitPack mirror (CNV-16)
+
+Publication JitPack de dashboard-plugin 0.0.1 + correctif signature conditionnelle. JitPack : 0.0.1 — POM HTTP 200.
