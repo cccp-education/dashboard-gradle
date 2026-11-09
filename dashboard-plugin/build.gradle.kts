@@ -1,7 +1,7 @@
 import org.gradle.plugin.compatibility.compatibility
+import org.gradle.plugins.signing.SigningExtension
 
 plugins {
-    signing
     `java-library`
     `maven-publish`
     `java-gradle-plugin`
@@ -156,9 +156,16 @@ publishing {
     }
 }
 
-signing {
-    if (System.getenv("CI") != "true" && !version.toString().endsWith("-SNAPSHOT")) {
+// CNV-16 — apply signing only when a signature is expected. plugin-publish
+// auto-signs as soon as it sees the signing plugin, so applying it on JitPack
+// (no GPG key) would fail publishToMavenLocal.
+val jitpackBuild = providers.environmentVariable("JITPACK").orNull == "true"
+val isPublishing = System.getenv("CCCP_PUBLISH") == "true"
+val isCi = System.getenv("CI") == "true"
+if (!jitpackBuild && (isPublishing || !isCi) && !version.toString().endsWith("-SNAPSHOT")) {
+    apply(plugin = "signing")
+    configure<SigningExtension> {
+        useGpgCmd()
         sign(publishing.publications)
     }
-    useGpgCmd()
 }
