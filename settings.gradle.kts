@@ -15,7 +15,6 @@ pluginManagement.resolutionStrategy.eachPlugin {
     }
 }
 
-
 plugins {
     id("com.gradleup.nmcp.settings").version("1.5.0")
 }
