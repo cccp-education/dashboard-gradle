@@ -72,3 +72,21 @@ Consommateur transitoire `/tmp/opencode/dash-serve-smoke` (plugin
 * `GET /` = **200** (HTML), `GET /styles.css` = **200**, `GET /nope` = **404**.
 
 Aucun test Gradle lancé localement ; serveur arrêté après vérification.
+
+== Release `0.0.3` + exposition au root (S-220)
+
+* `v0.0.2` était déjà taggé (commit `c257052`, **sans** `serve`) → nouvelle
+  version **`0.0.3`** : `dashboard-plugin/build.gradle.kts` lit
+  `-Pversion` (fallback `ws.versions.dashboard.plugin`), `jitpack.yml`
+  `publishToMavenLocal -Pversion="${VERSION#v}"`, tag annoté `v0.0.3`.
+* JitPack `dashboard-plugin:0.0.3` → POM **HTTP 200**.
+* Root consommateur : pin `0.0.3` (`build.gradle.kts`,
+  `gradle/libs.versions.toml`) + **shim `useModule`** dans `settings.gradle.kts`
+  (`education.cccp.dashboard` → `com.github.cccp-education.dashboard-gradle:dashboard-plugin`,
+  le marker n'étant pas servi au groupId de l'id sur JitPack).
+* **Preuve root** : `./gradlew tasks --all` expose `serve` ;
+  `./gradlew serve -Pdashboard.servePort=18081` → `GET /` = 200,
+  `/styles.css` = 200, `/nope` = 404.
+* `workspace-bom` catalogue : `dashboard-plugin = 0.0.3` (garde
+  `verifyCrossBoroughPins`) ; N0 publié 0.0.136 inchangé (à republier au
+  prochain tag N0).

@@ -1,5 +1,5 @@
 plugins {
-    id("education.cccp.dashboard") version "0.0.1"
+    id("education.cccp.dashboard") version "0.0.3"
 }
 
 dashboard {

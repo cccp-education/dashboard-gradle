@@ -10,6 +10,13 @@ pluginManagement {
 // the canonical plugin declarations may stay on the released version.
 pluginManagement.repositories.maven("https://jitpack.io")
 pluginManagement.resolutionStrategy.eachPlugin {
+    if (requested.id.id == "education.cccp.dashboard") {
+        // CNV-17 — the plugin marker is not served at the plugin-id group on
+        // JitPack; resolve the module explicitly (same shim as other boroughs).
+        useModule("com.github.cccp-education.dashboard-gradle:dashboard-plugin:${requested.version}")
+    }
+}
+pluginManagement.resolutionStrategy.eachPlugin {
     if (requested.id.id.startsWith("education.cccp.build.")) {
         useModule("com.github.cccp-education.conventions-gradle:conventions-plugin:0.0.17")
     }
