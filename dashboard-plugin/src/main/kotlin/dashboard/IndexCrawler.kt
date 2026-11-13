@@ -7,6 +7,7 @@ import dashboard.model.DashboardData
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
 import dashboard.model.SessionActivity
+import dashboard.progress.ProgressCalculator
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -23,7 +24,10 @@ import java.nio.file.attribute.BasicFileAttributes
  * does not report duplicated governance entries.
  */
 class IndexCrawler {
-    fun crawlDirectory(root: Path): DashboardData {
+    fun crawlDirectory(
+        root: Path,
+        workspaceBacklog: Path? = null,
+    ): DashboardData {
         val indexFiles = mutableListOf<Path>()
         val sessionFiles = mutableListOf<Path>()
         Files.walkFileTree(
@@ -89,15 +93,25 @@ class IndexCrawler {
             }
         }
 
-        val sortedBoroughs = boroughs.values.toList()
+        if (workspaceBacklog != null && Files.isRegularFile(workspaceBacklog)) {
+            parseWorkspaceBacklog(workspaceBacklog)?.let { (borough, globalEpics) ->
+                boroughs.merge(boroughKey(borough), borough, ::mergeBorough)
+                for (epic in globalEpics) {
+                    epics.merge(epicKey(epic), epic, ::mergeEpic)
+                }
+            }
+        }
+        val finalBoroughs = boroughs.values.toList()
+        val finalEpics = epics.values.toList()
         return DashboardData(
-            boroughs = sortedBoroughs,
-            epics = epics.values.toList(),
+            boroughs = finalBoroughs,
+            epics = finalEpics,
             dagNodes =
-                sortedBoroughs.map {
+                finalBoroughs.map {
                     DagNode(borough = it.name, project = it.project, dagLevel = it.dagLevel)
                 },
             sessions = sessions.values.toList(),
+            progress = ProgressCalculator.compute(finalBoroughs, finalEpics),
         )
     }
 
@@ -115,8 +129,69 @@ class IndexCrawler {
         val boroughs = tables.firstNotNullOfOrNull { parseBoroughTable(it) } ?: emptyList()
         val epics = tables.firstNotNullOfOrNull { parseEpicTable(it) } ?: emptyList()
         val nodes = boroughs.map { DagNode(borough = it.name, project = it.project, dagLevel = it.dagLevel) }
-        return DashboardData(boroughs = boroughs, epics = epics, dagNodes = nodes)
+        return DashboardData(
+            boroughs = boroughs,
+            epics = epics,
+            dagNodes = nodes,
+            progress = ProgressCalculator.compute(boroughs, epics),
+        )
     }
+
+    /**
+     * Parses the workspace-root `BACKLOG.adoc` (GBL transverse EPICs).
+     *
+     * The global backlog uses a different status vocabulary than borough
+     * roadmaps (`✅ CADRÉ` means "cadrage done", not "EPIC done"), so the
+     * terminal state is only `TERMINÉ` / `DONE`.
+     */
+    private fun parseWorkspaceBacklog(file: Path): Pair<BoroughData, List<EpicData>>? {
+        val content = Files.readString(file)
+        val table =
+            parseTables(content).firstOrNull { rows ->
+                val header = rows.firstOrNull()?.map { it.lowercase() }.orEmpty()
+                header.any { it.contains("epic") } && header.any { it.isPointsHeader() }
+            } ?: return null
+        val header = table.first().map { it.lowercase().trim() }
+        val epicIdx = header.indexOfFirst { it.contains("epic") }
+        val subjectIdx = header.indexOfFirst { it.contains("sujet") || it.contains("subject") }
+        val ptsIdx = header.indexOfFirst { it.isPointsHeader() }
+        val statusIdx = header.indexOfFirst { it.contains("statut") || it.contains("status") }
+        if (epicIdx == -1) return null
+
+        val epics =
+            table.drop(1).mapNotNull { row ->
+                val id = row.getOrElse(epicIdx) { "" }.trim()
+                if (id.isBlank()) return@mapNotNull null
+                EpicData(
+                    id = id,
+                    title = subjectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
+                    borough = TRANSVERSE_BOROUGH,
+                    points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { parsePoints(row[it]) } ?: 0,
+                    priority = "GBL",
+                    status = parseBacklogStatus(row.getOrElse(statusIdx.takeIf { it >= 0 && it < row.size } ?: -1) { "" }),
+                )
+            }
+        val borough =
+            BoroughData(
+                name = TRANSVERSE_BOROUGH,
+                project = TRANSVERSE_PROJECT,
+                dagLevel = "GBL",
+                role = "EPICs globaux (BACKLOG racine)",
+                session = "",
+            )
+        return borough to epics
+    }
+
+    private fun parseBacklogStatus(raw: String): EpicStatus =
+        when {
+            raw.contains("TERMIN", ignoreCase = true) ||
+                raw.contains("DONE", ignoreCase = true) -> EpicStatus.TERMINE
+            raw.contains("EN COURS", ignoreCase = true) ||
+                raw.contains("🟡") -> EpicStatus.EN_COURS
+            raw.contains("BLOQU", ignoreCase = true) ||
+                raw.contains("BLOCKED", ignoreCase = true) -> EpicStatus.BLOQUE
+            else -> EpicStatus.PLANIFIE
+        }
 
     private fun extractBoroughFromPath(
         file: Path,
@@ -300,7 +375,7 @@ class IndexCrawler {
         val header = rows.first().map { it.lowercase().trim() }
         val epicIdx = header.indexOfFirst { it.contains("epic") }
         val subjectIdx = header.indexOfFirst { it.contains("sujet") || it.contains("subject") }
-        val ptsIdx = header.indexOfFirst { it.contains("pt") }
+        val ptsIdx = header.indexOfFirst { it.isPointsHeader() }
         val priorityIdx = header.indexOfFirst { it.contains("priorite") || it.contains("priority") }
         val statusIdx = header.indexOfFirst { it.contains("statut") || it.contains("status") }
         val boroughIdx = header.indexOfFirst { it.contains("borough") }
@@ -313,7 +388,7 @@ class IndexCrawler {
                 id = row.getOrElse(epicIdx) { "" },
                 title = subjectIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 borough = boroughIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
-                points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { row[it].filter { c -> c.isDigit() }.toIntOrNull() } ?: 0,
+                points = ptsIdx.takeIf { it >= 0 && it < row.size }?.let { parsePoints(row[it]) } ?: 0,
                 priority = priorityIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "P2",
                 status = parseEpicStatus(rawStatus),
                 session = sessionNumber,
@@ -350,7 +425,7 @@ class IndexCrawler {
             raw.contains("🔄") ||
                 raw.contains("EN COURS", ignoreCase = true) ||
                 raw.contains("IN PROGRESS", ignoreCase = true) -> EpicStatus.EN_COURS
-            raw.contains("BLOQUE", ignoreCase = true) ||
+            raw.contains("BLOQU", ignoreCase = true) ||
                 raw.contains("BLOCKED", ignoreCase = true) -> EpicStatus.BLOQUE
             else -> EpicStatus.PLANIFIE
         }
@@ -363,6 +438,8 @@ class IndexCrawler {
     companion object {
         private const val INDEX_FILE = "INDEX.adoc"
         private const val SESSIONS_FILE = "SESSIONS_HISTORY.adoc"
+        private const val TRANSVERSE_BOROUGH = "Transverse"
+        private const val TRANSVERSE_PROJECT = "workspace-backlog"
 
         private val REPOSITORY_ROOTS = setOf("public", "private")
         private val CODE_NAME_ATTRIBUTE = Regex("""^:code-name:\s*(.+)$""", setOf(RegexOption.MULTILINE))
@@ -391,3 +468,19 @@ class IndexCrawler {
         fun skippedDirectories(): Set<String> = SKIPPED_DIRECTORIES
     }
 }
+
+/**
+ * A points header must name the metric exactly (`Pts`, `Points`), so that
+ * loose matches like `Description` (which contains `pt`) never hijack the
+ * column and feed dates/prose into the point totals.
+ */
+private fun String.isPointsHeader(): Boolean {
+    val value = trim()
+    return value == "pts" || value == "points" || value.startsWith("pts ") || value.startsWith("points ")
+}
+
+/**
+ * Parses a declared point estimate. Values outside `0..1000` are ignored so a
+ * date or an identifier accidentally captured cannot pollute the totals.
+ */
+private fun parsePoints(raw: String): Int = raw.filter { it.isDigit() }.toIntOrNull()?.takeIf { it in 0..1000 } ?: 0

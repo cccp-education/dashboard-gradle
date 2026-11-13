@@ -269,4 +269,49 @@ class IndexCrawlerTest {
         assertThat(data.epics).hasSize(2)
         assertThat(data.epics.map { it.id }).containsExactlyInAnyOrder("DSH-0", "DSH-9")
     }
+
+    @Test
+    fun `crawlDirectory should parse the workspace backlog into transverse progress`() {
+        val dashboardIndex = tempDir.resolve("foundry/dashboard/INDEX.adoc")
+        Files.createDirectories(dashboardIndex.parent)
+        Files.writeString(
+            dashboardIndex,
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | Dashboard | dashboard-gradle | N3 | Vision | S003
+            |===
+            |===
+            | EPIC | Sujet | Pts | Priorite | Statut
+            | DSH-0 | Bootstrap | 6 | P0 | ✅ S000
+            | DSH-1 | Rendu | 4 | P1 | 🟡 S001
+            |===
+            """.trimIndent(),
+        )
+        val backlog = tempDir.resolve("BACKLOG.adoc")
+        Files.writeString(
+            backlog,
+            """
+            = BACKLOG Global
+            |===
+            | EPIC | Sujet | Pts | Statut | Fichier source
+            | GBL-001 | Termine | 10 | ✅ TERMINÉ | x
+            | GBL-004 | Cadre | 10 | ✅ CADRÉ | y
+            |===
+            """.trimIndent(),
+        )
+
+        val data = crawler.crawlDirectory(tempDir.resolve("foundry"), backlog)
+
+        assertThat(data.schemaVersion).isEqualTo("1.0")
+        assertThat(data.boroughs.map { it.name }).contains("Transverse")
+        assertThat(data.epics.map { it.id }).contains("GBL-001", "GBL-004")
+        assertThat(data.progress.totalPoints).isEqualTo(30)
+        assertThat(data.progress.donePoints).isEqualTo(16)
+        assertThat(data.progress.percent).isEqualTo(53)
+        assertThat(data.progress.byBorough.map { it.borough }).contains("Dashboard", "Transverse")
+        val transverse = data.progress.byBorough.first { it.borough == "Transverse" }
+        assertThat(transverse.donePoints).isEqualTo(10)
+        assertThat(transverse.totalPoints).isEqualTo(20)
+    }
 }

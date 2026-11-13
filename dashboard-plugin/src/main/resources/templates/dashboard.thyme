@@ -58,6 +58,26 @@
             </div>
         </div>
 
+        <!-- Global progress (points) -->
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Avancement global (points)</h2>
+                    <span class="badge bg-secondary" th:text="${page.progress.percent + ' %'}">0 %</span>
+                </div>
+                <div class="card-body">
+                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         th:attr="aria-valuenow=${page.progress.percent}">
+                        <div class="progress-bar bg-success" th:style="|width:${page.progress.percent}%|"
+                             th:text="${page.progress.percent + ' %'}">0 %</div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0"
+                       th:text="${page.progress.donePoints + ' / ' + page.progress.totalPoints + ' points — ' + page.progress.doneEpics + ' / ' + page.progress.totalEpics + ' EPICs'}">
+                        0 / 0 points — 0 / 0 EPICs</p>
+                </div>
+            </div>
+        </div>
+
         <!-- EPIC Matrix -->
         <div class="col-lg-8">
             <div class="card dashboard-card">
@@ -82,6 +102,8 @@
                                     <td colspan="4">
                                         <strong th:text="${group.name} + ' (' + ${group.dagLevel} + ')'">Dashboard (N3)</strong>
                                         <small class="text-muted ms-2" th:text="${group.project}">dashboard-gradle</small>
+                                        <span class="badge bg-success ms-2"
+                                              th:text="${group.totalPoints == 0 ? '—' : group.percent + ' % (' + group.donePoints + '/' + group.totalPoints + ' pts)'}">0 %</span>
                                     </td>
                                 </tr>
                                 <tr th:each="epic : ${group.epics}" th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
@@ -175,12 +197,13 @@
                                 <th>Niveau</th>
                                 <th>Borough</th>
                                 <th>Projet</th>
+                                <th>Avancement</th>
                             </tr>
                             </thead>
                             <tbody>
                             <th:block th:each="level : ${page.dagLevels}">
                                 <tr class="borough-header">
-                                    <td colspan="3">
+                                    <td colspan="4">
                                         <strong th:text="${level.level}">N0</strong>
                                         <small class="text-muted ms-2"
                                                th:text="${level.nodes.size} + ' borough(s)'">0 borough(s)</small>
@@ -190,10 +213,11 @@
                                     <td th:text="${level.level}">N0</td>
                                     <td th:text="${node.label}">Dashboard (N3)</td>
                                     <td th:text="${node.project}">dashboard-gradle</td>
+                                    <td th:text="${page.progressLabel(node.id)}">—</td>
                                 </tr>
                             </th:block>
                             <tr th:if="${#lists.isEmpty(page.dagLevels)}">
-                                <td colspan="3" class="text-center text-muted py-4">Aucun graphe DAG disponible.</td>
+                                <td colspan="4" class="text-center text-muted py-4">Aucun graphe DAG disponible.</td>
                             </tr>
                             </tbody>
                         </table>

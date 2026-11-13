@@ -132,3 +132,9 @@ mis à jour (table DAG statique, absence d'assets externes, Bootstrap vendoré
 copié), `WorkspaceCrawlTest` +1 (skip-gardé : crawl réel de `foundry/`,
 ≥ 30 boroughs, ≥ 300 EPICs). Tests **compilés** (`compileTestKotlin` VERT) ;
 totaux globaux à recalculer au prochain run CI (Local = Build, Tests = CI).
+*Session 224* : DSH-BOUNDARY-2 — `ProgressCalculatorTest` +4 (agrégation
+points/percent, total nul, borough vide, EPICs orphelins), `IndexCrawlerTest`
++1 (workspace backlog → « Transverse » + `schemaVersion`), `DashboardRendererTest`
++1 (avancement global + badge), `CrawlDashboardFunctionalTest` +1 (JSON
+`schemaVersion`/`progress`), Cucumber `dashboard_crawl.feature` +1 scénario
+(+5 steps). Compilés ; totaux globaux à recalculer au prochain run CI.

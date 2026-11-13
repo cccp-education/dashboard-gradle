@@ -22,6 +22,11 @@ abstract class DashboardExtension {
     @get:Optional
     abstract val boroughs: ListProperty<String>
 
+    /** Optional workspace-root `BACKLOG.adoc` (GBL transverse EPICs). */
+    @get:Input
+    @get:Optional
+    abstract val workspaceBacklog: Property<String>
+
     @get:Input
     abstract val serveHost: Property<String>
 
@@ -36,5 +41,6 @@ abstract class DashboardExtension {
         outputDir.convention("build/dashboard")
         publishDir.convention("build/dashboard-publish")
         boroughs.convention(emptyList())
+        workspaceBacklog.convention("")
     }
 }

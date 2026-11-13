@@ -48,6 +48,7 @@ class DashboardRenderer {
                 epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
                 sessions = recentSessions(data.sessions),
                 stats = computeStats(data),
+                progress = data.progress,
                 boroughGroups = BoroughGrouper.groupByBorough(data),
                 dagLevels = groupDagLevels(dagGraph),
                 timeline = TimelineBuilder.build(data),

@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-11-14 (S-223 — **DSH-9.2 ✅** : crawl complet de `foundry/` — 38 boroughs / 460 EPICs / 461 sessions en 638 ms ; zéro CDN (Bootstrap vendoré, vis.js retiré) ; **DSH-BOUNDARY-1 ✅ livré en avance** (table DAG N0→N4). DSH-BOUNDARY-2 reste partiel : `configPath` seul.)_
+_Dernière mise à jour : 2026-11-14 (S-224 — **DSH-BOUNDARY-2 ✅** : `progress` par points (global + par borough), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse »), `schemaVersion 1.0` du pivot ; **DSH-BOUNDARY-0P** implémenté (prototype `prototype/`) en attente de validation pilote. Release `0.0.6`.)_
 
 == P0 — Terminé
 
@@ -64,7 +64,7 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 
 |===
 | US | Description | Statut | Pts
-| DSH-BOUNDARY-0P | Prototype de navigation pur HTML/CSS/JS + mock JSON (`prototype/`) : Panorama 3 zones, fiche borough, coquille graphe, états, transitions niveau 0→1. Aucune donnée réelle, jamais publié. Gate bloquant avant Phase 1 | 🟡 À FAIRE | 3
+| DSH-BOUNDARY-0P | Prototype de navigation pur HTML/CSS/JS + mock JSON (`prototype/`) : Panorama 3 zones, fiche borough, coquille graphe, états, transitions niveau 0→1. Aucune donnée réelle, jamais publié. Gate bloquant avant Phase 1 | 🟡 IMPLÉMENTÉ (S-224) — validation pilote requise | 3
 |===
 
 === Phase 1 — ALGER (territoire pilotage)
@@ -72,7 +72,7 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 |===
 | US | Description | Statut | Pts
 | DSH-BOUNDARY-1 | Retrait canvas vis.js + table ordonnée N0→N4 (structure cedee a Brooklin Flow) | ✅ TERMINÉ (S-223, livré avec le zéro CDN) | 3
-| DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | 🟡 PARTIEL (S-223 : `configPath` ✅ ; BACKLOG + % + `schemaVersion` à faire) | 5
+| DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | ✅ TERMINÉ (S-224) — GBL racine + `progress` (points) + `schemaVersion 1.0` ; source par borough = roadmap EPICs des INDEX | 5
 | DSH-BOUNDARY-3 | Incrémentalité : `@TaskAction` + `@InputFiles`/`@OutputDirectory`/`@CacheableTask` (UP-TO-DATE si contenu/structure inchanges) | 🟡 À FAIRE | 3
 | DSH-BOUNDARY-4 | Homepage Panorama (3 zones vision/avancement/structure) + page fiche borough (niveau 1) | 🟡 À FAIRE | 5
 |===

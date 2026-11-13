@@ -4,3 +4,5 @@
 * DSH-9.1 — tâche `serve` (serveur HTTP JDK, `localhost:8820`, garde path-traversal) : `dashboard-plugin 0.0.2 → 0.0.3 → 0.0.4`, sessions 220/222.
 * DSH-9.2 — crawl complet `foundry/` (38 boroughs / 460 EPICs / 461 sessions, 638 ms), élagage + déduplication + fallback de synthèse ; zéro CDN (Bootstrap 5.3.3 vendoré, vis.js retiré) ; `configPath` racine `../..` (surcharge `-Pdashboard.configPath`) ; activity stream plafonné à 60 récents — session 223.
 * DSH-BOUNDARY-1 — retrait du canvas vis.js + table statique « Couches DAG (N0 → N4) », livré en avance (contrainte zéro CDN + frontière S-216) — session 223.
+* DSH-BOUNDARY-2 — `progress` par points (global + par borough), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse »), `schemaVersion 1.0` du pivot ; rendu carte d'avancement global + badges par borough + colonne DAG — session 224.
+* DSH-BOUNDARY-0P — prototype de navigation pur HTML/CSS/JS/mock (`prototype/` : Panorama 3 zones, fiche borough, coquille graphe, états empty/loaded/overloaded), exclu du JAR — session 224 (validation pilote en attente).

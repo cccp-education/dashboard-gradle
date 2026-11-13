@@ -38,3 +38,19 @@ Feature: Dashboard data crawling
     Then the build should succeed
     And the dashboard data should contain 2 sessions
     And session "000" should have subject "Bootstrap gouvernance"
+
+  Scenario: Crawl workspace backlog into transverse point progress
+    Given a Gradle project with the dashboard plugin applied
+    And a foundry directory with INDEX.adoc containing epics:
+      | EPIC  | Subject   | Pts | Prio | Status |
+      | DSH-0 | Bootstrap | 6   | P0   | ✅ S000 |
+      | DSH-1 | Render    | 4   | P1   | PLANIFIE |
+    And a workspace backlog with GBL epics:
+      | EPIC    | Sujet   | Pts | Statut    |
+      | GBL-001 | Termine | 10  | ✅ TERMINÉ |
+      | GBL-004 | Cadre   | 10  | ✅ CADRÉ   |
+    When I execute the "crawlDashboard" task
+    Then the build should succeed
+    And the dashboard data should contain schemaVersion "1.0"
+    And the dashboard data should contain borough "Transverse"
+    And the global progress should be 53 percents

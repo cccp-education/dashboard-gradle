@@ -48,7 +48,15 @@ class DashboardPlugin : Plugin<Project> {
 
                 val crawler = IndexCrawler()
                 val startedAt = System.nanoTime()
-                val data = crawler.crawlDirectory(root)
+                val workspaceBacklog =
+                    extension.workspaceBacklog
+                        .get()
+                        .takeIf { it.isNotBlank() }
+                        ?.let { project.projectDir.toPath().resolve(it) }
+                if (workspaceBacklog != null && !Files.isRegularFile(workspaceBacklog)) {
+                    project.logger.lifecycle("Workspace backlog not found, skipped: $workspaceBacklog")
+                }
+                val data = crawler.crawlDirectory(root, workspaceBacklog)
                 val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000
 
                 val outPath = project.projectDir.toPath().resolve(outputDir)
@@ -62,7 +70,8 @@ class DashboardPlugin : Plugin<Project> {
                 val jsonFile = outPath.resolve("dashboard-data.json")
                 mapper.writeValue(jsonFile.toFile(), data)
                 project.logger.lifecycle(
-                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions) in ${elapsedMs}ms",
+                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions, " +
+                        "${data.progress.percent}% / ${data.progress.donePoints}/${data.progress.totalPoints} pts) in ${elapsedMs}ms",
                 )
             }
         }

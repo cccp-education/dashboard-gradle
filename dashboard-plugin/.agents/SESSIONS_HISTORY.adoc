@@ -76,3 +76,23 @@ aucune référence `href/src` externe. Tests compilés : +2 `IndexCrawlerTest`
 d'assets externes), `WorkspaceCrawlTest` skip-gardé (≥ 30 boroughs réels).
 Release JitPack `0.0.5` (tag `v0.0.5`, POM/JAR HTTP 200, dogfood
 racine 740 ms). Rapport `.agents/sessions/223-dsh-9-2-crawl-render.adoc`.
+
+== Session 224 — DSH-BOUNDARY-0P + DSH-BOUNDARY-2 — 2026-11-14
+
+**DSH-BOUNDARY-2 ✅** : le pivot `dashboard-data.json` porte
+`schemaVersion: "1.0"` et `progress` par **points** (global + par borough).
+Le `BACKLOG.adoc` racine est parsé (EPICs `GBL-*` → borough synthétique
+« Transverse », statut strict `TERMINÉ`/`DONE`). Rendu : carte « Avancement
+global (points) », badge de progression par borough dans l'EPIC matrix,
+colonne Avancement dans les couches DAG. Nouvelle propriété
+`workspaceBacklog` (+ `-Pdashboard.workspaceBacklog`).
+**DSH-BOUNDARY-0P implémenté** (attente validation pilote) : prototype pur
+HTML/CSS/JS/mock (`index.html`, `borough.html`, `graph.html`, `styles.css`,
+`app.js`) — Panorama 3 zones, fiche borough, coquille graphe, états
+`?state=empty|loaded|overloaded` ; toujours exclu du JAR.
+**2 bugs réels** : header « Pts » capturé par `Description` (milliards de
+points) et `TERMINÉ` accentué non reconnu. Dogfood : **39 boroughs / 471
+EPICs / 461 sessions — 47 % (196/417 pts)** en ~400 ms. Tests compilés :
+`ProgressCalculatorTest` (+4), `IndexCrawlerTest` (+1), renderer (+1),
+functional (+1), Cucumber (+1 scénario). Release `0.0.6`. Rapport
+`.agents/sessions/224-dsh-boundary-0p-2.adoc`.

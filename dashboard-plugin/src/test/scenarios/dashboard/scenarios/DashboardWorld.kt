@@ -86,6 +86,19 @@ class DashboardWorld {
         configPath = path
     }
 
+    fun configureWorkspaceBacklog(path: String) {
+        Files.writeString(
+            projectDir.resolve("build.gradle.kts"),
+            """
+            plugins { id("education.cccp.dashboard") }
+            dashboard {
+                configPath = "foundry"
+                workspaceBacklog = "$path"
+            }
+            """.trimIndent(),
+        )
+    }
+
     @After
     fun cleanup() {
         if (::projectDir.isInitialized) {

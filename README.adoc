@@ -38,13 +38,19 @@ The crawled directory is configurable:
 [source,shell]
 ----
 ./gradlew generateDashboard -Pdashboard.configPath=/path/to/foundry
+./gradlew generateDashboard -Pdashboard.workspaceBacklog=/path/to/BACKLOG.adoc
 ----
+
+`workspaceBacklog` (default `../../../BACKLOG.adoc`) adds the workspace GBL
+EPICs to the pivot under the synthetic `Transverse` borough.
 
 == Tasks
 
 - `crawlDashboard` — crawls every `INDEX.adoc` / `SESSIONS_HISTORY.adoc` of the
-  workspace (`build/`, `.gradle/`, `.git/`, `node_modules/`, backups pruned) and
-  writes `build/dashboard/dashboard-data.json`
+  workspace (`build/`, `.gradle/`, `.git/`, `node_modules/`, backups pruned),
+  parses the workspace `BACKLOG.adoc`, and writes
+  `build/dashboard/dashboard-data.json` (`schemaVersion: "1.0"` + point-based
+  `progress`, global and per borough)
 - `generateDashboard` — renders the offline static dashboard (`index.html`,
   `styles.css`, vendored `vendor/bootstrap.min.css`, JBake site)
 - `publishDashboardSite` — copies the generated JBake-compatible site to
@@ -54,11 +60,14 @@ The crawled directory is configurable:
 
 == Rendering
 
+- Global progress (points done/total) + per-borough progress badges.
 - EPIC matrix grouped by borough, activity stream (60 most recent sessions,
   full set in the JSON pivot), DAG layers as a static `N0 → N4` table
   (interactive graph belongs to Brooklin Flow), MVP0 timeline.
 - No CDN: Bootstrap 5.3.3 is vendored (`src/main/resources/static/vendor/`),
   the page renders fully offline.
+- `src/main/resources/prototype/` is a throwaway Phase 0 UX prototype (pure
+  HTML/CSS/JS/mock), excluded from the JAR and never published.
 
 == Testing
 

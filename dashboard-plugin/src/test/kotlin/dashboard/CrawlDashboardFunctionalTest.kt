@@ -49,6 +49,36 @@ class CrawlDashboardFunctionalTest {
     }
 
     @Test
+    fun `crawlDashboard should expose schemaVersion and point progress`() {
+        writePluginProjectWithBacklog()
+        writeIndexAdoc(foundryDir.resolve("bakery/INDEX.adoc"), "BAKERY", "bakery-gradle", "N2", "Site statique")
+        Files.writeString(
+            testDir.resolve("BACKLOG.adoc"),
+            """
+            = BACKLOG Global
+            |===
+            | EPIC | Sujet | Pts | Statut | Fichier source
+            | GBL-001 | Termine | 5 | ✅ TERMINÉ | x
+            | GBL-002 | Planifie | 5 | 🔲 CADRÉ | y
+            |===
+            """.trimIndent(),
+        )
+
+        GradleRunner
+            .create()
+            .withProjectDir(testDir.toFile())
+            .withArguments("crawlDashboard", "--stacktrace")
+            .withPluginClasspath()
+            .build()
+
+        val json = Files.readString(testDir.resolve("build/dashboard/dashboard-data.json"))
+        assertThat(json).contains("\"schemaVersion\" : \"1.0\"")
+        assertThat(json).contains("\"progress\"")
+        assertThat(json).contains("\"Transverse\"")
+        assertThat(json).contains("\"donePoints\" : 5")
+    }
+
+    @Test
     fun `crawlDashboard should warn when config path does not exist`() {
         writePluginProjectWithCustomConfig("nonexistent")
 
@@ -74,6 +104,23 @@ class CrawlDashboardFunctionalTest {
             dashboard {
                 configPath = "foundry"
                 outputDir = "build/dashboard"
+            }
+            """.trimIndent(),
+        )
+    }
+
+    private fun writePluginProjectWithBacklog() {
+        Files.writeString(testDir.resolve("settings.gradle.kts"), "rootProject.name = \"test-dashboard\"")
+        Files.writeString(
+            testDir.resolve("build.gradle.kts"),
+            """
+            plugins {
+                id("education.cccp.dashboard")
+            }
+            dashboard {
+                configPath = "foundry"
+                outputDir = "build/dashboard"
+                workspaceBacklog = "BACKLOG.adoc"
             }
             """.trimIndent(),
         )

@@ -5,10 +5,39 @@ data class DashboardData(
     val epics: List<EpicData>,
     val dagNodes: List<DagNode>,
     val sessions: List<SessionActivity> = emptyList(),
+    val schemaVersion: String = SCHEMA_VERSION,
+    val progress: ProgressSummary = ProgressSummary(),
     val timestamp: String =
         java.time.Instant
             .now()
             .toString(),
+) {
+    companion object {
+        const val SCHEMA_VERSION = "1.0"
+    }
+}
+
+/**
+ * Point-based progress of the workspace. `donePoints` counts EPICs whose status
+ * is terminal (`TERMINE`); `totalPoints` sums every EPIC's declared points.
+ */
+data class ProgressSummary(
+    val donePoints: Int = 0,
+    val totalPoints: Int = 0,
+    val percent: Int = 0,
+    val doneEpics: Int = 0,
+    val totalEpics: Int = 0,
+    val byBorough: List<BoroughProgress> = emptyList(),
+)
+
+data class BoroughProgress(
+    val borough: String,
+    val project: String,
+    val donePoints: Int,
+    val totalPoints: Int,
+    val percent: Int,
+    val doneEpics: Int,
+    val totalEpics: Int,
 )
 
 data class SessionActivity(

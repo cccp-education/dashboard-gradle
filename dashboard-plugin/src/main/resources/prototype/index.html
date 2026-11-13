@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALGER — Panorama (prototype)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="panorama">
+<header class="topbar">
+  <div class="brand">ALGER <span class="tag">prototype</span></div>
+  <nav>
+    <a href="index.html" class="active">Panorama</a>
+    <a href="graph.html">Graph</a>
+    <a href="borough.html?id=Newark">Borough</a>
+  </nav>
+  <div class="states">
+    State:
+    <a href="?state=loaded">loaded</a>
+    <a href="?state=empty">empty</a>
+    <a href="?state=overloaded">overloaded</a>
+  </div>
+</header>
+
+<main class="panorama">
+  <section class="zone zone-vision">
+    <header><h2>Vision</h2><span class="hint">MVP0 critical path</span></header>
+    <ol id="critical-path" class="path"></ol>
+  </section>
+
+  <section class="zone zone-progress">
+    <header><h2>Progress</h2><span class="hint">points done / total</span></header>
+    <div id="progress-list" class="bars"></div>
+  </section>
+
+  <section class="zone zone-structure">
+    <header><h2>Structure</h2><span class="hint">N0 → N4</span></header>
+    <div id="dag-levels" class="dag-levels"></div>
+    <div class="drilldown">
+      <a href="borough.html?id=Newark">Borough sheets (ALGER)</a>
+      <a href="graph.html">Knowledge graph (Brooklin Flow)</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">ALGER prototype — mock data only, never published.</footer>
+<script src="app.js"></script>
+</body>
+</html>

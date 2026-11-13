@@ -15,16 +15,21 @@ import dashboard.model.EpicData
 object BoroughGrouper {
     fun groupByBorough(data: DashboardData): List<BoroughGroup> {
         val epicsByBorough = data.epics.groupBy { it.borough }
+        val progressByBorough = data.progress.byBorough.associateBy { it.borough }
         val groups =
             data.boroughs
                 .sortedBy { it.dagLevel }
                 .map { borough ->
+                    val progress = progressByBorough[borough.name]
                     BoroughGroup(
                         name = borough.name,
                         dagLevel = borough.dagLevel.ifBlank { "N?" },
                         project = borough.project,
                         status = borough.status.name,
                         epics = sortEpics(epicsByBorough[borough.name] ?: emptyList()),
+                        donePoints = progress?.donePoints ?: 0,
+                        totalPoints = progress?.totalPoints ?: 0,
+                        percent = progress?.percent ?: 0,
                     )
                 }.toMutableList()
 
@@ -36,6 +41,9 @@ object BoroughGrouper {
                     project = "",
                     status = BoroughStatus.ACTIVE.name,
                     epics = sortEpics(orphans),
+                    donePoints = 0,
+                    totalPoints = 0,
+                    percent = 0,
                 )
         }
 

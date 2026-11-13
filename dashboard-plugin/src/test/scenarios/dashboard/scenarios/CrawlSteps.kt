@@ -125,6 +125,36 @@ class CrawlSteps(
         )
     }
 
+    @Given("a workspace backlog with GBL epics:")
+    fun givenWorkspaceBacklog(table: DataTable) {
+        val rows = table.asMaps()
+        val sb = StringBuilder()
+        sb.appendLine("= BACKLOG Global")
+        sb.appendLine("|===")
+        sb.appendLine("| EPIC | Sujet | Pts | Statut | Fichier source")
+        for (row in rows) {
+            sb.appendLine("| ${row["EPIC"]} | ${row["Sujet"]} | ${row["Pts"]} | ${row["Statut"]} | source")
+        }
+        sb.appendLine("|===")
+        world.writeIndexAdoc("BACKLOG.adoc", sb.toString())
+        world.configureWorkspaceBacklog("BACKLOG.adoc")
+    }
+
+    @Then("the dashboard data should contain schemaVersion {string}")
+    fun thenDataContainsSchemaVersion(version: String) {
+        val json = world.readJsonOutput() ?: error("No dashboard JSON output")
+        val data = mapper.readValue(json, DashboardData::class.java)
+        assertThat(data.schemaVersion).isEqualTo(version)
+    }
+
+    @Then("the global progress should be {int} percents")
+    fun thenGlobalProgressIs(percent: Int) {
+        val json = world.readJsonOutput() ?: error("No dashboard JSON output")
+        val data = mapper.readValue(json, DashboardData::class.java)
+        assertThat(data.progress.percent).isEqualTo(percent)
+        assertThat(data.progress.totalPoints).isGreaterThan(0)
+    }
+
     @When("I execute the {string} task")
     fun whenExecuteTask(taskName: String) {
         world.executeGradle(taskName)

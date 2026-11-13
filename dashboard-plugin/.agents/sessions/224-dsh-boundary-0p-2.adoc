@@ -1,0 +1,155 @@
+= Session 224 — DSH-BOUNDARY-0P (prototype) + DSH-BOUNDARY-2 (avancement réel)
+:session: 224
+:date: 2026-11-14
+:epic: DSH-BOUNDARY — Phase 0 (0P implémenté, validation pilote) + US-2 ✅
+:method: baby-step DDD/TDD/BDD (Local = Build, Tests = CI)
+
+== Mission
+
+`PROMPT_REPRISE.adoc` (session 224) — enchaîner après S-223 :
+
+. **DSH-BOUNDARY-0P** — prototype de navigation pur HTML/CSS/JS/mock
+   (gate de validation pilote avant la Phase 1).
+. **DSH-BOUNDARY-2** — avancement réel : `progress` par points, parsing du
+   `BACKLOG.adoc` racine, `schemaVersion` du pivot `dashboard-data.json`.
+
+== 1. DSH-BOUNDARY-0P — prototype (implémenté, validation pilote en attente)
+
+Artefact jetable dans `dashboard-plugin/src/main/resources/prototype/`,
+**exclu de `processResources`** (`exclude("prototype/**")`) donc jamais publié :
+
+[cols="2,3"]
+|===
+| Fichier | Contenu
+
+| `index.html`
+| Panorama 3 zones : Vision (critical path A1→A4), Progress (barres par
+  borough), Structure (couches N0→N4 + accès fiche/graphe)
+
+| `borough.html`
+| Fiche borough (niveau 1) : position DAG, état, points/%, sessions récentes
+
+| `graph.html`
+| Coquille de graphe (colonnes N0→N4) + panneau récap au clic
+
+| `styles.css`
+| Thème sombre, grille 35/35/30, responsive, états empty/loaded/overloaded
+
+| `app.js`
+| Lecture du mock JSON, rendu des 3 pages, états `?state=empty|loaded|overloaded`
+
+| `mock/dashboard-data.mock.json`
+| Données fictives (déjà présentes S-216)
+|===
+
+* Pur HTML/CSS/JS — **aucun** framework, **aucun** Thymeleaf, **aucune**
+  donnée réelle, **aucun** React Flow.
+* `node --check app.js` : **OK**.
+* Preuve d'exclusion du JAR : `unzip -l dashboard-plugin-0.0.6.jar | grep -c
+  prototype` = **0** (le JAR contient bien `static/vendor/bootstrap.min.css`).
+* Pour visualiser : servir le dossier `prototype/` en HTTP (fetch du mock).
+
+== 2. DSH-BOUNDARY-2 — avancement réel (✅)
+
+=== 2.1 Modèle
+
+* `DashboardData.schemaVersion = "1.0"` (contrat public consommé par
+  Brooklin Flow / Edster).
+* `DashboardData.progress: ProgressSummary` :
+
+[source]
+----
+ProgressSummary(donePoints, totalPoints, percent, doneEpics, totalEpics,
+                byBorough: [BoroughProgress(borough, project, donePoints,
+                totalPoints, percent, doneEpics, totalEpics)])
+----
+
+* `dashboard.progress.ProgressCalculator` (objet pur) : agrégation par points,
+  `% = round(done*100/total)` borné 0..100, total nul → 0 %, boroughs sans
+  EPIC conservés à zéro, EPICs orphelins comptés globalement.
+
+=== 2.2 Sources
+
+* **Par borough** : roadmap EPICs des `INDEX.adoc` (vue agrégée du backlog du
+  borough) — source stable et déjà parsée.
+* **Global transverse** : `BACKLOG.adoc` racine (`/home/cheroliv/workspace/`),
+  table `EPIC | Sujet | Pts | Statut` → EPICs `GBL-*` rattachés au borough
+  synthétique **« Transverse »** (`project = workspace-backlog`, DAG `GBL`).
+* Nouvelle propriété d'extension `workspaceBacklog` (défaut vide) ;
+  racine = `../../../BACKLOG.adoc` (`-Pdashboard.workspaceBacklog`).
+
+=== 2.3 Rendu
+
+* Carte **« Avancement global (points) »** : barre + `%` + `done/total pts` +
+  `done/total EPICs`.
+* Badge d'avancement dans chaque groupe borough de l'EPIC matrix
+  (`X % (done/total pts)`, `—` si aucun point déclaré).
+* Colonne **Avancement** dans la table des couches DAG.
+* Le pivot JSON expose le détail complet (`progress.byBorough`).
+
+=== 2.4 Bugs réels trouvés et corrigés (TDD/dogfood)
+
+. **Colonne « Pts » capturée par `Description`** : `header.contains("pt")`
+   matchait `description` (contient « pt ») → les points devenaient des dates
+   → **~2 000 000 000 pts**. Correctif : header de points **exact**
+   (`pts`/`points`) + `parsePoints` borné `0..1000`.
+. **Statut accentué** : `contains("TERMINE")` ne matchait pas `TERMINÉ` →
+   GBL-007/GBL-012 (46 pts terminés) comptaient comme planifiés. Correctif :
+   `contains("TERMIN")` (+ `BLOQU`).
+
+== Preuves (dogfooding)
+
+[cols="2,3"]
+|===
+| Preuve | Résultat
+
+| Crawl + rendu
+| **39 boroughs / 471 EPICs / 461 sessions** en **~400 ms**
+
+| Avancement global
+| **47 % — 196 / 417 points — 319 / 471 EPICs**
+
+| Groupe Transverse (GBL)
+| **24 % (59/241 pts)** — 12 EPICs GBL (GBL-001→GBL-013)
+
+| `dashboard-data.json`
+| `schemaVersion: "1.0"` + bloc `progress` (global + 39 entrées `byBorough`)
+
+| Prototype
+| 6 fichiers, `node --check` OK, **0** entrée `prototype` dans le JAR
+
+|===
+
+== Tests (compilés — Local = Build, Tests = CI)
+
+* `ProgressCalculatorTest` (**+4**) : points/percent par borough et global,
+  total nul, boroughs sans EPIC, EPICs orphelins.
+* `IndexCrawlerTest` (**+1**) : `workspaceBacklog` → borough « Transverse »,
+  `schemaVersion`, points/percent (30 pts, 16 faits, 53 %).
+* `DashboardRendererTest` (**+1**) : carte « Avancement global », `67 %`,
+  `8 / 12 points`, badge `67 % (8/12 pts)`.
+* `CrawlDashboardFunctionalTest` (**+1**) : `schemaVersion`, `progress`,
+  `Transverse`, `donePoints` dans le JSON.
+* Cucumber `dashboard_crawl.feature` (**+1 scénario**, +5 steps) : backlog
+  GBL → `schemaVersion 1.0`, borough `Transverse`, `53 %`.
+* `compileKotlin` / `compileTestKotlin` / `ktlintCheck` : **VERTS**.
+
+== Version
+
+* Prochaine release : **`0.0.6`** (`gradle/libs.versions.toml` mis à jour).
+* Racine consommateur : `id("education.cccp.dashboard") version "0.0.6"`.
+* `workspaceBacklog` racine : `../../../BACKLOG.adoc`.
+
+== Décisions / écarts
+
+* La source **par borough** est la roadmap EPICs de l'INDEX (vue agrégée du
+  backlog), pas un parsing direct de chaque `BACKLOG.adoc` — les formats de
+  tables y sont trop hétérogènes (risque de faux points documenté au cadrage).
+  Le `BACKLOG.adoc` racine, lui, est parsé tel que demandé.
+* `DSH-BOUNDARY-0P` est **implémenté** mais reste *gate* : la validation
+  pilote conditionne `DSH-BOUNDARY-4` (reproduction Thymeleaf).
+
+== Suivant
+
+`DSH-BOUNDARY-3` (incrémentalité) puis `DSH-BOUNDARY-4` (Panorama + fiche
+borough en Thymeleaf, d'après le prototype).

@@ -14,6 +14,6 @@
 - [x] Implémenter vue Timeline MVP0 — S008 ✅
 - [x] Ajouter une tâche `serve` (serveur local, `http://localhost:8820`) — DSH-9.1 — S220/222 ✅
 - [x] Crawl complet de `foundry/` + rendu offline (zéro CDN) — DSH-9.2 — S223 ✅
-- [ ] Valider la maquette Phase 0 (`prototype/`) — DSH-BOUNDARY-0P (gate bloquant)
-- [ ] Avancement réel : BACKLOG racine + % par points + `schemaVersion` — DSH-BOUNDARY-2
+- [x] Maquette Phase 0 (`prototype/`) implémentée — DSH-BOUNDARY-0P — S224 ✅ (validation pilote en attente)
+- [x] Avancement réel : BACKLOG racine + % par points + `schemaVersion` — DSH-BOUNDARY-2 — S224 ✅
 - [ ] Incrémentalité `@InputFiles`/`@OutputDirectory`/`@CacheableTask` — DSH-BOUNDARY-3

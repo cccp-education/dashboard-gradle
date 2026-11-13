@@ -185,6 +185,45 @@ class DashboardRendererTest {
     }
 
     @Test
+    fun `render should display global and per borough point progress`(
+        @TempDir tempDir: Path,
+    ) {
+        val data =
+            DashboardData(
+                boroughs =
+                    listOf(
+                        BoroughData("Dashboard", "dashboard-gradle", "N3", "Vision", "S005"),
+                    ),
+                epics =
+                    listOf(
+                        EpicData("DSH-0", "Bootstrap", "Dashboard", 8, "P0", EpicStatus.TERMINE),
+                        EpicData("DSH-1", "Serve", "Dashboard", 4, "P1", EpicStatus.EN_COURS),
+                    ),
+                dagNodes = emptyList(),
+                progress =
+                    dashboard.model.ProgressSummary(
+                        donePoints = 8,
+                        totalPoints = 12,
+                        percent = 67,
+                        doneEpics = 1,
+                        totalEpics = 2,
+                        byBorough =
+                            listOf(
+                                dashboard.model.BoroughProgress("Dashboard", "dashboard-gradle", 8, 12, 67, 1, 2),
+                            ),
+                    ),
+            )
+
+        DashboardRenderer().render(data, tempDir)
+
+        val html = Files.readString(tempDir.resolve("index.html"))
+        assertThat(html).contains("Avancement global (points)")
+        assertThat(html).contains("67 %")
+        assertThat(html).contains("8 / 12 points")
+        assertThat(html).contains("67 % (8/12 pts)")
+    }
+
+    @Test
     fun `epic status should map to css class`() {
         assertThat(DashboardRenderer.statusCssClass(EpicStatus.TERMINE)).isEqualTo("status-done")
         assertThat(DashboardRenderer.statusCssClass(EpicStatus.EN_COURS)).isEqualTo("status-in-progress")
