@@ -1,72 +1,59 @@
-= PROMPT_REPRISE — dashboard-gradle (Sessions 220-222 terminées)
+= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 223
 :session: 223
 :date: 2026-11-14
 
-== Session 220 accomplie — DSH-9.1 : tâche `serve`
+== Où on en est (acquis — ne pas refaire)
 
-Ajout du serveur local du dashboard généré (absent jusqu'ici) :
+* **`serve` (DSH-9.1) livré et publié** : `dashboard-plugin 0.0.4` sur JitPack.
+  Défaut `http://localhost:8820/` (DSL `serveHost`/`servePort`, CLI
+  `-Pdashboard.serveHost` / `-Pdashboard.servePort`). Domaine `dashboard.serve`
+  (MIME, résolution statique + garde path-traversal, `HttpServer` JDK).
+* **`dashboard-plugin/` = build autonome** (article 0124) : wrapper 9.9.1,
+  `settings.gradle.kts`, shim JitPack, catalogue `ws` 0.0.136. Le root
+  `dashboard-gradle` = **consommateur** (`id(...) version "0.0.4"` + shim
+  `useModule`), plus de `include("dashboard-plugin")`.
+* `jitpack.yml` : `cd dashboard-plugin && ./gradlew publishToMavenLocal -Pversion="${VERSION#v}"`.
+* CNV-17 : JitPack canal unique ; `conventions-plugin 0.0.17`.
+* Vérifié : `./gradlew serve` → 200 (`/`), 200 (`/styles.css`), 404 (`/nope`).
 
-* Domaine `dashboard.serve` : `DashboardMimeTypes` (pur), `DashboardStaticContent`
-  (résolution `/`→`index.html`, query ignorée, **garde path-traversal**),
-  `DashboardServer` (HTTP **JDK**, boucle locale, port `0` pour les tests).
-* Tâche `ServeDashboardTask` : `@DisableCachingByDefault`, `dependsOn
-  generateDashboard`, bloque jusqu'à Ctrl+C, log `Serving … (Ctrl+C to stop)`.
-* DSL `serveHost` (défaut `127.0.0.1`) / `servePort` (défaut `8080`) +
-  CLI `-Pdashboard.serveHost` / `-Pdashboard.servePort`.
-* Tests : `DashboardMimeTypesTest`, `DashboardStaticContentTest`,
-  `DashboardServerTest`, `ServeDashboardFunctionalTest` (TestKit).
-  `compileKotlin`/`compileTestKotlin` **verts** (Local = Build ; exécution CI).
+== Mission session 223 — DSH-9.2 (rendu / crawl)
+
+1. **Crawl complet** : le root configure `configPath = "dashboard-plugin"`
+   (le plugin) → `build/dashboard/index.html` n'affiche que « 2 boroughs ».
+   Cibler `foundry/` (depuis `dashboard-gradle` : `../..`) ou un chemin
+   configurable (propriété), et **prouver** le nombre de boroughs/EPICs.
+2. **Performance** : `IndexCrawler` fait `walkFileTree` sur tout l'arbre —
+   mesurer sur `foundry/`, puis exclure `build/`, `.gradle/`, `.git/`,
+   `node_modules/` si nécessaire (lien DSH-BOUNDARY-3 incrémentalité).
+3. **Rendu** : EPIC matrix / activity stream / DAG lisibles ; états vides.
+4. **Zéro CDN** : remplacer Bootstrap `cdn.jsdelivr.net` par des assets
+   vendorés (CSS local) ; rendu offline.
+5. **Preuves** : `build/dashboard/dashboard-data.json` (N boroughs),
+   capture(s), test de non-régression sur le nombre de boroughs.
+
+== Commandes
 
 [source,bash]
 ----
-./gradlew serve
-./gradlew serve -Pdashboard.servePort=8081
-./gradlew -t serve
+./gradlew generateDashboard             # root consommateur (plugin 0.0.4)
+./gradlew serve                         # http://localhost:8820/
+./gradlew -t serve                      # régénération continue
+cd dashboard-plugin && ./gradlew build  # build autonome du plugin (hors tests)
 ----
-
-Rapport : `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
-
-== Session 221 — GBL-013 + build autonome (clôture)
-
-Portabilité CI : `dashboard-plugin/` devient un build **autonome** (wrapper
-9.9.1, `settings.gradle.kts`, catalogue `ws` 0.0.136, shim JitPack) ; le root
-`dashboard-gradle` redevient un consommateur (plus de `include`). `ci/run.sh` +
-`lint.yml` migrés ; run `43498693366` **VERT**. Fix ktlint préexistant du
-provider de version. Reste GBL-013 **US-5→US-9**
-(`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc`).
-Rapport `.agents/sessions/221-gbl-013-standalone-0124.adoc`.
-
-== Session 222 — `serve` par défaut `http://localhost:8820`
-
-Défauts `serveHost=localhost`, `servePort=8820` (DSL/CLI), release
-`dashboard-plugin 0.0.4`, root + catalogues pinnés 0.0.4. Preuve :
-`./gradlew serve` → 200/200/404 sur `localhost:8820`. Rapport
-`.agents/sessions/222-serve-default-localhost-8820.adoc`.
-
-== Mission Session 223 — DSH-9.2 (+ GBL-013 US-5→9)
-
-1. **Source de données** : le root consommateur configure `configPath =
-   "dashboard-plugin"` (le plugin) alors que le crawl doit viser la racine
-   workspace (`foundry/`) → `build/dashboard/index.html` affiche « 2 boroughs »
-   au lieu de 30+. Corriger et prouver le nombre de boroughs/EPICs.
-2. **Rendu** : `EPIC matrix`, activity stream, DAG lisibles ; états vides.
-3. **Zéro CDN** : vendoriser le CSS (plus de `cdn.jsdelivr.net`), rendu offline.
-4. Preuves : `dashboard-data.json` + capture(s) ; test de non-régression sur le
-   nombre de boroughs.
 
 == Règles dures
 
-* Thymeleaf **uniquement** pour le rendu (pas de HTML ad hoc).
-* Ne jamais retirer l'exclusion `prototype/**` de `processResources`.
-* Local = Build, Tests = CI (aucun test lancé en local sans permission).
-* `DSH-BOUNDARY-0P` (maquette) reste le **gate** avant `DSH-BOUNDARY-1→7`.
+* Thymeleaf **uniquement** (aucun HTML ad hoc) ; ne pas retirer l'exclusion
+  `prototype/**` de `processResources`.
+* Local = Build, Tests = CI (aucun `test`/`check` local).
+* `DSH-BOUNDARY-0P` (maquette) reste le gate avant `DSH-BOUNDARY-1→7`.
+* JitPack : un artefact = un canal = un nom = une version ; ne jamais réutiliser
+  une version publiée (incrémenter `0.0.5` pour la prochaine release).
 
 == Références
 
-* `BACKLOG.adoc` § DSH-9 ; `.agents/INDEX.adoc` (roadmap) ;
-  `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`.
-
-== GBL-013 (clôture) — 2026-11-14
-Portabilité CI livrée : image \`cccp-ci-base\`, \`ci/run.sh\`, adapter fin.
-Rapport \`.agents/sessions/221-gbl-013-standalone-0124.adoc\`. Reste : US-5→US-9 (cadrage racine
-\`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc\`).
+* `BACKLOG.adoc` § DSH-9 ; `.agents/INDEX.adoc` ; rapports
+  `.agents/sessions/220-dsh-9-1-serve-task.adoc` et
+  `.agents/sessions/222-serve-default-localhost-8820.adoc`.
+* `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` ; GBL-013
+  `.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc` (US-5→9).
