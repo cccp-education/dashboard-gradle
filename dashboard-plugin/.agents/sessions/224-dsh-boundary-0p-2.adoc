@@ -134,11 +134,19 @@ ProgressSummary(donePoints, totalPoints, percent, doneEpics, totalEpics,
   GBL → `schemaVersion 1.0`, borough `Transverse`, `53 %`.
 * `compileKotlin` / `compileTestKotlin` / `ktlintCheck` : **VERTS**.
 
-== Version
+== Version et release
 
 * Prochaine release : **`0.0.6`** (`gradle/libs.versions.toml` mis à jour).
 * Racine consommateur : `id("education.cccp.dashboard") version "0.0.6"`.
 * `workspaceBacklog` racine : `../../../BACKLOG.adoc`.
+* **Release JitPack `0.0.6`** : commit `ee6a50e` (main) + tag annoté `v0.0.6`.
+  Preuves HTTP 200 : POM (`<version>0.0.6</version>`), JAR (169 977 o, contient
+  `dashboard/progress/ProgressCalculator.class` + `static/vendor/bootstrap.min.css`,
+  **0** entrée `prototype`).
+* **Dogfooding du consommateur racine** (artefact JitPack) : `./gradlew
+  generateDashboard` → **39 boroughs / 471 EPICs / 461 sessions — 47 %
+  (196/417 pts) en 355 ms**, `schemaVersion "1.0"`, aucune référence
+  `href/src` externe.
 
 == Décisions / écarts
 

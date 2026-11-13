@@ -94,5 +94,6 @@ HTML/CSS/JS/mock (`index.html`, `borough.html`, `graph.html`, `styles.css`,
 points) et `TERMINÉ` accentué non reconnu. Dogfood : **39 boroughs / 471
 EPICs / 461 sessions — 47 % (196/417 pts)** en ~400 ms. Tests compilés :
 `ProgressCalculatorTest` (+4), `IndexCrawlerTest` (+1), renderer (+1),
-functional (+1), Cucumber (+1 scénario). Release `0.0.6`. Rapport
+functional (+1), Cucumber (+1 scénario). Release JitPack `0.0.6`
+(tag `v0.0.6`, POM/JAR 200, `prototype` exclu du JAR). Rapport
 `.agents/sessions/224-dsh-boundary-0p-2.adoc`.
