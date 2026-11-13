@@ -154,3 +154,21 @@ catalogue. CI `Lint` verte `43469669403` / `43463753298`. Aucun item backlog
 nouveau : la suite est de la **maintenance** ; le gate `DSH-BOUNDARY-0P` et
 `DSH-8` restent ouverts. Rapport
 `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
+
+== EPIC GBL-013 — Portabilité de la CI + pattern 0124 — S-226
+
+_Cadrage racine : `.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc`._
+_Dépôt aligné sur l'article **0124** : `dashboard-plugin/` est désormais un build
+**autonome** (wrapper 9.9.1, `settings.gradle.kts`, catalogue `ws` 0.0.136,
+shim JitPack) ; le root `dashboard-gradle` est un **consommateur** (plus de
+`include("dashboard-plugin")`)._
+
+|===
+| US | Contenu | Pts | Statut
+
+| GBL-013-5
+| Vague 2 — lint dans `cccp-ci-base` + migration 0124
+| —
+| ✅ S-226 — `ci/run.sh fast` exécuté dans l'image (`ccccpeducation/cccp-ci-base@sha256:4722…`), run `43498693366` **VERT** ; build autonome (wrapper, settings, `ws`), root consommateur, `verify-gradle-wrapper` sur `dashboard-plugin/gradle/wrapper/...`. Dérive ktlint préexistante corrigée (`providers…orElse(ws.versions.dashboard.plugin).get()`).
+|===
+
