@@ -151,3 +151,86 @@ body {
     border-radius: 0.5rem;
     padding: 0.75rem 1rem;
 }
+
+/* ── DSH-BOUNDARY-4 — Panorama 3 zones (35/35/30) ───────────── */
+.panorama {
+    display: grid;
+    grid-template-columns: 35fr 35fr 30fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+@media (max-width: 1199px) {
+    .panorama { grid-template-columns: 1fr; }
+}
+
+.path { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+.path li {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #adb5bd;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+}
+.path li[data-state="ready"],
+.path li[data-state="done"] { border-left-color: var(--status-done); }
+.path li[data-state="in-progress"] { border-left-color: #f0a92c; }
+.path li[data-state="blocked"] { border-left-color: var(--status-blocked); }
+.path .ring { font-weight: 700; color: var(--status-in-progress); margin-right: 0.35rem; }
+.path .stat { font-variant-numeric: tabular-nums; font-weight: 600; }
+.path .mini {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 0.45rem 0 0.3rem;
+}
+.path .mini > span { display: block; height: 100%; background: var(--status-in-progress); }
+
+.milestones li { display: grid; grid-template-columns: 0.9rem 1fr; gap: 0 0.5rem; padding: 0.3rem 0; }
+.milestones .dot {
+    width: 0.6rem; height: 0.6rem; border-radius: 50%;
+    background: var(--status-planned); margin-top: 0.35rem;
+}
+.milestones .dot-DONE { background: var(--status-done); }
+.milestones .dot-IN_PROGRESS { background: #f0a92c; }
+.milestones small { grid-column: 2; }
+
+.bars { display: grid; gap: 0.45rem; }
+.bar-row { display: grid; grid-template-columns: 9.5rem 1fr 3.2rem; align-items: center; gap: 0.6rem; }
+.bar-row .name {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #212529;
+}
+.bar-row .bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.bar-row .bar > span { display: block; height: 100%; background: var(--status-in-progress); }
+.bar-row .pct { text-align: right; font-variant-numeric: tabular-nums; color: #6c757d; font-size: 0.8rem; }
+
+.dag-levels { display: grid; gap: 0.6rem; }
+.dag-level { border-top: 1px solid #e9ecef; padding-top: 0.5rem; }
+.dag-level h3 { margin: 0 0 0.35rem; color: var(--status-in-progress); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 999px;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.78rem;
+    color: #212529;
+}
+.chip .dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--status-done); }
+
+.back { display: inline-block; margin-bottom: 0.75rem; }
+.borough-progress { min-width: 16rem; }
+.borough-progress .progress { height: 10px; margin: 0.35rem 0; }

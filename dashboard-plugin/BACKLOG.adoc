@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-11-14 (S-224 — **DSH-BOUNDARY-2 ✅** : `progress` par points (global + par borough), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse »), `schemaVersion 1.0` du pivot ; **DSH-BOUNDARY-0P** implémenté (prototype `prototype/`) en attente de validation pilote. Release `0.0.6`.)_
+_Dernière mise à jour : 2026-11-14 (S-225 — **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** : tâches typées incrémentales (`crawlDashboard`/`generateDashboard`, pivot hors site) ; Panorama 3 zones + 39 fiches borough ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs — 18 % / 1425/7856 pts). Release `0.0.7`.)_
 
 == P0 — Terminé
 
@@ -73,8 +73,8 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 | US | Description | Statut | Pts
 | DSH-BOUNDARY-1 | Retrait canvas vis.js + table ordonnée N0→N4 (structure cedee a Brooklin Flow) | ✅ TERMINÉ (S-223, livré avec le zéro CDN) | 3
 | DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | ✅ TERMINÉ (S-224) — GBL racine + `progress` (points) + `schemaVersion 1.0` ; source par borough = roadmap EPICs des INDEX | 5
-| DSH-BOUNDARY-3 | Incrémentalité : `@TaskAction` + `@InputFiles`/`@OutputDirectory`/`@CacheableTask` (UP-TO-DATE si contenu/structure inchanges) | 🟡 À FAIRE | 3
-| DSH-BOUNDARY-4 | Homepage Panorama (3 zones vision/avancement/structure) + page fiche borough (niveau 1) | 🟡 À FAIRE | 5
+| DSH-BOUNDARY-3 | Incrémentalité : `@TaskAction` + `@InputFiles`/`@OutputDirectory`/`@CacheableTask` (UP-TO-DATE si contenu/structure inchanges) | ✅ TERMINÉ (S-225) | 3
+| DSH-BOUNDARY-4 | Homepage Panorama (3 zones vision/avancement/structure) + page fiche borough (niveau 1) | ✅ TERMINÉ (S-225) | 5
 |===
 
 === Écosystème — publication + Brooklin Flow

@@ -1,20 +1,18 @@
 package dashboard
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dashboard.publish.PublishDashboardTask
-import dashboard.render.DashboardRenderer
 import dashboard.serve.ServeDashboardTask
+import dashboard.tasks.CrawlDashboardTask
+import dashboard.tasks.GenerateDashboardTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.nio.file.Files
 
 /**
  * Gradle plugin entry point for the workspace dashboard.
  *
  * Registers four tasks:
- * - `crawlDashboard`: scans INDEX.adoc / SESSIONS_HISTORY.adoc and writes dashboard-data.json
- * - `generateDashboard`: renders the static HTML/CSS dashboard from the JSON data
+ * - `crawlDashboard`: scans the workspace governance files and writes the JSON pivot
+ * - `generateDashboard`: renders the static Panorama + borough sheets from the pivot
  * - `publishDashboardSite`: copies the generated site to the configured publish directory
  * - `serve`: serves the generated site locally (loopback only) until interrupted
  */
@@ -32,73 +30,83 @@ class DashboardPlugin : Plugin<Project> {
                 .orElse(8820),
         )
 
-        project.tasks.register("crawlDashboard") { task ->
-            task.group = DashboardConstants.DASHBOARD_GROUP
-            task.description = "Crawls INDEX.adoc and SESSIONS_HISTORY.adoc from all boroughs."
-            task.doLast {
-                val configPath = extension.configPath.get()
-                val outputDir = extension.outputDir.get()
-                project.logger.lifecycle("Crawling dashboard from $configPath → $outputDir")
+        val outputDirProvider =
+            extension.outputDir.map { path -> project.layout.projectDirectory.dir(path) }
 
-                val root = project.projectDir.toPath().resolve(configPath)
-                if (!Files.exists(root)) {
-                    project.logger.warn("Config path does not exist: $root")
-                    return@doLast
-                }
-
-                val crawler = IndexCrawler()
-                val startedAt = System.nanoTime()
-                val workspaceBacklog =
-                    extension.workspaceBacklog
-                        .get()
-                        .takeIf { it.isNotBlank() }
-                        ?.let { project.projectDir.toPath().resolve(it) }
-                if (workspaceBacklog != null && !Files.isRegularFile(workspaceBacklog)) {
-                    project.logger.lifecycle("Workspace backlog not found, skipped: $workspaceBacklog")
-                }
-                val data = crawler.crawlDirectory(root, workspaceBacklog)
-                val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000
-
-                val outPath = project.projectDir.toPath().resolve(outputDir)
-                Files.createDirectories(outPath)
-
-                val mapper =
-                    jacksonObjectMapper().apply {
-                        enable(SerializationFeature.INDENT_OUTPUT)
-                    }
-
-                val jsonFile = outPath.resolve("dashboard-data.json")
-                mapper.writeValue(jsonFile.toFile(), data)
-                project.logger.lifecycle(
-                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions, " +
-                        "${data.progress.percent}% / ${data.progress.donePoints}/${data.progress.totalPoints} pts) in ${elapsedMs}ms",
+        val crawl =
+            project.tasks.register("crawlDashboard", CrawlDashboardTask::class.java) { task ->
+                task.group = DashboardConstants.DASHBOARD_GROUP
+                task.description = "Crawls the workspace governance files and writes the JSON pivot."
+                task.rootDir.set(extension.configPath.map { path -> project.layout.projectDirectory.dir(path) })
+                task.projectDir.set(project.layout.projectDirectory)
+                task.workspaceBacklogPath.set(extension.workspaceBacklog)
+                task.criticalPath.set(extension.criticalPath)
+                task.dataFile.set(
+                    extension.dataDir.map { path ->
+                        project.layout.projectDirectory
+                            .dir(path)
+                            .file("dashboard-data.json")
+                    },
+                )
+                task.governanceFiles.from(
+                    project.provider {
+                        val root =
+                            project.projectDir
+                                .toPath()
+                                .resolve(extension.configPath.get())
+                                .toFile()
+                        val files = mutableListOf<Any>()
+                        files.add(
+                            project.fileTree(root).apply {
+                                include("**/INDEX.adoc", "**/SESSIONS_HISTORY.adoc", "**/BACKLOG.adoc")
+                                exclude(
+                                    "**/build/**",
+                                    "**/.gradle/**",
+                                    "**/.git/**",
+                                    "**/.kotlin/**",
+                                    "**/.idea/**",
+                                    "**/node_modules/**",
+                                    "**/out/**",
+                                    "**/target/**",
+                                    "**/dist/**",
+                                    "**/.venv/**",
+                                    "**/venv/**",
+                                    "**/__pycache__/**",
+                                    "**/backup/**",
+                                    "**/archives/**",
+                                )
+                            },
+                        )
+                        val backlog =
+                            extension.workspaceBacklog
+                                .get()
+                                .takeIf { it.isNotBlank() }
+                                ?.let {
+                                    project.projectDir
+                                        .toPath()
+                                        .resolve(it)
+                                        .toFile()
+                                }
+                        if (backlog != null && backlog.isFile) files.add(backlog)
+                        files
+                    },
                 )
             }
-        }
 
-        project.tasks.register("generateDashboard") { task ->
+        project.tasks.register("generateDashboard", GenerateDashboardTask::class.java) { task ->
             task.group = DashboardConstants.DASHBOARD_GROUP
-            task.description = "Generates the static dashboard site from crawled data."
-            task.dependsOn("crawlDashboard")
-            task.doLast {
-                val outputDir = project.projectDir.toPath().resolve(extension.outputDir.get())
-                val jsonFile = outputDir.resolve("dashboard-data.json")
-
-                if (!Files.exists(jsonFile)) {
-                    project.logger.warn("Dashboard data not found: $jsonFile. Run crawlDashboard first.")
-                    return@doLast
-                }
-
-                project.logger.lifecycle("Generating dashboard site at $outputDir")
-                DashboardRenderer().renderFromJson(jsonFile, outputDir)
-                project.logger.lifecycle("Dashboard site generated: ${outputDir.resolve("index.html")}")
-            }
+            task.description = "Generates the static Panorama and borough sheets from the crawled data."
+            task.dependsOn(crawl)
+            task.dataFile.set(crawl.flatMap { it.dataFile })
+            task.outputDir.set(outputDirProvider)
         }
 
         project.tasks.register("publishDashboardSite", PublishDashboardTask::class.java) { task ->
             task.dependsOn("generateDashboard")
-            task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
-            task.publishDir.set(project.layout.projectDirectory.dir(extension.publishDir))
+            task.outputDir.set(outputDirProvider)
+            task.publishDir.set(
+                extension.publishDir.map { path -> project.layout.projectDirectory.dir(path) },
+            )
         }
 
         project.tasks.register("serve", ServeDashboardTask::class.java) { task ->
@@ -106,7 +114,7 @@ class DashboardPlugin : Plugin<Project> {
             task.description =
                 "Serves the generated dashboard locally (default http://localhost:8820, Ctrl+C to stop)."
             task.dependsOn("generateDashboard")
-            task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
+            task.outputDir.set(outputDirProvider)
             task.host.set(extension.serveHost)
             task.port.set(extension.servePort)
         }

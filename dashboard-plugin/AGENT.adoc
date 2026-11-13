@@ -94,7 +94,7 @@ etats, transitions niveau 0 -> 1).
 * Il n'est JAMAIS publie ni deploye sur gh-pages : exclu de
   `processResources` (`exclude("prototype/**")` dans `build.gradle.kts`).
   *Ne jamais retirer cette exclusion* — `src/main/resources` est empaquete
-  dans le JAR Maven Central.
+  dans le JAR publié (JitPack).
 * C'est une reference visuelle contractuelle jetable, que la Phase 1
   reproduit (ALGER en Thymeleaf, Brooklin Flow en React Flow).
 * *Gate* : aucune US de production ne demarre avant validation pilote
@@ -158,7 +158,7 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 | DSH-7 | Integration runner-gradle + deploiement | P1 | ✅ S009
 | DSH-8 | Git Sync — refresh depuis les repos | P2 | PLANIFIE
 | DSH-9 | `serve` + rendu (crawl complet, zéro CDN) | P1 | ✅ S-220 → S-223
-| DSH-BOUNDARY | Frontière ALGER / Brooklin Flow / Edster | P1 | 🟡 0P implémenté (validation pilote), 1 ✅, 2 ✅ — reste 3→7
+| DSH-BOUNDARY | Frontière ALGER / Brooklin Flow / Edster | P1 | 🟡 0P implémenté (validation pilote), 1/2/3/4 ✅ — reste 5→7
 | PUB | Publication JitPack (canal unique) | P1 | ✅ 0.0.4 publiée (S-222) ; 0.0.5 en préparation
 |===
 

@@ -14,15 +14,14 @@ import org.thymeleaf.templatemode.TemplateMode
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.math.roundToInt
 
 /**
  * Renders the static dashboard from [DashboardData].
  *
- * Thymeleaf is initialized with a [ClassLoaderTemplateResolver] pointing to the
- * embedded templates in `src/main/resources/templates/`. The output produces:
- * - `index.html`: main page with EPIC matrix, activity stream, DAG layers and timeline
- * - `styles.css`: stylesheet with the status palette
- * - `vendor/bootstrap.min.css`: vendored Bootstrap (offline render, no CDN)
+ * Produces the Panorama homepage (`index.html`) and one static borough sheet
+ * per borough (`borough-<slug>.html`), plus the offline assets and the
+ * JBake-compatible export.
  */
 class DashboardRenderer {
     private val templateEngine: TemplateEngine = createTemplateEngine()
@@ -39,52 +38,18 @@ class DashboardRenderer {
     ) {
         Files.createDirectories(outputDir)
 
-        val dagGraph = DagGraphBuilder.build(data)
+        val panorama = buildPanorama(data)
+        val panoramaContext = contextOf(panorama)
+        val panoramaHtml = templateEngine.process("dashboard", panoramaContext)
 
-        val page =
-            DashboardPage(
-                title = "Dashboard Workspace CCCP",
-                boroughs = data.boroughs.sortedBy { it.dagLevel },
-                epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
-                sessions = recentSessions(data.sessions),
-                stats = computeStats(data),
-                progress = data.progress,
-                boroughGroups = BoroughGrouper.groupByBorough(data),
-                dagLevels = groupDagLevels(dagGraph),
-                timeline = TimelineBuilder.build(data),
-                sessionCount = data.sessions.size,
-            )
-
-        val context =
-            Context().apply {
-                setVariable("page", page)
-                setVariable("statusHelper", StatusCssHelper)
-            }
-
-        val html = templateEngine.process("dashboard", context)
-
-        // ── Flat site (legacy, consumed by direct preview)
-        Files.writeString(outputDir.resolve("index.html"), html)
+        Files.writeString(outputDir.resolve("index.html"), panoramaHtml)
         copyStaticAsset("static/styles.css", outputDir.resolve("styles.css"))
         copyStaticAsset(VENDOR_BOOTSTRAP, outputDir.resolve("vendor/bootstrap.min.css"))
 
-        // ── JBake-compatible site structure, consumable by bakery-gradle serve/bake
-        val jbakeDir = outputDir.resolve("jbake")
-        Files.createDirectories(jbakeDir)
-        writeJbakeProperties(jbakeDir.resolve("jbake.properties"))
-        Files.createDirectories(jbakeDir.resolve("content"))
-        val jbakeHtml =
-            html
-                .replace("href=\"styles.css\"", "href=\"css/styles.css\"")
-                .replace("href=\"vendor/bootstrap.min.css\"", "href=\"css/bootstrap.min.css\"")
-        Files.writeString(jbakeDir.resolve("content/index.html"), wrapAsJbakeContent(jbakeHtml))
-        Files.createDirectories(jbakeDir.resolve("templates"))
-        copyStaticAsset("templates/jbake-index.thyme", jbakeDir.resolve("templates/index.thyme"))
-        Files.createDirectories(jbakeDir.resolve("assets/css"))
-        copyStaticAsset("static/styles.css", jbakeDir.resolve("assets/css/styles.css"))
-        copyStaticAsset(VENDOR_BOOTSTRAP, jbakeDir.resolve("assets/css/bootstrap.min.css"))
-        Files.createDirectories(jbakeDir.resolve("assets/js"))
-        Files.writeString(jbakeDir.resolve("assets/js/dashboard-data.json"), mapper.writeValueAsString(data))
+        val boroughPages = renderBoroughPages(data, outputDir)
+        writeJbakeSite(data, outputDir, panoramaHtml, boroughPages)
+
+        mapper.writeValue(outputDir.resolve("dashboard-data.json").toFile(), data)
     }
 
     /**
@@ -98,6 +63,166 @@ class DashboardRenderer {
         render(data, outputDir)
     }
 
+    private fun contextOf(page: Any): Context =
+        Context().apply {
+            setVariable("page", page)
+            setVariable("statusHelper", StatusCssHelper)
+        }
+
+    private fun buildPanorama(data: DashboardData): DashboardPage {
+        val timeline = TimelineBuilder.build(data)
+        val progressByBorough = data.progress.byBorough.associateBy { it.borough }
+        val bars =
+            data.boroughs
+                .map { borough ->
+                    val progress = progressByBorough[borough.name]
+                    BoroughProgressView(
+                        name = borough.name,
+                        project = borough.project,
+                        dagLevel = borough.dagLevel.ifBlank { "N?" },
+                        slugFile = Slug.fileName(borough.name),
+                        percent = progress?.percent ?: 0,
+                        donePoints = progress?.donePoints ?: 0,
+                        totalPoints = progress?.totalPoints ?: 0,
+                        doneEpics = progress?.doneEpics ?: 0,
+                        totalEpics = progress?.totalEpics ?: 0,
+                    )
+                }.sortedWith(compareByDescending<BoroughProgressView> { it.percent }.thenBy { it.name })
+
+        return DashboardPage(
+            title = "Dashboard Workspace CCCP",
+            stats = computeStats(data),
+            progress = data.progress,
+            sessionCount = data.sessions.size,
+            rings = ringViews(data),
+            milestones = timeline.milestones,
+            boroughBars = bars,
+            dagLevels = structureLevels(data),
+        )
+    }
+
+    private fun ringViews(data: DashboardData): List<CriticalPathRingView> =
+        data.criticalPath.map { ring ->
+            val matched =
+                ring.projects.mapNotNull { project ->
+                    data.progress.byBorough.firstOrNull { it.project.equals(project, ignoreCase = true) }
+                }
+            val done = matched.sumOf { it.donePoints }
+            val total = matched.sumOf { it.totalPoints }
+            val percent = if (total == 0) 0 else (done * 100.0 / total).roundToInt().coerceIn(0, 100)
+            val state =
+                ring.state.ifBlank {
+                    when {
+                        total == 0 -> "planned"
+                        percent >= 100 -> "done"
+                        percent > 0 -> "in-progress"
+                        else -> "planned"
+                    }
+                }
+            CriticalPathRingView(
+                ring = ring.ring,
+                label = ring.label,
+                state = state,
+                percent = percent,
+                donePoints = done,
+                totalPoints = total,
+                projects = ring.projects.joinToString(", "),
+            )
+        }
+
+    private fun structureLevels(data: DashboardData): List<StructureLevel> {
+        val progressByBorough = data.progress.byBorough.associateBy { it.borough }
+        val nodes = DagGraphBuilder.build(data).nodes
+        return nodes
+            .groupBy { it.group.ifBlank { "N?" } }
+            .toList()
+            .sortedWith(compareBy({ DagGraphBuilder.parseDagLevel(it.first) }, { it.first }))
+            .map { (level, levelNodes) ->
+                StructureLevel(
+                    level = level,
+                    nodes =
+                        levelNodes.sortedBy { it.project }.map { node ->
+                            StructureNode(
+                                name = node.id,
+                                project = node.project,
+                                slugFile = Slug.fileName(node.id),
+                                percent = progressByBorough[node.id]?.percent ?: 0,
+                            )
+                        },
+                )
+            }
+    }
+
+    private fun renderBoroughPages(
+        data: DashboardData,
+        outputDir: Path,
+    ): List<Pair<String, String>> {
+        val progressByBorough = data.progress.byBorough.associateBy { it.borough }
+        return data.boroughs.map { borough ->
+            val progress = progressByBorough[borough.name]
+            val page =
+                BoroughPage(
+                    title = "${borough.name} — Dashboard CCCP",
+                    name = borough.name,
+                    project = borough.project,
+                    dagLevel = borough.dagLevel.ifBlank { "N?" },
+                    role = borough.role,
+                    status = borough.status.name,
+                    percent = progress?.percent ?: 0,
+                    donePoints = progress?.donePoints ?: 0,
+                    totalPoints = progress?.totalPoints ?: 0,
+                    doneEpics = progress?.doneEpics ?: 0,
+                    totalEpics = progress?.totalEpics ?: 0,
+                    epics =
+                        data.epics
+                            .filter { it.borough == borough.name }
+                            .sortedWith(compareBy({ it.priority }, { it.id })),
+                    sessions = recentSessions(data.sessions, borough.name),
+                )
+            val fileName = Slug.fileName(borough.name)
+            val html = templateEngine.process("borough", contextOf(page))
+            Files.writeString(outputDir.resolve(fileName), html)
+            fileName to html
+        }
+    }
+
+    private fun writeJbakeSite(
+        data: DashboardData,
+        outputDir: Path,
+        panoramaHtml: String,
+        boroughPages: List<Pair<String, String>>,
+    ) {
+        val jbakeDir = outputDir.resolve("jbake")
+        Files.createDirectories(jbakeDir)
+        writeJbakeProperties(jbakeDir.resolve("jbake.properties"))
+        Files.createDirectories(jbakeDir.resolve("content"))
+        Files.writeString(jbakeDir.resolve("content/index.html"), wrapAsJbakeContent(toJbakeAssets(panoramaHtml)))
+        for ((fileName, html) in boroughPages) {
+            Files.writeString(jbakeDir.resolve("content/$fileName"), wrapAsJbakeContent(toJbakeAssets(html)))
+        }
+        Files.createDirectories(jbakeDir.resolve("templates"))
+        copyStaticAsset("templates/jbake-index.thyme", jbakeDir.resolve("templates/index.thyme"))
+        Files.createDirectories(jbakeDir.resolve("assets/css"))
+        copyStaticAsset("static/styles.css", jbakeDir.resolve("assets/css/styles.css"))
+        copyStaticAsset(VENDOR_BOOTSTRAP, jbakeDir.resolve("assets/css/bootstrap.min.css"))
+        Files.createDirectories(jbakeDir.resolve("assets/js"))
+        Files.writeString(jbakeDir.resolve("assets/js/dashboard-data.json"), mapper.writeValueAsString(data))
+    }
+
+    private fun toJbakeAssets(html: String): String =
+        html
+            .replace("href=\"vendor/bootstrap.min.css\"", "href=\"css/bootstrap.min.css\"")
+            .replace("href=\"styles.css\"", "href=\"css/styles.css\"")
+
+    private fun recentSessions(
+        sessions: List<SessionActivity>,
+        borough: String,
+    ): List<SessionActivity> =
+        sessions
+            .filter { it.borough == borough }
+            .sortedWith(compareByDescending<SessionActivity> { it.date }.thenByDescending { it.number })
+            .take(RECENT_SESSIONS_LIMIT)
+
     private fun computeStats(data: DashboardData): DashboardStats {
         val byStatus = data.epics.groupingBy { it.status }.eachCount()
         return DashboardStats(
@@ -109,25 +234,6 @@ class DashboardRenderer {
             blockedCount = byStatus[EpicStatus.BLOQUE] ?: 0,
         )
     }
-
-    /**
-     * Keeps the activity stream readable when the workspace holds thousands of
-     * sessions: the full set stays in `dashboard-data.json`, the page shows the
-     * most recent entries only.
-     */
-    private fun recentSessions(sessions: List<SessionActivity>): List<SessionActivity> =
-        sessions
-            .sortedWith(compareByDescending<SessionActivity> { it.date }.thenByDescending { it.number })
-            .take(RECENT_SESSIONS_LIMIT)
-
-    private fun groupDagLevels(graph: DagGraph): List<DagLevelGroup> =
-        graph.nodes
-            .groupBy { it.group.ifBlank { UNKNOWN_DAG_LEVEL } }
-            .toList()
-            .sortedWith(compareBy({ DagGraphBuilder.parseDagLevel(it.first) }, { it.first }))
-            .map { (level, nodes) ->
-                DagLevelGroup(level = level, nodes = nodes.sortedBy { it.project })
-            }
 
     private fun copyStaticAsset(
         resourcePath: String,
@@ -177,8 +283,7 @@ $html
 
     companion object {
         private const val VENDOR_BOOTSTRAP = "static/vendor/bootstrap.min.css"
-        private const val RECENT_SESSIONS_LIMIT = 60
-        private const val UNKNOWN_DAG_LEVEL = "N?"
+        private const val RECENT_SESSIONS_LIMIT = 40
 
         /**
          * Returns the CSS class associated with an EPIC status.

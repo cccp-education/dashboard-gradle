@@ -271,6 +271,44 @@ class IndexCrawlerTest {
     }
 
     @Test
+    fun `crawlDirectory should read point totals from a borough BACKLOG`() {
+        val index = tempDir.resolve("foundry/dashboard/INDEX.adoc")
+        Files.createDirectories(index.parent)
+        Files.writeString(
+            index,
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | Dashboard | dashboard-gradle | N3 | Vision | S004
+            |===
+            |===
+            | EPIC | Description | Statut | Priorite
+            | DSH-0 | Bootstrap | ✅ TERMINE | P0
+            |===
+            """.trimIndent(),
+        )
+        Files.writeString(
+            tempDir.resolve("foundry/dashboard/BACKLOG.adoc"),
+            """
+            = BACKLOG
+            |===
+            | US | Description | Pts | Statut
+            | US-1 | A | 5 | ✅ S-001
+            | US-2 | B | 5 | ✅ S-002
+            | US-3 | C | 5 | 🟡 À FAIRE
+            |===
+            """.trimIndent(),
+        )
+
+        val data = crawler.crawlDirectory(tempDir.resolve("foundry"))
+
+        val dashboard = data.progress.byBorough.first { it.borough == "Dashboard" }
+        assertThat(dashboard.donePoints).isEqualTo(10)
+        assertThat(dashboard.totalPoints).isEqualTo(15)
+        assertThat(dashboard.percent).isEqualTo(67)
+    }
+
+    @Test
     fun `crawlDirectory should parse the workspace backlog into transverse progress`() {
         val dashboardIndex = tempDir.resolve("foundry/dashboard/INDEX.adoc")
         Files.createDirectories(dashboardIndex.parent)

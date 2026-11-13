@@ -1,34 +1,24 @@
 package dashboard.render
 
-import dashboard.model.BoroughData
 import dashboard.model.EpicData
 import dashboard.model.ProgressSummary
 import dashboard.model.SessionActivity
-import dashboard.timeline.Timeline
+import dashboard.timeline.Milestone
 
 /**
- * Thymeleaf page model exposed to the dashboard template.
- *
- * This DTO structures raw [dashboard.model.DashboardData] into a presentation-friendly
- * shape (EPIC matrix, activity stream, statistics, DAG layers, timeline).
+ * Thymeleaf model for the Panorama homepage (3 zones: vision / progress /
+ * structure).
  */
 data class DashboardPage(
     val title: String,
-    val boroughs: List<BoroughData>,
-    val epics: List<EpicData>,
-    val sessions: List<SessionActivity>,
     val stats: DashboardStats,
     val progress: ProgressSummary,
-    val boroughGroups: List<BoroughGroup>,
-    val dagLevels: List<DagLevelGroup>,
-    val timeline: Timeline,
     val sessionCount: Int,
-) {
-    fun progressLabel(borough: String): String {
-        val entry = progress.byBorough.firstOrNull { it.borough == borough } ?: return "—"
-        return if (entry.totalPoints == 0) "—" else "${entry.percent} %"
-    }
-}
+    val rings: List<CriticalPathRingView>,
+    val milestones: List<Milestone>,
+    val boroughBars: List<BoroughProgressView>,
+    val dagLevels: List<StructureLevel>,
+)
 
 data class DashboardStats(
     val boroughCount: Int,
@@ -39,6 +29,64 @@ data class DashboardStats(
     val blockedCount: Int,
 )
 
+data class CriticalPathRingView(
+    val ring: String,
+    val label: String,
+    val state: String,
+    val percent: Int,
+    val donePoints: Int,
+    val totalPoints: Int,
+    val projects: String,
+)
+
+data class BoroughProgressView(
+    val name: String,
+    val project: String,
+    val dagLevel: String,
+    val slugFile: String,
+    val percent: Int,
+    val donePoints: Int,
+    val totalPoints: Int,
+    val doneEpics: Int,
+    val totalEpics: Int,
+) {
+    val hasPoints: Boolean get() = totalPoints > 0
+}
+
+data class StructureLevel(
+    val level: String,
+    val nodes: List<StructureNode>,
+)
+
+data class StructureNode(
+    val name: String,
+    val project: String,
+    val slugFile: String,
+    val percent: Int,
+)
+
+/**
+ * Thymeleaf model for a borough sheet (level 1 page).
+ */
+data class BoroughPage(
+    val title: String,
+    val name: String,
+    val project: String,
+    val dagLevel: String,
+    val role: String,
+    val status: String,
+    val percent: Int,
+    val donePoints: Int,
+    val totalPoints: Int,
+    val doneEpics: Int,
+    val totalEpics: Int,
+    val epics: List<EpicData>,
+    val sessions: List<SessionActivity>,
+) {
+    val hasPoints: Boolean get() = totalPoints > 0
+}
+
+/** Grouping used by the historical EPIC matrix (kept for the BDD suite). */
 data class BoroughGroup(
     val name: String,
     val dagLevel: String,
@@ -48,9 +96,4 @@ data class BoroughGroup(
     val donePoints: Int,
     val totalPoints: Int,
     val percent: Int,
-)
-
-data class DagLevelGroup(
-    val level: String,
-    val nodes: List<DagNodeView>,
 )

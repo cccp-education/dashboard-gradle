@@ -1,14 +1,15 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
 _Derniere mise a jour_ : 2026-11-14 — Session 225 (GBL-013 US-9 : `WorkspaceCrawlTest` skip-gardé en CI isolée, matrice cross-borough `dashboard-plugin`, run `43524985246` VERT)
-_Derniere mise a jour_ : 2026-11-14 — Session 224 (DSH-BOUNDARY-0P + DSH-BOUNDARY-2)
+_Derniere mise a jour_ : 2026-11-14 — Session 225 (DSH-BOUNDARY-3 + DSH-BOUNDARY-4)
+_session terminee_ : 225 — **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** : `crawlDashboard`/`generateDashboard` typées et incrémentales (pivot `build/dashboard-data`, 2e run UP-TO-DATE) ; Panorama 3 zones (Vision A1→A4, Avancement, Structure) + **39 fiches `borough-*.html`** ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs / 437 sessions — **18 % / 1425/7856 pts**). Release `0.0.7`. Rapport `.agents/sessions/225-dsh-boundary-3-4.adoc`.
 _session terminee_ : 224 — **DSH-BOUNDARY-2 ✅** : `progress` par **points** (global + par borough, `schemaVersion 1.0`), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse ») ; **DSH-BOUNDARY-0P** implémenté (`prototype/` : Panorama 3 zones, fiche borough, coquille graphe, états empty/loaded/overloaded) en attente de validation pilote. Preuve dogfood : **39 boroughs / 471 EPICs / 461 sessions — 47 % (196/417 pts)** en 355 ms. **Release JitPack `0.0.6`** (tag `v0.0.6`, POM/JAR HTTP 200, `prototype` absent du JAR). Rapport `.agents/sessions/224-dsh-boundary-0p-2.adoc`.
 _session terminee_ : 223 — **DSH-9.2 ✅** : crawl complet de `foundry/` (**38 boroughs / 460 EPICs / 461 sessions en 638 ms**), élagage + déduplication + fallback de synthèse, **zéro CDN** (Bootstrap 5.3.3 vendoré, vis.js retiré) et **DSH-BOUNDARY-1 ✅ livré en avance** (table statique DAG N0→N4). **Release JitPack `0.0.5`** (tag `v0.0.5`, POM/JAR HTTP 200, dogfood racine 740 ms). Rapport `.agents/sessions/223-dsh-9-2-crawl-render.adoc`.
 _session terminee_ : 222 — `serve` par défaut sur `http://localhost:8820` (host/port surchargeables), release `dashboard-plugin 0.0.4`, root + catalogues pinnés 0.0.4. Preuve 200/200/404. Rapport `.agents/sessions/222-serve-default-localhost-8820.adoc`.
 _session terminee_ : 220 — DSH-9.1 : tâche `serve` (domaine `dashboard.serve` : MIME, résolution statique + garde path-traversal, serveur HTTP JDK loopback ; `ServeDashboardTask` `dependsOn generateDashboard`, host/port DSL + `-Pdashboard.serve*` ; tests unit + TestKit compilés). `compileKotlin`/`compileTestKotlin` verts. Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 _session terminee_ : 219 — CNV-17 : catalogue workspace `ws` servi par JitPack (`workspace-catalog:0.0.136`, fin de `education.cccp:*`), shim `conventions-plugin:0.0.17` sans préfixe `v`, JitPack en résolution de dépendances. CI `Lint` verte `43469669403` / `43463753298`. Rapport `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
 _session terminee_ : 216 — Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster). 9 US ~31 pts. Redécoupage : retrait vis.js, avancement réel (foundry + BACKLOG), incrémentalité, homepage Panorama, absorption DFL-1/2/3/7. Zéro code modifié.
-_prochaine session_ : 225 — **DSH-BOUNDARY-3** (incrémentalité `@InputFiles`/`@OutputDirectory`/`@CacheableTask`) puis **DSH-BOUNDARY-4** (homepage Panorama + fiche borough en Thymeleaf, d'après le prototype 0P à valider) ; `DSH-BOUNDARY-5→7` et `DSH-8` restent ouverts.
+_prochaine session_ : 226 — **DSH-BOUNDARY-5** (Brooklin Flow : graphe React Flow + overlay `dashboard-data.json` + panneau récap) ; validation pilote du prototype 0P requise (gate). ALGER résiduel : `DSH-8` (Git sync, filtres, mode sombre).
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).
@@ -68,6 +69,7 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 | 222 | 2026-11-14 | feature+release | **`serve` par défaut `localhost:8820`** — release `0.0.4` (tag `v0.0.4`, JitPack 200), root pinné 0.0.4, preuve 200/200/404. | 10/10
 | 223 | 2026-11-14 | feature+release | **DSH-9.2 ✅** — crawl complet `foundry/` : **38 boroughs / 460 EPICs / 461 sessions en 638 ms** (élagage, déduplication, fallback de synthèse) ; zéro CDN (Bootstrap 5.3.3 vendoré, vis.js retiré) ; **DSH-BOUNDARY-1 ✅** (table DAG N0→N4) ; activity stream plafonné à 60 récents ; tests compilés (+3 unit, +1 skip-gardé). **Release JitPack `0.0.5`** (tag `v0.0.5`). | 10/10
 | 224 | 2026-11-14 | feature+release | **DSH-BOUNDARY-2 ✅ + DSH-BOUNDARY-0P implémenté** — `progress` par points (global + par borough, `schemaVersion 1.0`), `BACKLOG.adoc` racine → EPICs GBL « Transverse » ; prototype HTML/CSS/JS/mock (Panorama, fiche borough, graphe, états) en attente de validation pilote ; bug de colonne « Pts » (`Description` contient `pt`) corrigé. Dogfood : **39 boroughs / 471 EPICs / 47 % (196/417 pts)**. **Release JitPack `0.0.6`**. | 10/10
+| 225 | 2026-11-14 | feature+release | **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** — tâches typées incrémentales (`crawlDashboard`/`generateDashboard`, pivot `build/dashboard-data`, 2e run UP-TO-DATE) ; Panorama 3 zones (Vision A1→A4 via DSL `criticalPath`, Avancement, Structure) + **39 fiches `borough-*.html`** ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs / 437 sessions — **18 % / 1425/7856 pts**) ; parser AsciiDoc multi-lignes/indenté/non fermé corrigé. **Release JitPack `0.0.7`**. | 10/10
 |===
 
 '''
@@ -88,7 +90,7 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 | DSH-9 | Serveur local `serve` + audit/correction du rendu `generateDashboard` | 8 | P1 | ✅ S-223 (`.1` S-220 + `.2` S-223) | Dashboard
 | PUB | Publication Maven Central nmcp | 5 | P1 | ✅ S-215 (0.0.1 Central) | Dashboard
 | DSH-10 | Site JBake-compatible consommable par bakery-gradle | 5 | P1 | ✅ S010 | Dashboard
-| DSH-BOUNDARY | Frontière Dashboard (ALGER / Brooklin Flow / Edster) | 26 | P1 | 🟡 0P implémenté + 1 ✅ + 2 ✅ (S-223/224) | Dashboard + Brooklin Flow
+| DSH-BOUNDARY | Frontière Dashboard (ALGER / Brooklin Flow / Edster) | 26 | P1 | 🟡 0P implémenté + 1/2/3/4 ✅ (S-223/225) ; reste 5→7 | Dashboard + Brooklin Flow
 |===
 
 '''

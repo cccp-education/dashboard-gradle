@@ -4,6 +4,7 @@ import dashboard.model.BoroughData
 import dashboard.model.BoroughProgress
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
+import dashboard.model.PointTotals
 import dashboard.model.ProgressSummary
 import java.util.LinkedHashMap
 import kotlin.math.roundToInt
@@ -12,34 +13,41 @@ import kotlin.math.roundToInt
  * Computes point-based progress (`terminés / total`) per borough and globally.
  *
  * Points are the only comparable unit across boroughs: EPIC counts vary by
- * granularity while declared points reflect the estimated effort. An EPIC with
- * zero declared points still counts in `totalEpics` but adds nothing to the
- * point totals.
+ * granularity while declared points reflect the estimated effort. When a
+ * borough `BACKLOG.adoc` exposes point totals, those take precedence over the
+ * coarser EPIC roadmap (some INDEX roadmaps have no `Pts` column).
  */
 object ProgressCalculator {
     fun compute(
         boroughs: List<BoroughData>,
         epics: List<EpicData>,
+        backlogPoints: Map<String, PointTotals> = emptyMap(),
     ): ProgressSummary {
         val epicsByBorough = epics.groupBy { it.borough }
         val entries = LinkedHashMap<String, BoroughProgress>()
 
         for (borough in boroughs) {
-            entries[borough.name] = progressOf(borough.name, borough.project, epicsByBorough[borough.name].orEmpty())
+            entries[borough.name] =
+                progressOf(
+                    borough = borough.name,
+                    project = borough.project,
+                    epics = epicsByBorough[borough.name].orEmpty(),
+                    backlogPoints = backlogPoints[borough.name],
+                )
         }
         for ((name, boroughEpics) in epicsByBorough) {
-            entries.putIfAbsent(name, progressOf(name, "", boroughEpics))
+            entries.putIfAbsent(name, progressOf(name, "", boroughEpics, backlogPoints[name]))
         }
 
         val byBorough = entries.values.toList()
-        val donePoints = epics.filter { it.status == EpicStatus.TERMINE }.sumOf { it.points }
-        val totalPoints = epics.sumOf { it.points }
+        val donePoints = byBorough.sumOf { it.donePoints }
+        val totalPoints = byBorough.sumOf { it.totalPoints }
         return ProgressSummary(
             donePoints = donePoints,
             totalPoints = totalPoints,
             percent = percentOf(donePoints, totalPoints),
-            doneEpics = epics.count { it.status == EpicStatus.TERMINE },
-            totalEpics = epics.size,
+            doneEpics = byBorough.sumOf { it.doneEpics },
+            totalEpics = byBorough.sumOf { it.totalEpics },
             byBorough = byBorough,
         )
     }
@@ -48,10 +56,11 @@ object ProgressCalculator {
         borough: String,
         project: String,
         epics: List<EpicData>,
+        backlogPoints: PointTotals?,
     ): BoroughProgress {
         val done = epics.filter { it.status == EpicStatus.TERMINE }
-        val donePoints = done.sumOf { it.points }
-        val totalPoints = epics.sumOf { it.points }
+        val donePoints = backlogPoints?.donePoints ?: done.sumOf { it.points }
+        val totalPoints = backlogPoints?.totalPoints ?: epics.sumOf { it.points }
         return BoroughProgress(
             borough = borough,
             project = project,

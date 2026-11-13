@@ -73,7 +73,7 @@ class DashboardWorld {
     }
 
     fun readJsonOutput(): String? {
-        val jsonFile = projectDir.resolve("build/dashboard/dashboard-data.json")
+        val jsonFile = projectDir.resolve("build/dashboard-data/dashboard-data.json")
         return if (Files.exists(jsonFile)) Files.readString(jsonFile) else null
     }
 

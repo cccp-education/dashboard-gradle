@@ -1,5 +1,5 @@
 [versions]
-dashboard = "0.0.6"
+dashboard = "0.0.7"
 plugin-publish = "2.2.1"
 kotlin = "2.4.10"
 jackson = "2.18.3"

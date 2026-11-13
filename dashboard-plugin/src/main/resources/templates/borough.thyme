@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${page.title}">Borough — Dashboard CCCP</title>
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{styles.css}" href="styles.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand mb-0 h1" href="index.html">Dashboard Workspace CCCP</a>
+        <span class="navbar-text text-light" th:text="${page.project}">project</span>
+    </div>
+</nav>
+
+<main class="container-fluid mt-4">
+    <a class="back" href="index.html">← Panorama</a>
+
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <h1 class="h3 mb-1" th:text="${page.name}">Borough</h1>
+                    <p class="text-muted mb-0">
+                        <span th:text="${page.project}">project</span> —
+                        <span th:text="${'DAG ' + page.dagLevel}">DAG N2</span> —
+                        <span th:text="${page.status}">ACTIVE</span>
+                    </p>
+                    <p class="text-muted mb-0" th:if="${not #strings.isEmpty(page.role)}"
+                       th:text="${page.role}">role</p>
+                </div>
+                <div class="borough-progress">
+                    <span class="h4" th:text="${page.hasPoints ? page.percent + ' %' : '—'}">0 %</span>
+                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         th:attr="aria-valuenow=${page.percent}">
+                        <div class="progress-bar bg-success" th:style="|width:${page.percent}%|"></div>
+                    </div>
+                    <small class="text-muted"
+                           th:text="${page.donePoints + ' / ' + page.totalPoints + ' pts — ' + page.doneEpics + ' / ' + page.totalEpics + ' EPICs'}">
+                        0 / 0 pts</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-lg-8">
+            <div class="card dashboard-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">EPICs</h2>
+                    <span class="badge bg-secondary" th:text="${page.epics.size} + ' EPICs'">0 EPICs</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th>EPIC</th>
+                                <th>Sujet</th>
+                                <th>Priorité</th>
+                                <th>Pts</th>
+                                <th>Statut</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="epic : ${page.epics}"
+                                th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
+                                <td th:text="${epic.id}">DSH-0</td>
+                                <td th:text="${epic.title}">Bootstrap</td>
+                                <td th:text="${epic.priority}">P0</td>
+                                <td th:text="${epic.points}">0</td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:class="'status-badge ' + ${statusHelper.statusCssClass(epic.status)}"
+                                          th:text="${epic.status}">TERMINE</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(page.epics)}">
+                                <td colspan="5" class="text-center text-muted py-4">Aucun EPIC détecté</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Sessions récentes</h2>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item activity-item" th:each="session : ${page.sessions}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <strong class="mb-1" th:text="'S' + ${session.number}">S000</strong>
+                                <small class="text-muted" th:text="${session.date}">2026-06-22</small>
+                            </div>
+                            <p class="mb-1" th:text="${session.subject}">Sujet</p>
+                            <small class="text-muted" th:text="${session.files}">fichiers</small>
+                        </li>
+                        <li class="list-group-item text-center text-muted py-4"
+                            th:if="${#lists.isEmpty(page.sessions)}">
+                            Aucune session récente
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-dark text-white mt-5 py-3">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2026 CCCP Education — Dashboard workspace</p>
+    </div>
+</footer>
+</body>
+</html>

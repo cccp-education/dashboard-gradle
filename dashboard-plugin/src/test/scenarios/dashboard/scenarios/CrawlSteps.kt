@@ -4,11 +4,13 @@ package dashboard.scenarios
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dashboard.model.DashboardData
+import dashboard.render.Slug
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.assertj.core.api.Assertions.assertThat
+import java.nio.file.Files
 
 class CrawlSteps(
     private val world: DashboardWorld,
@@ -236,6 +238,16 @@ class CrawlSteps(
     fun thenDashboardSiteContainsStylesheet() {
         val html = world.readHtmlOutput() ?: error("No dashboard HTML output")
         assertThat(html).contains("styles.css")
+    }
+
+    @Then("the borough page {string} should contain {string}")
+    fun thenBoroughPageContains(
+        borough: String,
+        text: String,
+    ) {
+        val file = world.projectDir.resolve("build/dashboard/" + Slug.fileName(borough))
+        if (!Files.exists(file)) error("Borough page not found: $file")
+        assertThat(Files.readString(file)).contains(text)
     }
 
     @Then("the build log should contain {string}")

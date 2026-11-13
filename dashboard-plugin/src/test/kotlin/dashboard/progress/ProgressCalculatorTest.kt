@@ -3,6 +3,7 @@ package dashboard.progress
 import dashboard.model.BoroughData
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
+import dashboard.model.PointTotals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -73,6 +74,24 @@ class ProgressCalculatorTest {
         assertThat(empty.totalEpics).isZero()
         assertThat(empty.totalPoints).isZero()
         assertThat(empty.percent).isZero()
+    }
+
+    @Test
+    fun `backlog point totals override the epic roadmap`() {
+        val borough = BoroughData("Dashboard", "dashboard-gradle", "N3", "", "")
+        val epics = listOf(EpicData("DSH-0", "Done", "Dashboard", points = 0, status = EpicStatus.TERMINE))
+
+        val progress =
+            ProgressCalculator.compute(
+                listOf(borough),
+                epics,
+                mapOf("Dashboard" to PointTotals(donePoints = 10, totalPoints = 20)),
+            )
+
+        assertThat(progress.donePoints).isEqualTo(10)
+        assertThat(progress.totalPoints).isEqualTo(20)
+        assertThat(progress.percent).isEqualTo(50)
+        assertThat(progress.byBorough.single().doneEpics).isEqualTo(1)
     }
 
     @Test

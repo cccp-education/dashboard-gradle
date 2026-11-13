@@ -13,224 +13,126 @@
         <span class="navbar-brand mb-0 h1" th:text="${page.title}">Dashboard Workspace CCCP</span>
         <span class="navbar-text text-light">
             <span th:text="${page.stats.boroughCount}">0</span> boroughs —
-            <span th:text="${page.stats.epicCount}">0</span> epics
+            <span th:text="${page.stats.epicCount}">0</span> epics —
+            <span class="badge bg-success" th:text="${page.progress.percent + ' %'}">0 %</span>
         </span>
     </div>
 </nav>
 
-<div class="container-fluid mt-4">
-    <div class="row g-4">
-        <!-- Stats cards -->
-        <div class="col-12">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="card stats-card stats-done">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Terminés</h5>
-                            <p class="display-6" th:text="${page.stats.doneCount}">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card stats-in-progress">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">En cours</h5>
-                            <p class="display-6" th:text="${page.stats.inProgressCount}">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card stats-planned">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Planifiés</h5>
-                            <p class="display-6" th:text="${page.stats.plannedCount}">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card stats-blocked">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Bloqués</h5>
-                            <p class="display-6" th:text="${page.stats.blockedCount}">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Global progress (points) -->
-        <div class="col-12">
-            <div class="card dashboard-card">
+<main class="container-fluid mt-4">
+    <div class="panorama">
+        <!-- ZONE VISION (35) -->
+        <section class="zone-vision">
+            <div class="card dashboard-card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">Avancement global (points)</h2>
-                    <span class="badge bg-secondary" th:text="${page.progress.percent + ' %'}">0 %</span>
+                    <h2 class="h5 mb-0">Vision — chaîne MVP0</h2>
+                    <span class="text-muted small">A1 → A4</span>
                 </div>
                 <div class="card-body">
-                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                         th:attr="aria-valuenow=${page.progress.percent}">
-                        <div class="progress-bar bg-success" th:style="|width:${page.progress.percent}%|"
-                             th:text="${page.progress.percent + ' %'}">0 %</div>
-                    </div>
-                    <p class="text-muted small mt-2 mb-0"
-                       th:text="${page.progress.donePoints + ' / ' + page.progress.totalPoints + ' points — ' + page.progress.doneEpics + ' / ' + page.progress.totalEpics + ' EPICs'}">
-                        0 / 0 points — 0 / 0 EPICs</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- EPIC Matrix -->
-        <div class="col-lg-8">
-            <div class="card dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">EPIC Matrix</h2>
-                    <span class="badge bg-secondary" th:text="${page.epics.size} + ' epics'">0 epics</span>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                            <tr>
-                                <th>EPIC</th>
-                                <th>Sujet</th>
-                                <th>Priorité</th>
-                                <th>Statut</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <th:block th:each="group : ${page.boroughGroups}" th:if="${not #lists.isEmpty(group.epics)}">
-                                <tr class="borough-header">
-                                    <td colspan="4">
-                                        <strong th:text="${group.name} + ' (' + ${group.dagLevel} + ')'">Dashboard (N3)</strong>
-                                        <small class="text-muted ms-2" th:text="${group.project}">dashboard-gradle</small>
-                                        <span class="badge bg-success ms-2"
-                                              th:text="${group.totalPoints == 0 ? '—' : group.percent + ' % (' + group.donePoints + '/' + group.totalPoints + ' pts)'}">0 %</span>
-                                    </td>
-                                </tr>
-                                <tr th:each="epic : ${group.epics}" th:class="'status-row ' + ${statusHelper.statusCssClass(epic.status)}">
-                                    <td th:text="${epic.id}">DSH-0</td>
-                                    <td th:text="${epic.title}">Bootstrap</td>
-                                    <td th:text="${epic.priority}">P0</td>
-                                    <td>
-                                        <span class="status-badge" th:class="'status-badge ' + ${statusHelper.statusCssClass(epic.status)}"
-                                              th:text="${epic.status}">TERMINE</span>
-                                    </td>
-                                </tr>
-                            </th:block>
-                            <tr th:if="${#lists.isEmpty(page.epics)}">
-                                <td colspan="4" class="text-center text-muted py-4">Aucun EPIC détecté</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Activity Stream -->
-        <div class="col-lg-4">
-            <div class="card dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">Activity Stream</h2>
-                    <span class="badge bg-secondary"
-                          th:text="${page.sessions.size + ' / ' + page.sessionCount + ' sessions'}">0 / 0 sessions</span>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item activity-item" th:each="session : ${page.sessions}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <strong class="mb-1" th:text="'S' + ${session.number}">S000</strong>
-                                <small class="text-muted" th:text="${session.date}">2026-06-22</small>
+                    <ol class="path">
+                        <li th:each="ring : ${page.rings}" th:attr="data-state=${ring.state}">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <span><span class="ring" th:text="${ring.ring}">A1</span>
+                                    <span th:text="${ring.label}">Corpus</span></span>
+                                <span class="stat" th:text="${ring.percent + ' %'}">0 %</span>
                             </div>
-                            <p class="mb-1" th:text="${session.subject}">Sujet de la session</p>
-                            <small class="text-muted" th:text="${session.borough} + (${session.files.isEmpty()} ? '' : ' — ' + ${session.files})">Borough</small>
+                            <div class="mini"><span th:style="|width:${ring.percent}%|"></span></div>
+                            <small class="text-muted"
+                                   th:text="${ring.projects + ' — ' + ring.donePoints + '/' + ring.totalPoints + ' pts'}">
+                                projects — 0/0 pts</small>
                         </li>
-                        <li class="list-group-item text-center text-muted py-4" th:if="${#lists.isEmpty(page.sessions)}">
-                            Aucune session récente
+                    </ol>
+                    <p class="text-muted py-3 mb-0" th:if="${#lists.isEmpty(page.rings)}">
+                        Aucun anneau du critical path configuré.
+                    </p>
+
+                    <h3 class="h6 mt-4">Jalons MVP0</h3>
+                    <ul class="milestones list-unstyled mb-0">
+                        <li th:each="milestone : ${page.milestones}">
+                            <span class="dot" th:classappend="${'dot-' + milestone.status}"></span>
+                            <span th:text="${milestone.label}">Jalon</span>
+                            <small class="text-muted"
+                                   th:text="${milestone.date + ' — ' + milestone.borough + ' (' + milestone.dagLevel + ')'}">
+                                2026-06-18 — Borough</small>
+                        </li>
+                        <li class="text-muted py-2" th:if="${#lists.isEmpty(page.milestones)}">
+                            Aucun jalon disponible.
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Timeline -->
-        <div class="col-12">
-            <div class="card dashboard-card">
+        <!-- ZONE AVANCEMENT (35) -->
+        <section class="zone-progress">
+            <div class="card dashboard-card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">Timeline</h2>
-                    <span class="badge bg-secondary" th:text="${page.timeline.milestones.size} + ' milestones'">0 milestones</span>
+                    <h2 class="h5 mb-0">Avancement</h2>
+                    <span class="text-muted small"
+                          th:text="${page.progress.donePoints + ' / ' + page.progress.totalPoints + ' pts'}">0 / 0 pts</span>
                 </div>
-                <div class="card-body p-0">
-                    <div class="timeline-wrapper">
-                        <ul class="timeline list-unstyled mb-0 py-4 px-3">
-                            <li class="timeline-item" th:each="milestone : ${page.timeline.milestones}">
-                                <div class="timeline-marker" th:class="'timeline-marker status-' + ${milestone.status}"></div>
-                                <div class="timeline-content">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <strong class="mb-1" th:text="${milestone.label}">Bootstrap</strong>
-                                        <small class="text-muted" th:text="${milestone.date}">2026-06-18</small>
-                                    </div>
-                                    <small class="text-muted" th:text="${milestone.borough} + ' (' + ${milestone.dagLevel} + ') — ' + ${milestone.id}">Dashboard (N3) — DSH-0</small>
-                                </div>
-                            </li>
-                            <li class="timeline-item text-center text-muted py-4" th:if="${#lists.isEmpty(page.timeline.milestones)}">
-                                Aucun jalon disponible
-                            </li>
-                        </ul>
+                <div class="card-body">
+                    <div class="global-progress mb-3">
+                        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                             th:attr="aria-valuenow=${page.progress.percent}">
+                            <div class="progress-bar bg-success" th:style="|width:${page.progress.percent}%|"
+                                 th:text="${page.progress.percent + ' %'}">0 %</div>
+                        </div>
+                        <small class="text-muted"
+                               th:text="${page.progress.doneEpics + ' / ' + page.progress.totalEpics + ' EPICs terminés'}">
+                            0 / 0 EPICs</small>
+                    </div>
+                    <div class="bars">
+                        <div class="bar-row" th:each="borough : ${page.boroughBars}">
+                            <a class="name" th:href="${borough.slugFile}" th:text="${borough.name}"
+                               th:title="${borough.project + ' — ' + borough.dagLevel}">Borough</a>
+                            <span class="bar"><span th:style="|width:${borough.percent}%|"></span></span>
+                            <span class="pct" th:text="${borough.hasPoints ? borough.percent + ' %' : '—'}">0 %</span>
+                        </div>
+                        <p class="text-muted py-3 mb-0" th:if="${#lists.isEmpty(page.boroughBars)}">
+                            Aucun borough crawlé.
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- DAG layers — static table N0 → N4 (structure belongs to Brooklin Flow) -->
-        <div class="col-12">
-            <div class="card dashboard-card">
+        <!-- ZONE STRUCTURE (30) -->
+        <section class="zone-structure">
+            <div class="card dashboard-card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">Couches DAG (N0 → N4)</h2>
-                    <span class="badge bg-secondary"
-                          th:text="${page.stats.boroughCount + ' boroughs / ' + page.dagLevels.size + ' niveaux'}">0 / 0</span>
+                    <h2 class="h5 mb-0">Structure</h2>
+                    <span class="text-muted small">N0 → N4</span>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0">
-                            <thead class="table-light">
-                            <tr>
-                                <th>Niveau</th>
-                                <th>Borough</th>
-                                <th>Projet</th>
-                                <th>Avancement</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <th:block th:each="level : ${page.dagLevels}">
-                                <tr class="borough-header">
-                                    <td colspan="4">
-                                        <strong th:text="${level.level}">N0</strong>
-                                        <small class="text-muted ms-2"
-                                               th:text="${level.nodes.size} + ' borough(s)'">0 borough(s)</small>
-                                    </td>
-                                </tr>
-                                <tr th:each="node : ${level.nodes}">
-                                    <td th:text="${level.level}">N0</td>
-                                    <td th:text="${node.label}">Dashboard (N3)</td>
-                                    <td th:text="${node.project}">dashboard-gradle</td>
-                                    <td th:text="${page.progressLabel(node.id)}">—</td>
-                                </tr>
-                            </th:block>
-                            <tr th:if="${#lists.isEmpty(page.dagLevels)}">
-                                <td colspan="4" class="text-center text-muted py-4">Aucun graphe DAG disponible.</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                <div class="card-body">
+                    <div class="dag-levels">
+                        <div class="dag-level" th:each="level : ${page.dagLevels}">
+                            <h3 class="h6" th:text="${level.level}">N0</h3>
+                            <div class="chips">
+                                <a class="chip" th:each="node : ${level.nodes}" th:href="${node.slugFile}"
+                                   th:title="${node.project + ' — ' + node.percent + ' %'}">
+                                    <span class="dot"></span><span th:text="${node.name}">Borough</span>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="text-muted py-3 mb-0" th:if="${#lists.isEmpty(page.dagLevels)}">
+                            Aucune couche DAG disponible.
+                        </p>
                     </div>
+                    <p class="text-muted small mt-3 mb-0">
+                        La structure navigable appartient à Brooklin Flow. Ici, ALGER résume les couches
+                        et ouvre les fiches borough.
+                    </p>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
-</div>
+</main>
 
 <footer class="bg-dark text-white mt-5 py-3">
     <div class="container text-center">
-        <p class="mb-0">&copy; 2026 CCCP Education — Dashboard workspace</p>
+        <p class="mb-0">&copy; 2026 CCCP Education — Dashboard workspace —
+            <span th:text="${page.sessionCount}">0</span> sessions</p>
     </div>
 </footer>
 </body>

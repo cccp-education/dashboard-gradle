@@ -1,0 +1,138 @@
+= Session 225 — DSH-BOUNDARY-3 (incrémentalité) + DSH-BOUNDARY-4 (Panorama + fiches)
+:session: 225
+:date: 2026-11-14
+:epic: DSH-BOUNDARY — US-3 ✅ + US-4 ✅ (ALGER côté pilotage complet)
+:method: baby-step DDD/TDD/BDD (Local = Build, Tests = CI)
+
+== Mission
+
+`PROMPT_REPRISE.adoc` (session 225) :
+
+. **DSH-BOUNDARY-3** — `crawlDashboard`/`generateDashboard` incrémentales
+   (`@TaskAction`, `@InputFiles`, `@OutputDirectory`, `@CacheableTask`).
+. **DSH-BOUNDARY-4** — homepage Panorama 3 zones + fiche borough (niveau 1),
+   en Thymeleaf, d'après le prototype 0P.
+
+== 1. DSH-BOUNDARY-3 — tâches typées et incrémentales
+
+* `dashboard.tasks.CrawlDashboardTask` (`@CacheableTask`) :
+  * `@InputFiles @PathSensitive(RELATIVE)` = FileTree filtrée
+    (`**/INDEX.adoc`, `**/SESSIONS_HISTORY.adoc`, `**/BACKLOG.adoc`) avec
+    exclusions `build/.gradle/.git/.kotlin/.idea/node_modules/out/target/
+    dist/.venv/venv/__pycache__/backup/archives` ;
+  * `@Input` `workspaceBacklogPath` (le fichier est aussi dans le FileTree) ;
+  * `@Input` `criticalPath` (anneaux A1→A4) ;
+  * `@OutputFile` **hors du site** : `build/dashboard-data/dashboard-data.json`
+    (nouvelle extension `dataDir`) ;
+  * `@TaskAction` : crawl + écriture Jackson.
+* `dashboard.tasks.GenerateDashboardTask` (`@CacheableTask`) :
+  `@InputFile` le pivot ; `@OutputDirectory` le site `build/dashboard` ;
+  rendu Panorama + fiches borough.
+* Sorties **disjointes** → les deux tâches sont cachables sans conflit.
+* `PublishDashboardTask` et `serve` conservent `build/dashboard` (inputs/livrables).
+
+.Preuve d'incrémentalité (racine, artefact local 0.0.7)
+[source]
+----
+$ ./gradlew generateDashboard          # 1er run : SUCCESS (crawl + rendu)
+$ ./gradlew generateDashboard          # 2e run :
+> Task :crawlDashboard UP-TO-DATE
+> Task :generateDashboard UP-TO-DATE
+----
+
+Un changement d'un `.adoc` gouvernance (ou du `BACKLOG.adoc` racine) invalide
+`crawlDashboard` ; un changement du pivot invalide `generateDashboard`.
+`--rerun-tasks` force l'exécution (testé en FT).
+
+== 2. DSH-BOUNDARY-4 — Panorama + fiches borough
+
+* **Panorama** (`dashboard.thyme`) en 3 zones (grille `35fr 35fr 30fr`) :
+  * **Vision** — chaîne MVP0 A1→A4 (DSL `dashboard { criticalPath { … } }`,
+    `CriticalPathRing`), état + % points + jalons ;
+  * **Avancement** — barre globale (`%`, points, EPICs) + une barre par borough,
+    cliquable vers sa fiche ;
+  * **Structure** — couches N0→N4 (chips cliquables), sans canvas (frontière
+    S-216).
+* **Fiche borough** (`borough.thyme`) : `borough-<slug>.html` par borough
+  (slug déterministe, accents retirés) — position DAG, avancement, EPICs
+  (statuts), sessions récentes, retour Panorama.
+* **JBake** : le Panorama et **chaque fiche** sont exportés dans
+  `jbake/content/` (chemins d'assets réécrits) ; le pivot reste copié dans
+  `build/dashboard/dashboard-data.json`.
+* **Zéro CDN** conservé (Bootstrap 5.3.3 vendoré), `prototype/**` toujours exclu
+  du JAR.
+
+== 3. Complément DSH-BOUNDARY-2 — points réels depuis les BACKLOGs
+
+Les roadmaps `INDEX.adoc` n'ont pas toutes une colonne `Pts` (ex. slider,
+capsule) → les points étaient à 0. Le crawler lit désormais les
+`BACKLOG.adoc` des boroughs :
+
+* tables **multi-lignes** (une cellule par ligne) et **délimiteurs indentés** ;
+* table `EPIC` préférée **seulement si elle porte une colonne de statut** ;
+  sinon les tables `US/Item` avec `Pts` + statut/session ;
+* points bornés `0..1000` ; statut terminal `✅`/`TERMIN`/`DONE` ;
+* `PointTotals` par borough → `ProgressCalculator` (override du roadmap).
+
+Bug réel corrigé : le parser historique (regex + une ligne = une ligne)
+perdait les tables multi-lignes/indentées/non fermées (ex.
+`bakery/.agents/SESSIONS_HISTORY.adoc`) → sessions et points faux. Le parser
+est désormais un scanneur de lignes (tolérant, jusqu'à EOF si le délimiteur de
+fermeture manque).
+
+== Preuves (racine, artefact local 0.0.7)
+
+[cols="2,3"]
+|===
+| Preuve | Résultat
+
+| Crawl
+| **39 boroughs / 487 EPICs / 437 sessions** en **579 ms**
+
+| Avancement
+| **18 % — 1425 / 7856 points** (Panorama + fiches)
+
+| Anneaux (Vision)
+| A1 `0 %` (blocked), A2 `35 %` (blocked), A3 `19 %` (ready), A4 `13 %` (ready)
+
+| Fiches
+| **39** `borough-*.html` générées
+
+| Zéro CDN
+| 0 référence `href/src="http…"` dans `index.html`
+
+| Pivot
+| `schemaVersion: "1.0"`, `progress` global + `byBorough`
+
+|===
+
+== Tests (compilés — Local = Build, Tests = CI)
+
+* `IncrementalDashboardFunctionalTest` (**+2**) : `crawlDashboard` UP-TO-DATE
+  puis SUCCESS après modification d'un `INDEX.adoc` ; `generateDashboard`
+  UP-TO-DATE puis `--rerun-tasks` SUCCESS.
+* `DashboardRendererTest` réécrit : Panorama 3 zones, fiches par borough
+  (EPICs/sessions), jalons, assets locaux, absence de CDN, progression
+  globale + par borough ; `Slug` (accents, espaces, emoji).
+* `GenerateDashboardFunctionalTest` : Panorama + `borough-dashboard.html`.
+* `CrawlDashboardFunctionalTest` : pivot dans `build/dashboard-data/`.
+* Cucumber : scénarios Panorama / fiches / sessions / jalons ; nouveau step
+  `the borough page "<nom>" should contain "<texte>"`.
+* `IndexCrawlerTest` : points depuis un `BACKLOG.adoc` de borough (10/15, 67 %).
+* `compileKotlin` / `compileTestKotlin` / `ktlintCheck` : **VERTS**.
+
+== Version et release
+
+* Version `0.0.7` ; racine `id("education.cccp.dashboard") version "0.0.7"`.
+* **Fix local** : `settings.gradle.kts` préfère le JAR mavenLocal
+  (`education.cccp:dashboard-plugin:<v>`) s'il existe, sinon JitPack
+  (`-PdashboardUseJitPack=true` pour forcer JitPack). Indispensable entre le
+  bump et le tag.
+* Release JitPack `0.0.7` : tag annoté `v0.0.7` + push.
+
+== Suivant
+
+`DSH-BOUNDARY-5` (Brooklin Flow : graphe React Flow + overlay
+`dashboard-data.json`) ; la validation pilote du prototype 0P reste le gate
+formel avant les US Brooklin Flow. Résiduels ALGER : `DSH-8` (Git sync,
+filtres, mode sombre).

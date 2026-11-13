@@ -46,13 +46,13 @@ EPICs to the pivot under the synthetic `Transverse` borough.
 
 == Tasks
 
-- `crawlDashboard` — crawls every `INDEX.adoc` / `SESSIONS_HISTORY.adoc` of the
-  workspace (`build/`, `.gradle/`, `.git/`, `node_modules/`, backups pruned),
+- `crawlDashboard` — crawls every `INDEX.adoc` / `SESSIONS_HISTORY.adoc` /
+  `BACKLOG.adoc` of the workspace (build outputs, caches and backups pruned),
   parses the workspace `BACKLOG.adoc`, and writes
-  `build/dashboard/dashboard-data.json` (`schemaVersion: "1.0"` + point-based
-  `progress`, global and per borough)
-- `generateDashboard` — renders the offline static dashboard (`index.html`,
-  `styles.css`, vendored `vendor/bootstrap.min.css`, JBake site)
+  `build/dashboard-data/dashboard-data.json` (`schemaVersion: "1.0"` +
+  point-based `progress`, global and per borough). Incremental (``)
+- `generateDashboard` — renders the Panorama (`index.html`) + one
+  `borough-<slug>.html` sheet per borough, offline assets, and the JBake site
 - `publishDashboardSite` — copies the generated JBake-compatible site to
   `build/dashboard-publish`
 - `serve` — serves the generated site locally on `http://localhost:8820`
@@ -60,7 +60,8 @@ EPICs to the pivot under the synthetic `Transverse` borough.
 
 == Rendering
 
-- Global progress (points done/total) + per-borough progress badges.
+- Global progress (points done/total) + the MVP0 A1→A4 vision (DSL
+  `dashboard { criticalPath { … } }`) + per-borough progress bars and sheets.
 - EPIC matrix grouped by borough, activity stream (60 most recent sessions,
   full set in the JSON pivot), DAG layers as a static `N0 → N4` table
   (interactive graph belongs to Brooklin Flow), MVP0 timeline.

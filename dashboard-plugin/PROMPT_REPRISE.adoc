@@ -2,73 +2,59 @@
 :session: 226
 :date: 2026-11-14
 
-== Session 225 — GBL-013 US-9 : crawl plein workspace en CI isolée
-
-* `WorkspaceCrawlTest` skip-gardé sur `foundry/public/workspace-bom` (le
-  workspace complet) ; la matrice cross-borough clone un seul borough.
-* Correctif workspace-bom : `dashboard-plugin` est le build testable, pas la
-  racine consommateur (pattern 0124).
-* Run `43524985246` VERT. Rapport `.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
-
 == Où on en est (acquis — ne pas refaire)
 
-* **DSH-9.2 ✅ (S-223)** : crawl complet de `foundry/` (élagage, déduplication,
-  fallback de synthèse) ; zéro CDN (Bootstrap 5.3.3 vendoré, vis.js retiré) ;
-  **DSH-BOUNDARY-1 ✅** (table DAG N0→N4) ; activity stream plafonné à 60.
-* **DSH-BOUNDARY-2 ✅ (S-224)** : `dashboard-data.json` porte
-  `schemaVersion: "1.0"` et `progress` (points terminés/total, global + par
-  borough) ; le `BACKLOG.adoc` racine est parsé (EPICs GBL → borough
-  « Transverse », statut strict `TERMINÉ`/`DONE`).
-* **DSH-BOUNDARY-0P implémenté (S-224)** : prototype `prototype/`
-  (`index.html`, `borough.html`, `graph.html`, `styles.css`, `app.js`, mock
-  JSON) — Panorama 3 zones, fiche borough, coquille graphe, états
-  `?state=empty|loaded|overloaded`. **En attente de validation pilote**
-  (ouvrir le dossier via un serveur statique).
-* Dogfood 0.0.6 : **39 boroughs / 471 EPICs / 461 sessions — 47 % (196/417
-  pts)** ; crawl ~400 ms.
-* Racine : `configPath = ../..` (`-Pdashboard.configPath`),
-  `workspaceBacklog = ../../../BACKLOG.adoc`
-  (`-Pdashboard.workspaceBacklog`).
-* Release `0.0.6` (tag `v0.0.6`) ; `dashboard-plugin/` = build autonome.
-* Piège corrigé S-224 : un header de colonne « Pts » doit être **exact**
-  (`Pts`/`Points`) — `contains("pt")` capturait `Description` (milliards de
-  points) ; `TERMINÉ` accentué exige `contains("TERMIN")`.
+* **DSH-BOUNDARY-3 ✅ (S-225)** : `crawlDashboard`/`generateDashboard` sont des
+  tâches typées `@CacheableTask` ; le pivot vit dans `build/dashboard-data/`,
+  le site dans `build/dashboard/` (sorties disjointes). 2e run = UP-TO-DATE.
+* **DSH-BOUNDARY-4 ✅ (S-225)** : Panorama 3 zones (Vision A1→A4, Avancement,
+  Structure) + une fiche `borough-<slug>.html` par borough (EPICs, sessions,
+  progression). Vision configurée par la racine (`dashboard { criticalPath }`).
+* **Points réels** : les `BACKLOG.adoc` des boroughs sont parsés
+  (tables multi-lignes/indentées/non fermées tolérées). Dogfood :
+  **39 boroughs / 487 EPICs / 437 sessions — 18 % (1425/7856 pts)**, ~580 ms.
+* **Zéro CDN** (Bootstrap 5.3.3 vendoré), DAG en table statique (frontière
+  S-216), `prototype/**` exclu du JAR.
+* **Publication (politique définitive)** : **JitPack canal unique** ; Maven
+  Central/Sonatype et Gradle Plugin Portal sont **retirés**. Tag `vX.Y.Z`.
+* **Local** : `publishToMavenLocal -Pversion=0.0.8` puis le root préfère
+  mavenLocal si le JAR existe ; `-PdashboardUseJitPack=true` force JitPack.
+* Dernière release : **`0.0.7`** (tag `v0.0.7`). Prochaine : `0.0.8`.
 
-== Mission session 225 — DSH-BOUNDARY-3 puis DSH-BOUNDARY-4
+== Mission session 226 — DSH-BOUNDARY-5 (Brooklin Flow)
 
-1. **DSH-BOUNDARY-3 — incrémentalité** (3 pts) : remplacer les `doLast` de
-   `crawlDashboard`/`generateDashboard` par des tâches typées `@TaskAction`
-   avec `@InputFiles` (`.adoc` du crawl : INDEX, SESSIONS_HISTORY, BACKLOG
-   racine), `@OutputDirectory`, `@CacheableTask` ; UP-TO-DATE seulement si
-   contenu/structure inchangés. Vérifier `--dry-run` / `:crawlDashboard
-   --rerun-tasks` et la compatibilité `serve`.
-2. **DSH-BOUNDARY-4 — homepage Panorama** (5 pts) : reproduire en Thymeleaf
-   le prototype validé : 3 zones (vision / avancement / structure) + page
-   fiche borough (niveau 1). Le prototype reste la référence visuelle ; ne
-   jamais l'inclure dans le JAR (`exclude("prototype/**")`).
-3. Si validation pilote du prototype demandée : la recueillir et ajuster
-   avant DSH-BOUNDARY-4.
+1. **Valider le prototype 0P** (gate formel) : `prototype/` (Panorama, fiche,
+   graphe, états `?state=empty|loaded|overloaded`) — recueillir l'accord
+   pilote avant de poursuivre la Phase 1 Brooklin Flow.
+2. **DSH-BOUNDARY-5** (dépôt `foundry/public/dashboard-flow-gradle`) :
+   graphe React Flow chargeant `graph.json` (graphify) + overlay
+   `dashboard-data.json` (ALGER) : coloration par statut, filtres
+   (couche N / borough / statut), panneau récap au clic. Absorbe DFL-1 +
+   DFL-2 (partiel). Zéro calcul de métrique côté Brooklin Flow.
+3. Si le pilote préfère rester ALGER : `DSH-8` (Git sync des boroughs,
+   filtres de tableau, mode sombre) ou audit de rendu des 39 fiches.
 
 == Commandes
 
 [source,bash]
 ----
-./gradlew generateDashboard             # racine (plugin 0.0.6)
+./gradlew generateDashboard             # racine (plugin 0.0.7 local)
+./gradlew generateDashboard -PdashboardUseJitPack=true   # artefact JitPack
 ./gradlew serve                         # http://localhost:8820/
-./gradlew -t serve                      # régénération continue
 cd dashboard-plugin && ./gradlew build  # build autonome (hors tests)
 ----
 
 == Règles dures
 
-* Thymeleaf **uniquement** (ALGER) ; le prototype est hors chaîne de rendu et
-  jamais publié.
+* Thymeleaf **uniquement** pour ALGER ; le prototype reste hors rendu.
 * Local = Build, Tests = CI (aucun `test`/`check` local).
-* JitPack : un artefact = un canal = un nom = une version (0.0.7 ensuite).
-* Le DAG interactif reste hors d'ALGER (frontière S-216).
+* JitPack : un artefact = un canal = un nom = une version ; jamais réutiliser
+  une version taggée. Ne jamais lancer `publishPlugins` /
+  `publishAggregationToCentralPortal`.
+* Le DAG interactif reste hors d'ALGER ; Brooklin Flow lit les pivots JSON.
 
 == Références
 
-* Rapport `.agents/sessions/224-dsh-boundary-0p-2.adoc`.
+* Rapport `.agents/sessions/225-dsh-boundary-3-4.adoc`.
 * `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (décisions 1→13).
 * `BACKLOG.adoc` § DSH-BOUNDARY ; `.agents/INDEX.adoc`.

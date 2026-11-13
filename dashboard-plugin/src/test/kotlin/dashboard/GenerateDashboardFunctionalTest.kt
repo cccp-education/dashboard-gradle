@@ -21,9 +21,8 @@ class GenerateDashboardFunctionalTest {
     }
 
     @Test
-    fun `generateDashboard should produce index html with epic matrix`() {
+    fun `generateDashboard should produce the panorama and a borough sheet`() {
         writePluginProject()
-        writeIndexAdoc(foundryDir.resolve("dashboard/INDEX.adoc"), "Dashboard", "dashboard-gradle", "N3", "Vision")
         writeEpicIndex(foundryDir.resolve("dashboard/INDEX.adoc"))
 
         val result =
@@ -44,15 +43,23 @@ class GenerateDashboardFunctionalTest {
         assertThat(indexHtml).exists()
         val html = Files.readString(indexHtml)
         assertThat(html).contains("Dashboard Workspace CCCP")
-        assertThat(html).contains("EPIC Matrix")
-        assertThat(html).contains("DSH-0")
-        assertThat(html).contains("status-done")
+        assertThat(html).contains("Vision — chaîne MVP0")
+        assertThat(html).contains("Avancement")
+        assertThat(html).contains("Structure")
+
+        val boroughHtml = testDir.resolve("build/dashboard/borough-dashboard.html")
+        assertThat(boroughHtml).exists()
+        val borough = Files.readString(boroughHtml)
+        assertThat(borough).contains("EPICs")
+        assertThat(borough).contains("DSH-0")
+        assertThat(borough).contains("status-done")
 
         assertThat(testDir.resolve("build/dashboard/styles.css")).exists()
+        assertThat(testDir.resolve("build/dashboard/vendor/bootstrap.min.css")).exists()
     }
 
     @Test
-    fun `generateDashboard should include activity stream from sessions history`() {
+    fun `generateDashboard should include recent sessions on the borough sheet`() {
         writePluginProject()
         val dashboardDir = foundryDir.resolve("dashboard")
         Files.createDirectories(dashboardDir)
@@ -82,9 +89,9 @@ class GenerateDashboardFunctionalTest {
             .withPluginClasspath()
             .build()
 
-        val html = Files.readString(testDir.resolve("build/dashboard/index.html"))
-        assertThat(html).contains("Activity Stream")
-        assertThat(html).contains("Cadrage DSH-3")
+        val borough = Files.readString(testDir.resolve("build/dashboard/borough-dashboard.html"))
+        assertThat(borough).contains("Sessions récentes")
+        assertThat(borough).contains("Cadrage DSH-3")
     }
 
     private fun writePluginProject() {
@@ -99,25 +106,6 @@ class GenerateDashboardFunctionalTest {
                 configPath = "foundry"
                 outputDir = "build/dashboard"
             }
-            """.trimIndent(),
-        )
-    }
-
-    private fun writeIndexAdoc(
-        path: Path,
-        borough: String,
-        project: String,
-        dag: String,
-        role: String,
-    ) {
-        Files.createDirectories(path.parent)
-        Files.writeString(
-            path,
-            """
-            |===
-            | Borough | Project | DAG | Role in MVP0 | Session
-            | $borough | $project | $dag | $role | S001
-            |===
             """.trimIndent(),
         )
     }

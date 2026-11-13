@@ -105,3 +105,19 @@ complet) ; la matrice cross-borough clone un seul borough. Correctif workspace-b
 (`dashboard-plugin` comme sous-build). Run `43524985246` **VERT**. Rapport
 `.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
 
+
+== Session 225 — DSH-BOUNDARY-3 + DSH-BOUNDARY-4 — 2026-11-14
+
+**DSH-BOUNDARY-3 ✅** : `crawlDashboard`/`generateDashboard` deviennent des
+tâches typées `@CacheableTask` (`@InputFiles` filtrés INDEX/SESSIONS/BACKLOG,
+`@OutputFile` pivot dans `build/dashboard-data/`, `@OutputDirectory` site) ;
+sorties disjointes, 2e run UP-TO-DATE. **DSH-BOUNDARY-4 ✅** : Panorama
+3 zones (Vision A1→A4 via DSL `criticalPath`, Avancement, Structure) +
+**39 fiches `borough-*.html`** (slug déterministe, EPICs, sessions,
+progression) + export JBake par fiche. **Points réels** : parsing des
+`BACKLOG.adoc` de borough (tables multi-lignes/indentées/non fermées) —
+**39 boroughs / 487 EPICs / 437 sessions — 18 % (1425/7856 pts)** en ~580 ms.
+Fix local : le root préfère mavenLocal si le JAR existe, sinon JitPack.
+Tests compilés : `IncrementalDashboardFunctionalTest` (+2), renderer réécrit,
+`Slug`, functional + Cucumber. Release `0.0.7`. Rapport
+`.agents/sessions/225-dsh-boundary-3-4.adoc`.

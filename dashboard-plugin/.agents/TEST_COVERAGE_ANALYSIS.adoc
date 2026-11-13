@@ -138,3 +138,10 @@ points/percent, total nul, borough vide, EPICs orphelins), `IndexCrawlerTest`
 +1 (avancement global + badge), `CrawlDashboardFunctionalTest` +1 (JSON
 `schemaVersion`/`progress`), Cucumber `dashboard_crawl.feature` +1 scénario
 (+5 steps). Compilés ; totaux globaux à recalculer au prochain run CI.
+*Session 225* : DSH-BOUNDARY-3/4 — `IncrementalDashboardFunctionalTest` +2
+(UP-TO-DATE puis SUCCESS après changement ; `--rerun-tasks`), `Slug` test
+(+1), `DashboardRendererTest` réécrit (Panorama 3 zones + fiches + absence
+CDN), `GenerateDashboardFunctionalTest`/`CrawlDashboardFunctionalTest` migrés
+sur le Panorama et `build/dashboard-data/`, Cucumber (Panorama/fiches +
+`the borough page "<nom>" should contain`), `IndexCrawlerTest` +1 (points
+depuis un BACKLOG de borough). Compilés ; totaux globaux au prochain run CI.

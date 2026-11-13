@@ -16,4 +16,6 @@
 - [x] Crawl complet de `foundry/` + rendu offline (zéro CDN) — DSH-9.2 — S223 ✅
 - [x] Maquette Phase 0 (`prototype/`) implémentée — DSH-BOUNDARY-0P — S224 ✅ (validation pilote en attente)
 - [x] Avancement réel : BACKLOG racine + % par points + `schemaVersion` — DSH-BOUNDARY-2 — S224 ✅
-- [ ] Incrémentalité `@InputFiles`/`@OutputDirectory`/`@CacheableTask` — DSH-BOUNDARY-3
+- [x] Incrémentalité `@InputFiles`/`@OutputDirectory`/`@CacheableTask` — DSH-BOUNDARY-3 — S225 ✅
+- [x] Panorama 3 zones + fiches borough en Thymeleaf — DSH-BOUNDARY-4 — S225 ✅
+- [ ] Brooklin Flow : graphe React Flow + overlay `dashboard-data.json` — DSH-BOUNDARY-5

@@ -8,3 +8,6 @@
 * DSH-BOUNDARY-0P — prototype de navigation pur HTML/CSS/JS/mock (`prototype/` : Panorama 3 zones, fiche borough, coquille graphe, états empty/loaded/overloaded), exclu du JAR — session 224 (validation pilote en attente).
 
 * GBL-013 US-9 — `WorkspaceCrawlTest` skip-gardé en CI isolée (`foundry/public/workspace-bom`) ; correctif cross-borough `dashboard-plugin` ; run `43524985246` vert — session 225.
+* DSH-BOUNDARY-3 — `crawlDashboard`/`generateDashboard` typées et incrémentales (`@CacheableTask`, `@InputFiles` filtrés, pivot `build/dashboard-data`, sorties disjointes) — session 225.
+* DSH-BOUNDARY-4 — Panorama 3 zones (Vision A1→A4, Avancement, Structure) + 39 fiches `borough-*.html` (EPICs, sessions, progression), export JBake par fiche — session 225.
+* Points réels — parsing des `BACKLOG.adoc` de borough (multi-lignes/indentés/non fermés), 39 boroughs / 487 EPICs / 18 % (1425/7856 pts) — session 225.

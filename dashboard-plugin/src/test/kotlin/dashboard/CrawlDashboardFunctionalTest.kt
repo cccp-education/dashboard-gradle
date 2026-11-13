@@ -41,7 +41,7 @@ class CrawlDashboardFunctionalTest {
             org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE,
         )
 
-        val jsonFile = testDir.resolve("build/dashboard/dashboard-data.json")
+        val jsonFile = testDir.resolve("build/dashboard-data/dashboard-data.json")
         assertThat(jsonFile).exists()
         val content = Files.readString(jsonFile)
         assertThat(content).contains("BAKERY")
@@ -71,7 +71,7 @@ class CrawlDashboardFunctionalTest {
             .withPluginClasspath()
             .build()
 
-        val json = Files.readString(testDir.resolve("build/dashboard/dashboard-data.json"))
+        val json = Files.readString(testDir.resolve("build/dashboard-data/dashboard-data.json"))
         assertThat(json).contains("\"schemaVersion\" : \"1.0\"")
         assertThat(json).contains("\"progress\"")
         assertThat(json).contains("\"Transverse\"")

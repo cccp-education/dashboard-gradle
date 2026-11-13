@@ -6,6 +6,7 @@ import dashboard.model.DagNode
 import dashboard.model.DashboardData
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
+import dashboard.model.PointTotals
 import dashboard.model.SessionActivity
 import dashboard.progress.ProgressCalculator
 import java.io.IOException
@@ -30,6 +31,7 @@ class IndexCrawler {
     ): DashboardData {
         val indexFiles = mutableListOf<Path>()
         val sessionFiles = mutableListOf<Path>()
+        val backlogFiles = mutableListOf<Path>()
         Files.walkFileTree(
             root,
             object : SimpleFileVisitor<Path>() {
@@ -49,6 +51,7 @@ class IndexCrawler {
                     when (file.fileName.toString()) {
                         INDEX_FILE -> indexFiles.add(file)
                         SESSIONS_FILE -> sessionFiles.add(file)
+                        BACKLOG_FILE -> backlogFiles.add(file)
                     }
                     return FileVisitResult.CONTINUE
                 }
@@ -61,6 +64,7 @@ class IndexCrawler {
         )
         indexFiles.sort()
         sessionFiles.sort()
+        backlogFiles.sort()
 
         val boroughs = LinkedHashMap<String, BoroughData>()
         val epics = LinkedHashMap<String, EpicData>()
@@ -93,6 +97,17 @@ class IndexCrawler {
             }
         }
 
+        val backlogPoints = LinkedHashMap<String, PointTotals>()
+        for (file in backlogFiles) {
+            if (workspaceBacklog != null && isSameFile(file, workspaceBacklog)) continue
+            val owner = extractBoroughFromPath(file, boroughs.values.toList()) ?: continue
+            val totals = parseBacklogPoints(file) ?: continue
+            if (totals.totalPoints <= 0) continue
+            backlogPoints.merge(owner, totals) { current, candidate ->
+                if (candidate.totalPoints > current.totalPoints) candidate else current
+            }
+        }
+
         if (workspaceBacklog != null && Files.isRegularFile(workspaceBacklog)) {
             parseWorkspaceBacklog(workspaceBacklog)?.let { (borough, globalEpics) ->
                 boroughs.merge(boroughKey(borough), borough, ::mergeBorough)
@@ -111,7 +126,7 @@ class IndexCrawler {
                     DagNode(borough = it.name, project = it.project, dagLevel = it.dagLevel)
                 },
             sessions = sessions.values.toList(),
-            progress = ProgressCalculator.compute(finalBoroughs, finalEpics),
+            progress = ProgressCalculator.compute(finalBoroughs, finalEpics, backlogPoints),
         )
     }
 
@@ -136,6 +151,57 @@ class IndexCrawler {
             progress = ProgressCalculator.compute(boroughs, epics),
         )
     }
+
+    /**
+     * Parses point totals from a borough `BACKLOG.adoc`.
+     *
+     * Only tables that declare a points column are considered. EPIC-level
+     * tables win over US-level tables (an EPIC table is already the sum of its
+     * US), then every retained row contributes its points and, when a status
+     * column exists, its terminal state.
+     */
+    private fun parseBacklogPoints(file: Path): PointTotals? {
+        val tables = parseTables(Files.readString(file))
+        val withPoints =
+            tables.filter { rows ->
+                val firstRow = rows.firstOrNull()
+                val header = firstRow?.map { it.lowercase().trim() } ?: emptyList()
+                header.any { it.isPointsHeader() }
+            }
+        if (withPoints.isEmpty()) return null
+        val epicTables =
+            withPoints.filter { rows ->
+                val header = rows.first().map { it.lowercase().trim() }
+                val firstCell = header.firstOrNull().orEmpty()
+                firstCell.contains("epic") && header.any { it.isStatusHeader() }
+            }
+        val selected = if (epicTables.isNotEmpty()) epicTables else withPoints
+
+        var done = 0
+        var total = 0
+        for (table in selected) {
+            val header = table.first().map { it.lowercase().trim() }
+            val ptsIdx = header.indexOfFirst { it.isPointsHeader() }
+            val statusIdx = header.indexOfFirst { it.isStatusHeader() }
+            for (row in table.drop(1)) {
+                val points = ptsIdx.takeIf { it in row.indices }?.let { parsePoints(row[it]) } ?: 0
+                if (points <= 0) continue
+                total += points
+                if (statusIdx in row.indices && isDoneCell(row[statusIdx])) done += points
+            }
+        }
+        return if (total > 0) PointTotals(donePoints = done, totalPoints = total) else null
+    }
+
+    private fun isDoneCell(cell: String): Boolean {
+        val lower = cell.lowercase()
+        return cell.contains("✅") || lower.contains("termin") || lower.contains("done")
+    }
+
+    private fun isSameFile(
+        a: Path,
+        b: Path,
+    ): Boolean = runCatching { Files.isSameFile(a, b) }.getOrDefault(false)
 
     /**
      * Parses the workspace-root `BACKLOG.adoc` (GBL transverse EPICs).
@@ -322,22 +388,52 @@ class IndexCrawler {
         }
 
     private fun parseTables(content: String): List<List<List<String>>> {
-        val tableRegex = """\|={3,}\n(.*?)\n\|={3,}""".toRegex(setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.MULTILINE))
-        return tableRegex
-            .findAll(content)
-            .map { match ->
-                val body = match.groupValues[1].trim()
-                body
-                    .lines()
-                    .map { line ->
-                        line
-                            .trim()
-                            .trimStart('|')
-                            .split('|')
-                            .map { it.trim() }
-                    }.filter { row -> row.isNotEmpty() && row.all { cell -> cell.isNotBlank() } }
-            }.toList()
+        val delimiter = Regex("""^\s*\|={3,}\s*$""")
+        val tables = mutableListOf<List<List<String>>>()
+        var current: MutableList<String>? = null
+        for (line in content.lines()) {
+            if (delimiter.matches(line)) {
+                if (current == null) {
+                    current = mutableListOf()
+                } else {
+                    val parsed = parseTableBody(current.joinToString("\n"))
+                    if (parsed.isNotEmpty()) tables.add(parsed)
+                    current = null
+                }
+            } else {
+                current?.add(line)
+            }
+        }
+        // Governance files occasionally leave a table unclosed: parse to EOF.
+        current?.let { body ->
+            val parsed = parseTableBody(body.joinToString("\n"))
+            if (parsed.isNotEmpty()) tables.add(parsed)
+        }
+        return tables
     }
+
+    /**
+     * Parses one AsciiDoc table body.
+     *
+     * Both single-line rows (`| a | b | c`) and multi-line cells (one `|` line
+     * per cell) are supported: cells are accumulated and chunked by the header
+     * width. This matters for BACKLOG tables where a row spans several lines.
+     */
+    private fun parseTableBody(body: String): List<List<String>> {
+        val lines = body.lines().map { it.trim() }.filter { it.startsWith("|") }
+        if (lines.isEmpty()) return emptyList()
+        val width = splitCells(lines.first()).size.coerceAtLeast(1)
+        val cells = lines.flatMap { splitCells(it) }
+        return cells
+            .chunked(width)
+            .filter { row -> row.size == width && row.any { cell -> cell.isNotBlank() } }
+    }
+
+    private fun splitCells(line: String): List<String> =
+        line
+            .removePrefix("|")
+            .split("|")
+            .map { it.trim() }
 
     private fun parseBoroughTable(rows: List<List<String>>): List<BoroughData>? {
         if (rows.isEmpty()) return null
@@ -438,6 +534,7 @@ class IndexCrawler {
     companion object {
         private const val INDEX_FILE = "INDEX.adoc"
         private const val SESSIONS_FILE = "SESSIONS_HISTORY.adoc"
+        private const val BACKLOG_FILE = "BACKLOG.adoc"
         private const val TRANSVERSE_BOROUGH = "Transverse"
         private const val TRANSVERSE_PROJECT = "workspace-backlog"
 
@@ -484,3 +581,12 @@ private fun String.isPointsHeader(): Boolean {
  * date or an identifier accidentally captured cannot pollute the totals.
  */
 private fun parsePoints(raw: String): Int = raw.filter { it.isDigit() }.toIntOrNull()?.takeIf { it in 0..1000 } ?: 0
+
+private fun String.isStatusHeader(): Boolean {
+    val value = trim()
+    return value.contains("statut") ||
+        value.contains("status") ||
+        value.contains("session") ||
+        value.contains("etat") ||
+        value.contains("état")
+}

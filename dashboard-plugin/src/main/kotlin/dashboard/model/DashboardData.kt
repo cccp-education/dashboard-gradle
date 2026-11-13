@@ -1,5 +1,7 @@
 package dashboard.model
 
+import dashboard.CriticalPathRing
+
 data class DashboardData(
     val boroughs: List<BoroughData>,
     val epics: List<EpicData>,
@@ -7,6 +9,7 @@ data class DashboardData(
     val sessions: List<SessionActivity> = emptyList(),
     val schemaVersion: String = SCHEMA_VERSION,
     val progress: ProgressSummary = ProgressSummary(),
+    val criticalPath: List<CriticalPathRing> = emptyList(),
     val timestamp: String =
         java.time.Instant
             .now()
@@ -82,4 +85,10 @@ data class DagNode(
     val project: String,
     val dagLevel: String,
     val children: List<String> = emptyList(),
+)
+
+/** Point totals parsed from a borough `BACKLOG.adoc` (source of truth for %). */
+data class PointTotals(
+    val donePoints: Int,
+    val totalPoints: Int,
 )
