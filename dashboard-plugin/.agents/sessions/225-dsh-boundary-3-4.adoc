@@ -128,7 +128,10 @@ fermeture manque).
   (`education.cccp:dashboard-plugin:<v>`) s'il existe, sinon JitPack
   (`-PdashboardUseJitPack=true` pour forcer JitPack). Indispensable entre le
   bump et le tag.
-* Release JitPack `0.0.7` : tag annoté `v0.0.7` + push.
+* **Release JitPack `0.0.7`** : tag annoté `v0.0.7` + push. POM (version `0.0.7`)
+  et JAR (203 518 o, `CrawlDashboardTask`/`GenerateDashboardTask`/`borough.thyme`,
+  **0** `prototype`) HTTP 200. Root `-PdashboardUseJitPack=true` → **39 boroughs /
+  487 EPICs / 437 sessions — 18 % (1433/7856 pts) en 429 ms**.
 
 == Suivant
 

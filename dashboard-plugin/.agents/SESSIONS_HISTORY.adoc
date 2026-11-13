@@ -116,8 +116,8 @@ sorties disjointes, 2e run UP-TO-DATE. **DSH-BOUNDARY-4 ✅** : Panorama
 **39 fiches `borough-*.html`** (slug déterministe, EPICs, sessions,
 progression) + export JBake par fiche. **Points réels** : parsing des
 `BACKLOG.adoc` de borough (tables multi-lignes/indentées/non fermées) —
-**39 boroughs / 487 EPICs / 437 sessions — 18 % (1425/7856 pts)** en ~580 ms.
+**39 boroughs / 487 EPICs / 437 sessions — 18 % (1433/7856 pts)** en ~580 ms.
 Fix local : le root préfère mavenLocal si le JAR existe, sinon JitPack.
 Tests compilés : `IncrementalDashboardFunctionalTest` (+2), renderer réécrit,
-`Slug`, functional + Cucumber. Release `0.0.7`. Rapport
-`.agents/sessions/225-dsh-boundary-3-4.adoc`.
+`Slug`, functional + Cucumber. Release JitPack `0.0.7` (tag `v0.0.7`, POM/JAR 200, root JitPack 429 ms).
+Rapport `.agents/sessions/225-dsh-boundary-3-4.adoc`.

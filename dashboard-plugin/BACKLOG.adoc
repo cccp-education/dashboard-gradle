@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-11-14 (S-225 — **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** : tâches typées incrémentales (`crawlDashboard`/`generateDashboard`, pivot hors site) ; Panorama 3 zones + 39 fiches borough ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs — 18 % / 1425/7856 pts). Release `0.0.7`.)_
+_Dernière mise à jour : 2026-11-14 (S-225 — **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** : tâches typées incrémentales (`crawlDashboard`/`generateDashboard`, pivot hors site) ; Panorama 3 zones + 39 fiches borough ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs — 18 % / 1433/7856 pts). Release `0.0.7`.)_
 
 == P0 — Terminé
 
