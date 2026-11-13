@@ -95,3 +95,16 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 | Export JSON dashboard data | ✅ CADUQUE — `dashboard-data.json` est le contrat public fondationnel depuis S-002, versionné DSH-BOUNDARY-2
 | Mode sombre | 🟡 À FAIRE (reste ALGER DSH-8)
 |===
+
+'''
+
+== Session 219 — CNV-17 (JitPack canal unique) — 2026-11-14
+
+Migration de publication terminée : catalogue workspace `ws` servi par JitPack
+(`com.github.cccp-education.workspace-bom:workspace-catalog:0.0.136`, fin de
+`education.cccp:workspace-catalog:0.0.116`), shim `conventions-plugin:0.0.17`
+sans préfixe `v`, JitPack en résolution de dépendances. Version dérivée du
+catalogue. CI `Lint` verte `43469669403` / `43463753298`. Aucun item backlog
+nouveau : la suite est de la **maintenance** ; le gate `DSH-BOUNDARY-0P` et
+`DSH-8` restent ouverts. Rapport
+`.agents/sessions/219-cnv-17-jitpack-channel.adoc`.

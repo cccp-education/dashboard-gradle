@@ -1,57 +1,70 @@
-= PROMPT_REPRISE — dashboard-gradle
-:session: 218
-:date: 2026-10-12
+= PROMPT_REPRISE — dashboard-gradle (Session 219 terminée — CNV-17/JitPack)
+:session: 220
+:date: 2026-11-14
 
-== Session accomplie (S-217, fix cross-borough)
+== Session 219 accomplie — CNV-17 : JitPack canal unique
 
-* **Tolérance CI des credentials nmcp** : `settings.gradle.kts`
-  `?: error("ossrhUsername/password not found")` → `?: ""` (fix du job
-  `runAllTests` MEMPHIS qui échoue à la configuration faute de credentials).
-  `./gradlew help` VERT. Rapport `.agents/sessions/217-nmcp-settings-ci-tolerance.adoc`.
+Décision pilote 2026-11-13 : JitPack devient le **canal unique** des artefacts
+publics `education.cccp` (un artefact = un canal = un nom = une version).
+Central (quota Sonatype jusqu'au 2026-12-01) et le Portal ne sont plus ciblés
+pour `foundry/public/**`.
 
-== Session accomplie (S-216, gouvernance pure)
+* **Catalogue workspace** : `education.cccp:workspace-catalog:0.0.116` →
+  `com.github.cccp-education.workspace-bom:workspace-catalog:0.0.136`
+  (catalogue `ws`, source unique des versions de plugin).
+* **Shim** : `education.cccp.build.*` → tag JitPack
+  `conventions-plugin:0.0.17` (correctif : **sans** préfixe `v`).
+* **JitPack** présent en `pluginManagement` et en `dependencyResolutionManagement`.
+* `version` reste **dérivée** du catalogue (`ws.versions.dashboard.plugin`).
+* Aucun code métier modifié ; zéro test local. **CI `Lint` verte**
+  `43469669403` (`bcfc6a2`) et `43463753298` (`8a4f129`).
 
-*Cadrage EPIC DSH-BOUNDARY — frontière Dashboard* :
+Rapport : `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
+Cadrage : `conventions-gradle/conventions-plugin/.agents/CADRAGE_EPIC_CNV_17_JITPACK_PRIMARY.adoc`.
 
-1. Frontière actée : ALGER = pilotage (chiffres, gouvernance `.adoc`) /
-   Brooklin Flow = navigation (structure, `graph.json`) / Edster =
-   interactif privé (actions Gradle, contenus, auth).
-2. 6 constats audités (vis.js empiète sur BF, `configPath=dashboard-plugin`
-   tronque le dogfood, BACKLOG ignoré, tâches non incrémentales, BF vide,
-   interactif sans foyer statique).
-3. 13 décisions (dont templating Thymeleaf unique), 9 US ~31 pts.
-   Absorption de DFL-1/DFL-2(partiel)/DFL-3/DFL-7.
-4. Doc : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (copie côté BF).
-5. Zéro code modifié.
+== Contexte hérité (rappel)
+
+* S-217 — tolérance CI des credentials nmcp (`?: ""`), débloque `runAllTests` MEMPHIS.
+* S-216 — **cadrage EPIC DSH-BOUNDARY** : ALGER = pilotage (chiffres) /
+  Brooklin Flow = navigation (structure) / Edster = interactif privé. 13
+  décisions, 9 US ~31 pts, absorption DFL-1/2/3/7.
+* DSH-0→7, DSH-10, PUB : ✅ TERMINÉS.
 
 == Statut
+- DSH-8 (Git Sync + filtres + mode sombre) : 🟡 reste ALGER.
+- DSH-BOUNDARY : ✅ CADRÉ ; **Phase 0 = gate bloquant** avant toute US de production.
 
-- DSH-0→DSH-7, DSH-10, PUB : ✅ TERMINÉS
-- DSH-BOUNDARY : ✅ CADRÉ (7 US à exécuter)
-- DSH-8 (Git Sync + filtres + mode sombre) : 🟡 reste ALGER
+== Mission session 220 — maintenance
 
-== Prochaine session (217) — DSH-BOUNDARY-0P (Phase 0 — maquette)
+*Mission par défaut : la maquette de navigation (DSH-BOUNDARY-0P).*
 
-*Mission unique : la maquette de navigation.*
-
-Emplacement : `dashboard-plugin/src/main/resources/prototype/`
-(README.adoc + mock/ déjà en place). À produire : `index.html` (Panorama
-3 zones), `borough.html` (fiche borough), `graph.html` (coquille graphe),
-`styles.css`, `app.js`, `mock/*.json`.
+Emplacement : `src/main/resources/prototype/` (README.adoc + `mock/` déjà en
+place). À produire : `index.html` (Panorama 3 zones), `borough.html` (fiche
+borough), `graph.html` (coquille graphe), `styles.css`, `app.js`, `mock/*.json`.
 
 Périmètre : Panorama 3 zones (vision critical path A1→A4 / avancement par
 points / structure N0→N4), fiche borough, coquille graphe, états
 (vide/chargé/surcharge), transitions niveau 0 → 1, responsive.
 
-*Interdits* : Thymeleaf, React Flow, données réelles (mock en dur
-uniquement), publication (exclu de `processResources`).
+*Interdits* : Thymeleaf, React Flow, données réelles (mock en dur uniquement),
+publication (exclu de `processResources`).
 
-*Gate bloquant* : aucune US de production (DSH-BOUNDARY-1→7) ne démarre
-avant validation pilote de cette maquette. Pas d'alternative — la maquette
-est la mission de la session.
+*Gate bloquant* : aucune US de production (DSH-BOUNDARY-1→7) ne démarre avant
+validation pilote de cette maquette.
 
-== Vérifications ouverture
+== Vérifications d'ouverture
 
-. `git status` — dashboard-gradle committé/poussé ?
-. `./gradlew check` VERT (58/0, version dérivée ws 0.0.34)
-. Lire `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` § Ordre d'exécution
+. `git status` — working tree propre attendu (session 219 committée/poussée).
+. `./gradlew help` / `./gradlew tasks` — configuration VERTE sur le catalogue
+   JitPack `0.0.136`.
+. Lire `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` § Ordre d'exécution et
+   `.agents/INDEX.adoc` + `BACKLOG.adoc` (`DSH-8`, `DSH-BOUNDARY`).
+
+== Rappels
+
+* **Local = Build, Tests = CI** : compiler/builder uniquement ; jamais `check` local.
+* **Un artefact = un canal = un nom = une version** : ne jamais réintroduire
+  une coordonnée Central dans un catalogue publié.
+* Version = tag : bump **avant** le tag `vX.Y.Z`, version servie `X.Y.Z`.
+* Shim : `conventions-plugin:0.0.17` (sans `v`).
+* Zéro logique LLM/RAG dans ce borough (frontière DSH-BOUNDARY).

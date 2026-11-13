@@ -1,8 +1,9 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-09-14 — Session 216 (cadrage, gouvernance pure)
+_Derniere mise a jour_ : 2026-11-14 — Session 219 (CNV-17 : JitPack canal unique)
+_session terminee_ : 219 — CNV-17 : catalogue workspace `ws` servi par JitPack (`workspace-catalog:0.0.136`, fin de `education.cccp:*`), shim `conventions-plugin:0.0.17` sans préfixe `v`, JitPack en résolution de dépendances. CI `Lint` verte `43469669403` / `43463753298`. Rapport `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
 _session terminee_ : 216 — Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster). 9 US ~31 pts. Redécoupage : retrait vis.js, avancement réel (foundry + BACKLOG), incrémentalité, homepage Panorama, absorption DFL-1/2/3/7. Zéro code modifié.
-_prochaine session_ : 217 — DSH-BOUNDARY-0P (Phase 0 : maquette HTML/CSS/JS/mock — `src/main/resources/prototype/`, gate bloquant).
+_prochaine session_ : 220 — maintenance : `DSH-BOUNDARY-0P` (maquette, **gate bloquant**) puis `DSH-BOUNDARY-1→7` ; `DSH-8` reste ouvert.
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).

@@ -1,0 +1,59 @@
+= Session 219 — CNV-17 : JitPack canal unique
+:toc: left
+:icons: font
+
+:session: 219
+:date: 2026-11-14
+:type: build / publication (cross-borough)
+:statut: TERMINÉE
+
+== Contexte
+
+Décision pilote du 2026-11-13 (EPIC CNV-17, `conventions-gradle`) : JitPack
+devient le **canal unique** des artefacts publics `education.cccp` — un
+artefact = un canal = un nom = une version. Central (quota Sonatype jusqu'au
+2026-12-01) et le Portal ne sont plus ciblés pour `foundry/public/**` ;
+`foundry/private/**` et `office/**` restent inchangés. Cadrage :
+`conventions-gradle/conventions-plugin/.agents/CADRAGE_EPIC_CNV_17_JITPACK_PRIMARY.adoc`.
+
+== Changements
+
+* **Catalogue workspace** : `education.cccp:workspace-catalog:0.0.116` →
+  `com.github.cccp-education.workspace-bom:workspace-catalog:0.0.136`
+  (catalogue `ws`, source unique des versions de plugin — D4).
+* **Shim** : `education.cccp.build.*` →
+  `conventions-gradle:conventions-plugin:0.0.17` (tag **sans** préfixe `v`).
+* **JitPack** présent en `pluginManagement` et en
+  `dependencyResolutionManagement`.
+* `version` reste **dérivée** du catalogue (`ws.versions.dashboard.plugin`),
+  alignée sur `0.0.136` sans hardcode.
+* Aucun code métier modifié ; zéro test local (Local = Build, Tests = CI).
+
+== Preuves CI
+
+[cols="3,2,2", options="header"]
+|===
+| Commit | Workflow | Résultat
+| `8a4f129` — catalogue JitPack `0.0.136` | `Lint` `43463753298` | ✅ success
+| `bcfc6a2` — shim `0.0.17` sans préfixe `v` | `Lint` `43469669403` | ✅ success
+|===
+
+`Lint` est l'unique workflow du dépôt ; il valide la configuration et l'accès
+au catalogue JitPack.
+
+== Fichiers touchés
+
+* `settings.gradle.kts` — catalogue `ws` JitPack `0.0.136`, shim
+  `conventions-plugin:0.0.17`, dépôt JitPack (configuration + dépendances).
+* `jitpack.yml` inchangé (recette CNV-16 valide : JDK 25, `CI=true`,
+  `./gradlew publishToMavenLocal`).
+
+== État et suite
+
+* Version locale `0.0.1` (dérivée du catalogue) ; canal = JitPack (tag).
+* Working tree propre ; CI verte au dernier commit.
+* **Suite : maintenance.** `DSH-8` (Git Sync + filtres + mode sombre) reste
+  ouvert ; `DSH-BOUNDARY-0P` (maquette) reste le **gate bloquant** avant les
+  US de production `DSH-BOUNDARY-1→7`.
+* Détail transversal : rapports CNV-17 de `conventions-gradle` (S-045) et
+  `workspace-bom` (N0 `0.0.136`).
