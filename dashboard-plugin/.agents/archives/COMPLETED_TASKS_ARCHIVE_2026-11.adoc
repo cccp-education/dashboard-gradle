@@ -1,3 +1,4 @@
 = COMPLETED TASKS ARCHIVE — 2026-11
 
 * GBL-013 — portabilité CI (session close) : voir `.agents/sessions/` (rapport dédié).
+* DSH-9.1 — tâche `serve` (serveur HTTP JDK, `localhost:8820`, garde path-traversal) : `dashboard-plugin 0.0.2 → 0.0.3 → 0.0.4`, sessions 220/222.

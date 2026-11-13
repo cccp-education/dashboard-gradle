@@ -41,3 +41,9 @@ Aucun test Gradle lancé localement (Local = Build, Tests = CI).
 * **DSH-9.2** — rendu/crawl (`configPath` → racine workspace, « 2 boroughs »,
   zéro CDN).
 * GBL-013 **US-5→US-9** ; `DSH-BOUNDARY-0P` (gate) puis `DSH-BOUNDARY-1→7`.
+
+== Clôture — prompt de reprise 223
+
+`PROMPT_REPRISE.adoc` réécrit pour la session 223 (DSH-9.2 : crawl
+`configPath` → `foundry/`, performances `walkFileTree`, rendu, zéro CDN) et
+commité (`af9aa62`). Aucun code modifié depuis la release 0.0.4.

@@ -56,3 +56,6 @@ description alignée, test mis à jour. Release `dashboard-plugin 0.0.4`
 (tag `v0.0.4`, JitPack 200), root + catalogues pinnés 0.0.4, catalogue
 workspace-bom aligné. Preuve : `./gradlew serve` → 200/200/404 sur
 `localhost:8820`. Rapport `.agents/sessions/222-serve-default-localhost-8820.adoc`.
+
+Clôture S-222 : `PROMPT_REPRISE.adoc` réécrit pour la session 223 (DSH-9.2) et
+commité (`af9aa62`) ; couverture/archive/TODO mis à jour. Arbre propre.

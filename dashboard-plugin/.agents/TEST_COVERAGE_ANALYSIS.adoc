@@ -122,3 +122,7 @@
 *Session 007* : 31 tests PASS — Renommage packages, DSH-5 DAG visualization, traduction anglaise.
 *Session 008* : 42 tests PASS + 9 Cucumber scenarios — DSH-6 Timeline MVP0 (domaine `dashboard.timeline`, intégration renderer/template, parsing session).
 *Session 010* : 47 tests PASS + 10 Cucumber scenarios — site JBake-compatible consommable par bakery-gradle `serve` (`jbake/`, `publishDashboardSite`, template `[(${content.body})]`, CSS path `css/styles.css`, serve OK localhost:8820).
+*Session 220-222* : DSH-9.1 `serve` — ajout `DashboardMimeTypesTest` (3),
+`DashboardStaticContentTest` (5), `DashboardServerTest` (1),
+`ServeDashboardFunctionalTest` (2) = **+11** (totaux globaux à réactualiser au
+prochain run CI ; Local = Build).

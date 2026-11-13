@@ -12,3 +12,4 @@
 - [ ] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005
 - [x] Implémenter vue DAG Graph — S007 ✅
 - [x] Implémenter vue Timeline MVP0 — S008 ✅
+- [x] Ajouter une tâche `serve` (serveur local, `http://localhost:8820`) — DSH-9.1 — S220/222 ✅
