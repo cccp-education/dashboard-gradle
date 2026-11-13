@@ -1,5 +1,5 @@
-= PROMPT_REPRISE — dashboard-gradle (Session 220 terminée — DSH-9.1 `serve`)
-:session: 221
+= PROMPT_REPRISE — dashboard-gradle (Sessions 220-221 terminées — serve + GBL-013)
+:session: 222
 :date: 2026-11-14
 
 == Session 220 accomplie — DSH-9.1 : tâche `serve`
@@ -26,7 +26,17 @@ Ajout du serveur local du dashboard généré (absent jusqu'ici) :
 
 Rapport : `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 
-== Mission Session 221 — DSH-9.2 (audit/correction du rendu)
+== Session 221 — GBL-013 + build autonome (clôture)
+
+Portabilité CI : `dashboard-plugin/` devient un build **autonome** (wrapper
+9.9.1, `settings.gradle.kts`, catalogue `ws` 0.0.136, shim JitPack) ; le root
+`dashboard-gradle` redevient un consommateur (plus de `include`). `ci/run.sh` +
+`lint.yml` migrés ; run `43498693366` **VERT**. Fix ktlint préexistant du
+provider de version. Reste GBL-013 **US-5→US-9**
+(`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc`).
+Rapport `.agents/sessions/221-gbl-013-standalone-0124.adoc`.
+
+== Mission Session 222 — DSH-9.2 (+ GBL-013 US-5→9)
 
 1. **Source de données** : le root consommateur configure `configPath =
    "dashboard-plugin"` (le plugin) alors que le crawl doit viser la racine

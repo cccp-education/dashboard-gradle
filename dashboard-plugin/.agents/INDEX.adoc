@@ -1,10 +1,10 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-11-14 — Session 220 (DSH-9.1 : tâche `serve`)
+_Derniere mise a jour_ : 2026-11-14 — Sessions 220 (serve) + 221 (GBL-013 build autonome)
 _session terminee_ : 220 — DSH-9.1 : tâche `serve` (domaine `dashboard.serve` : MIME, résolution statique + garde path-traversal, serveur HTTP JDK loopback ; `ServeDashboardTask` `dependsOn generateDashboard`, host/port DSL + `-Pdashboard.serve*` ; tests unit + TestKit compilés). `compileKotlin`/`compileTestKotlin` verts. Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 _session terminee_ : 219 — CNV-17 : catalogue workspace `ws` servi par JitPack (`workspace-catalog:0.0.136`, fin de `education.cccp:*`), shim `conventions-plugin:0.0.17` sans préfixe `v`, JitPack en résolution de dépendances. CI `Lint` verte `43469669403` / `43463753298`. Rapport `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
 _session terminee_ : 216 — Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster). 9 US ~31 pts. Redécoupage : retrait vis.js, avancement réel (foundry + BACKLOG), incrémentalité, homepage Panorama, absorption DFL-1/2/3/7. Zéro code modifié.
-_prochaine session_ : 221 — **DSH-9.2** (audit/correction du rendu : `configPath` → racine workspace, crawl complet, zéro CDN) ; ensuite `DSH-BOUNDARY-0P` (maquette, **gate bloquant**) puis `DSH-BOUNDARY-1→7` ; `DSH-8` reste ouvert.
+_prochaine session_ : 222 — **DSH-9.2** (audit/correction du rendu : `configPath` → racine workspace, crawl complet, zéro CDN) ; ensuite `DSH-BOUNDARY-0P` (maquette, **gate bloquant**) puis `DSH-BOUNDARY-1→7` ; `DSH-8` reste ouvert.
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).

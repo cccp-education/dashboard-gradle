@@ -6,6 +6,7 @@ before_install:
   - sdk use java 25-open
   - java -version 2>&1 | grep -q 'version "25'
 install:
-  - ./gradlew publishToMavenLocal -Pversion="${VERSION#v}"
+  # article 0124 — `dashboard-plugin/` is a standalone build (own wrapper/settings).
+  - cd dashboard-plugin && ./gradlew publishToMavenLocal -Pversion="${VERSION#v}"
 env:
   CI: "true"
