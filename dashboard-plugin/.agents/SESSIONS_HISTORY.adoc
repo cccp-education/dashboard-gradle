@@ -74,5 +74,5 @@ activity stream plafonné à 60 récents sur 461, états vides conservés.
 aucune référence `href/src` externe. Tests compilés : +2 `IndexCrawlerTest`
 (élagage, déduplication), `DashboardRendererTest` (DAG statique + absence
 d'assets externes), `WorkspaceCrawlTest` skip-gardé (≥ 30 boroughs réels).
-Prochaine release `0.0.5`. Rapport
-`.agents/sessions/223-dsh-9-2-crawl-render.adoc`.
+Release JitPack `0.0.5` (tag `v0.0.5`, POM/JAR HTTP 200, dogfood
+racine 740 ms). Rapport `.agents/sessions/223-dsh-9-2-crawl-render.adoc`.

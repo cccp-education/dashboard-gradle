@@ -155,11 +155,18 @@ Surcharge : `./gradlew generateDashboard -Pdashboard.configPath=/autre/racine`.
   tests sont compilés et seront exécutés par un job de test CI lorsqu'il sera
   ajouté (aucun test local lancé, règle EAGER).
 
-== Version
+== Version et release
 
 * Prochaine release : **`0.0.5`** (jamais réutiliser `0.0.4`, publiée en S-222).
 * `gradle/libs.versions.toml` : `dashboard = "0.0.5"`.
 * Racine consommateur : `id("education.cccp.dashboard") version "0.0.5"`.
+* **Release JitPack `0.0.5`** : commits `9c6702e` (main) + tag annoté `v0.0.5`.
+  Preuves HTTP 200 : POM (`<version>0.0.5</version>`), JAR (149 772 o, contient
+  `IndexCrawler`, `DashboardRenderer`, `static/vendor/bootstrap.min.css`).
+* **Dogfooding du consommateur racine** (artefact JitPack, pas mavenLocal) :
+  `./gradlew generateDashboard` → **38 boroughs / 460 epics / 461 sessions en
+  740 ms**, `index.html` sans aucune référence `href/src="http…"`, Bootstrap
+  local (`vendor/bootstrap.min.css`, 232 803 o).
 
 == Décisions / écarts
 
