@@ -124,3 +124,6 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 == Session 218 — JitPack mirror (CNV-16)
 
 Publication JitPack de dashboard-plugin 0.0.1 + correctif signature conditionnelle. JitPack : 0.0.1 — POM HTTP 200.
+
+== Session 221 — GBL-013 (clôture) — 2026-11-14
+Alignement article 0124 (build autonome) + lint dans l'image ; run 43498693366.

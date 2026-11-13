@@ -1,0 +1,3 @@
+= COMPLETED TASKS ARCHIVE — 2026-11
+
+* GBL-013 — portabilité CI (session close) : voir `.agents/sessions/` (rapport dédié).

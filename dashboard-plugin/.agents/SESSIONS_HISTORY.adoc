@@ -44,3 +44,7 @@ statique avec garde path-traversal, serveur HTTP JDK ; tâche
 configurables et CLI `-Pdashboard.serve*`). Tests unitaires + TestKit
 (compilés, exécutés en CI). `compileKotlin`/`compileTestKotlin` verts.
 Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
+
+== Session 221 — GBL-013 + alignement article 0124 — 2026-11-14
+
+dashboard-plugin devient un build autonome (wrapper 9.9.1, settings, catalogue ws 0.0.136, shim JitPack) ; root consommateur sans include. ci/run.sh + lint.yml migrés, verify-gradle-wrapper sur le wrapper du plugin. Run 43498693366 VERT. Fix ktlint préexistant (providers…orElse(ws.versions.dashboard.plugin).get()). Rapport `.agents/sessions/221-gbl-013-standalone-0124.adoc`.

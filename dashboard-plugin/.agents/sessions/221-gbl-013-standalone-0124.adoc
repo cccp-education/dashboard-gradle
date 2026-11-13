@@ -1,0 +1,25 @@
+= Session 221 — GBL-013 + alignement article 0124
+:date: 2026-11-14
+:borough: ALGER (dashboard-gradle)
+
+== Livré
+
+* **Pattern 0124** : `dashboard-plugin/` devient un build **autonome** — wrapper
+  9.9.1, `settings.gradle.kts` (`rootProject.name = "dashboard-plugin"`, shim
+  JitPack, nmcp, catalogue `ws` `0.0.136`), JitPack dans les `repositories` du
+  projet. Le root `dashboard-gradle` redevient un **consommateur** (plus de
+  `include("dashboard-plugin")`).
+* **GBL-013 US-5** : `ci/run.sh` (`fast` = `ktlintCheck` depuis
+  `dashboard-plugin`) ; `lint.yml` migré (`container:` épinglé,
+  `verify-gradle-wrapper` sur le wrapper du plugin, `ci/run.sh fast`). Run
+  `43498693366` **VERT**.
+
+== Fix préexistant
+
+Dérive ktlint dans `build.gradle.kts` (rouge depuis `5e91ed3`) :
+`version = providers.gradleProperty("version").orElse(ws.versions.dashboard.plugin).get()`.
+
+== Suivant
+
+DSH-9.2 (`configPath` racine workspace, crawl complet, zéro CDN), puis
+`DSH-BOUNDARY-0P` (gate bloquant) et `DSH-8`.

@@ -48,3 +48,8 @@ Rapport : `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 
 * `BACKLOG.adoc` § DSH-9 ; `.agents/INDEX.adoc` (roadmap) ;
   `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`.
+
+== GBL-013 (clôture) — 2026-11-14
+Portabilité CI livrée : image \`cccp-ci-base\`, \`ci/run.sh\`, adapter fin.
+Rapport \`.agents/sessions/221-gbl-013-standalone-0124.adoc\`. Reste : US-5→US-9 (cadrage racine
+\`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc\`).
