@@ -61,3 +61,14 @@ lancé en local). Preuve d'exécution = CI.
   → racine workspace (crawl complet), zéro CDN (assets vendorés), preuve du
   nombre de boroughs. Toujours 🟡.
 * `DSH-BOUNDARY-0P` (gate maquette) puis `DSH-BOUNDARY-1→7` ; `DSH-8` ouvert.
+
+== Preuve locale (smoke, Règle 2)
+
+Consommateur transitoire `/tmp/opencode/dash-serve-smoke` (plugin
+`publishToMavenLocal` 0.0.2, mavenLocal en premier) :
+
+* `tasks --all` expose `serve - Serves the generated dashboard locally …`.
+* `serve -Pdashboard.servePort=18080` → log `Serving … http://127.0.0.1:18080`.
+* `GET /` = **200** (HTML), `GET /styles.css` = **200**, `GET /nope` = **404**.
+
+Aucun test Gradle lancé localement ; serveur arrêté après vérification.
