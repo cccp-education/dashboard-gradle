@@ -33,3 +33,21 @@ transitions niveau 0 -> niveau 1, responsive.
 
 `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` — decision 11 (Phase 0) et
 section « Architecture d'information cible ».
+
+== Visualiser la maquette
+
+[source,shell]
+----
+node serve.js          # http://127.0.0.1:8822/
+node serve.js 8900     # port explicite
+----
+
+États : `?state=empty`, `?state=loaded` (défaut), `?state=overloaded`.
+
+Parcours à valider (gate DSH-BOUNDARY-0P) :
+
+. Panorama : les 3 zones (Vision / Progress / Structure) tiennent sur un écran,
+  aucune information à plus de 2 clics.
+. Fiche borough : clic sur un nom dans la zone Progress ou Structure.
+. Graphe : coquille N0→N4, clic nœud → panneau récapitulatif.
+. États : `empty` (aucune donnée) et `overloaded` (120 boroughs) restent lisibles.

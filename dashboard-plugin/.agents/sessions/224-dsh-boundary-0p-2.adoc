@@ -40,6 +40,9 @@ Artefact jetable dans `dashboard-plugin/src/main/resources/prototype/`,
 
 | `mock/dashboard-data.mock.json`
 | Données fictives (déjà présentes S-216)
+
+| `serve.js`
+| Serveur statique Node sans dépendance (`node serve.js` → http://127.0.0.1:8822/)
 |===
 
 * Pur HTML/CSS/JS — **aucun** framework, **aucun** Thymeleaf, **aucune**
