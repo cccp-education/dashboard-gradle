@@ -126,3 +126,9 @@
 `DashboardStaticContentTest` (5), `DashboardServerTest` (1),
 `ServeDashboardFunctionalTest` (2) = **+11** (totaux globaux à réactualiser au
 prochain run CI ; Local = Build).
+*Session 223* : DSH-9.2 — `IndexCrawlerTest` +2 (élagage des répertoires de
+build/caches/backups ; déduplication boroughs + EPICs), `DashboardRendererTest`
+mis à jour (table DAG statique, absence d'assets externes, Bootstrap vendoré
+copié), `WorkspaceCrawlTest` +1 (skip-gardé : crawl réel de `foundry/`,
+≥ 30 boroughs, ≥ 300 EPICs). Tests **compilés** (`compileTestKotlin` VERT) ;
+totaux globaux à recalculer au prochain run CI (Local = Build, Tests = CI).

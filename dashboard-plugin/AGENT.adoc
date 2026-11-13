@@ -126,7 +126,10 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 === Composants Cles
 
 * **DashboardPlugin** : Point d'entree du plugin Gradle
-* **IndexCrawler** : Crawle les INDEX.adoc/BACKLOG.adoc des 25 boroughs
+* **IndexCrawler** : Crawle les `INDEX.adoc` / `SESSIONS_HISTORY.adoc` de tout
+  `foundry/` (élagage build/caches/backups, déduplication, fallback de
+  synthèse). Le parsing des `BACKLOG.adoc` (avancement par points) est prévu
+  par DSH-BOUNDARY-2.
 * **DashboardData** : Modele de donnees pivot (EPICs, statuts, DAG, timeline)
 * **DashboardTheme** : Theme JBake custom avec vues Thymeleaf
 * **DashboardExtension** : Extension Gradle DSL
@@ -145,16 +148,18 @@ dashboard-plugin/                  # RACINE DE TRAVAIL (ce repertoire)
 
 |===
 | EPIC | Sujet | Priorite | Statut
-| DSH-0 | Bootstrap gouvernance + structure projet | P0 | EN COURS
-| DSH-1 | Plugin scaffold + build + publication | P0 | PLANIFIE
-| DSH-2 | Crawler INDEX.adoc → JSON pivot | P0 | PLANIFIE
-| DSH-3 | Dashboard theme JBake + vues Thymeleaf | P0 | PLANIFIE
-| DSH-4 | EPIC matrix — tableau borough × statut | P1 | PLANIFIE
-| DSH-5 | DAG visualization — graphe N0→N4 | P1 | PLANIFIE
-| DSH-6 | Timeline roadmap — jalons MVP0 | P1 | PLANIFIE
-| DSH-7 | Integration runner-gradle + deploiement | P1 | PLANIFIE
-| DSH-8 | GitHub Sync — refresh depuis raw API | P2 | PLANIFIE
-| PUB | Publication Gradle Plugin Portal (défaut jusqu'au 2026-12-01) | P1 | PLANIFIE (compatibilité déclarée S-036 ; bump + tag)
+| DSH-0 | Bootstrap gouvernance + structure projet | P0 | ✅ S000
+| DSH-1 | Plugin scaffold + build + publication | P0 | ✅ S001/S005
+| DSH-2 | Crawler INDEX.adoc → JSON pivot | P0 | ✅ S002
+| DSH-3 | Dashboard theme JBake + vues Thymeleaf | P0 | ✅ S005
+| DSH-4 | EPIC matrix — tableau borough × statut | P1 | ✅ S006
+| DSH-5 | DAG visualization — graphe N0→N4 | P1 | ✅ S007 (table statique S-223)
+| DSH-6 | Timeline roadmap — jalons MVP0 | P1 | ✅ S008
+| DSH-7 | Integration runner-gradle + deploiement | P1 | ✅ S009
+| DSH-8 | Git Sync — refresh depuis les repos | P2 | PLANIFIE
+| DSH-9 | `serve` + rendu (crawl complet, zéro CDN) | P1 | ✅ S-220 → S-223
+| DSH-BOUNDARY | Frontière ALGER / Brooklin Flow / Edster | P1 | 🟡 Cadré S-216 (0P→7)
+| PUB | Publication JitPack (canal unique) | P1 | ✅ 0.0.4 publiée (S-222) ; 0.0.5 en préparation
 |===
 
 == Gestion du Contexte

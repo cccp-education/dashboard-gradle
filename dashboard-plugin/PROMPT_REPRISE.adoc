@@ -1,59 +1,64 @@
-= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 223
-:session: 223
+= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 224
+:session: 224
 :date: 2026-11-14
 
 == Où on en est (acquis — ne pas refaire)
 
-* **`serve` (DSH-9.1) livré et publié** : `dashboard-plugin 0.0.4` sur JitPack.
-  Défaut `http://localhost:8820/` (DSL `serveHost`/`servePort`, CLI
-  `-Pdashboard.serveHost` / `-Pdashboard.servePort`). Domaine `dashboard.serve`
-  (MIME, résolution statique + garde path-traversal, `HttpServer` JDK).
-* **`dashboard-plugin/` = build autonome** (article 0124) : wrapper 9.9.1,
-  `settings.gradle.kts`, shim JitPack, catalogue `ws` 0.0.136. Le root
-  `dashboard-gradle` = **consommateur** (`id(...) version "0.0.4"` + shim
-  `useModule`), plus de `include("dashboard-plugin")`.
-* `jitpack.yml` : `cd dashboard-plugin && ./gradlew publishToMavenLocal -Pversion="${VERSION#v}"`.
-* CNV-17 : JitPack canal unique ; `conventions-plugin 0.0.17`.
-* Vérifié : `./gradlew serve` → 200 (`/`), 200 (`/styles.css`), 404 (`/nope`).
+* **DSH-9.2 ✅ (S-223)** : crawl complet de `foundry/` — **38 boroughs,
+  460 EPICs, 461 sessions** en **638 ms** ; élagage (`build`, `.gradle`,
+  `.git`, `node_modules`, `backup`, `archives`…), déduplication et fallback
+  de synthèse pour les boroughs sans table `Borough | Project`.
+* **Zéro CDN** : Bootstrap 5.3.3 vendoré (`static/vendor/bootstrap.min.css`),
+  vis.js/Bootstrap JS supprimés, rendu 100 % offline.
+* **DSH-BOUNDARY-1 ✅ livré en avance** : le canvas vis.js est remplacé par une
+  table statique « Couches DAG (N0 → N4) » (niveaux inconnus = `N?`).
+* **Activity stream** : 60 sessions les plus récentes affichées (`60 / N`
+  dans le badge) ; le pivot JSON garde tout.
+* Racine : `configPath = providers.gradleProperty("dashboard.configPath")`
+  `getOrElse("../..")` ; surcharge CLI `-Pdashboard.configPath=…`.
+* Version : **`0.0.5`** (tag `v0.0.5` = prochaine release JitPack ; `0.0.4`
+  ne doit jamais être réutilisée).
+* `dashboard-plugin/` = build autonome (article 0124), wrapper 9.9.1,
+  catalogue `ws` 0.0.136, shim `conventions-plugin:0.0.17`.
 
-== Mission session 223 — DSH-9.2 (rendu / crawl)
+== Mission session 224 — DSH-BOUNDARY-0P puis DSH-BOUNDARY-2
 
-1. **Crawl complet** : le root configure `configPath = "dashboard-plugin"`
-   (le plugin) → `build/dashboard/index.html` n'affiche que « 2 boroughs ».
-   Cibler `foundry/` (depuis `dashboard-gradle` : `../..`) ou un chemin
-   configurable (propriété), et **prouver** le nombre de boroughs/EPICs.
-2. **Performance** : `IndexCrawler` fait `walkFileTree` sur tout l'arbre —
-   mesurer sur `foundry/`, puis exclure `build/`, `.gradle/`, `.git/`,
-   `node_modules/` si nécessaire (lien DSH-BOUNDARY-3 incrémentalité).
-3. **Rendu** : EPIC matrix / activity stream / DAG lisibles ; états vides.
-4. **Zéro CDN** : remplacer Bootstrap `cdn.jsdelivr.net` par des assets
-   vendorés (CSS local) ; rendu offline.
-5. **Preuves** : `build/dashboard/dashboard-data.json` (N boroughs),
-   capture(s), test de non-régression sur le nombre de boroughs.
+1. **DSH-BOUNDARY-0P (gate bloquant)** — valider la maquette
+   (`src/main/resources/prototype/`, déjà présente : README + mock JSON) :
+   Panorama 3 zones, fiche borough, coquille graphe, états, transitions
+   niveau 0 → 1. Aucune US de production 2→7 avant validation pilote.
+2. **DSH-BOUNDARY-2** — avancement réel :
+   * parser le `BACKLOG.adoc` **racine** (`/home/cheroliv/workspace/BACKLOG.adoc`)
+     et les BACKLOG des boroughs (statuts + points) ;
+   * calculer le % par **points** (pas par nombre d'items) par borough et
+     global ;
+   * introduire `schemaVersion` dans `dashboard-data.json` (contrat public
+     consommé par Brooklin Flow / Edster).
+3. **DSH-BOUNDARY-3** (si le temps) — incrémentalité :
+   `@InputFiles` / `@OutputDirectory` / `@CacheableTask` (UP-TO-DATE si
+   contenu/structure inchangés).
 
 == Commandes
 
 [source,bash]
 ----
-./gradlew generateDashboard             # root consommateur (plugin 0.0.4)
+./gradlew generateDashboard             # racine (plugin 0.0.5)
 ./gradlew serve                         # http://localhost:8820/
 ./gradlew -t serve                      # régénération continue
-cd dashboard-plugin && ./gradlew build  # build autonome du plugin (hors tests)
+cd dashboard-plugin && ./gradlew build  # build autonome (hors tests)
 ----
 
 == Règles dures
 
-* Thymeleaf **uniquement** (aucun HTML ad hoc) ; ne pas retirer l'exclusion
-  `prototype/**` de `processResources`.
+* Thymeleaf **uniquement** ; ne jamais retirer l'exclusion `prototype/**`
+  de `processResources`.
 * Local = Build, Tests = CI (aucun `test`/`check` local).
-* `DSH-BOUNDARY-0P` (maquette) reste le gate avant `DSH-BOUNDARY-1→7`.
-* JitPack : un artefact = un canal = un nom = une version ; ne jamais réutiliser
-  une version publiée (incrémenter `0.0.5` pour la prochaine release).
+* JitPack : un artefact = un canal = un nom = une version (0.0.6 ensuite).
+* Le DAG interactif reste hors d'ALGER (frontière S-216) ; Brooklin Flow lit
+  `graph.json` + `dashboard-data.json`.
 
 == Références
 
-* `BACKLOG.adoc` § DSH-9 ; `.agents/INDEX.adoc` ; rapports
-  `.agents/sessions/220-dsh-9-1-serve-task.adoc` et
-  `.agents/sessions/222-serve-default-localhost-8820.adoc`.
-* `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` ; GBL-013
-  `.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc` (US-5→9).
+* Rapport `.agents/sessions/223-dsh-9-2-crawl-render.adoc`.
+* `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (décisions 1→13).
+* `BACKLOG.adoc` § DSH-9 / DSH-BOUNDARY ; `.agents/INDEX.adoc`.

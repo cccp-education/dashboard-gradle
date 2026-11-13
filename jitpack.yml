@@ -1,6 +1,6 @@
 # CNV-17 — JitPack canal unique (N3 dashboard-plugin).
-# Build from a public tag; the plugin version comes from the workspace catalog
-# (`ws.versions.dashboard.plugin`, 0.0.2) and JitPack serves it at the tag.
+# Build from a public tag; the plugin version comes from the tag
+# (`-Pversion="${VERSION#v}"`, e.g. v0.0.5 → 0.0.5).
 before_install:
   - sdk install java 25-open || (sleep 10 && sdk install java 25-open)
   - sdk use java 25-open

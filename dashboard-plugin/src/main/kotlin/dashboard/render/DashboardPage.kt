@@ -9,7 +9,7 @@ import dashboard.timeline.Timeline
  * Thymeleaf page model exposed to the dashboard template.
  *
  * This DTO structures raw [dashboard.model.DashboardData] into a presentation-friendly
- * shape (EPIC matrix, activity stream, statistics, DAG graph, timeline).
+ * shape (EPIC matrix, activity stream, statistics, DAG layers, timeline).
  */
 data class DashboardPage(
     val title: String,
@@ -18,9 +18,9 @@ data class DashboardPage(
     val sessions: List<SessionActivity>,
     val stats: DashboardStats,
     val boroughGroups: List<BoroughGroup>,
-    val dagGraph: DagGraph,
-    val dagGraphJson: String,
+    val dagLevels: List<DagLevelGroup>,
     val timeline: Timeline,
+    val sessionCount: Int,
 )
 
 data class DashboardStats(
@@ -38,4 +38,9 @@ data class BoroughGroup(
     val project: String,
     val status: String,
     val epics: List<EpicData>,
+)
+
+data class DagLevelGroup(
+    val level: String,
+    val nodes: List<DagNodeView>,
 )

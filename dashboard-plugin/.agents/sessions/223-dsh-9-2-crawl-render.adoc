@@ -1,0 +1,178 @@
+= Session 223 — DSH-9.2 : crawl complet + rendu offline
+:session: 223
+:date: 2026-11-14
+:epic: DSH-9 (clos) + DSH-BOUNDARY-1 (livré en avance)
+:method: baby-step DDD/TDD/BDD (Local = Build, Tests = CI)
+
+== Mission
+
+`PROMPT_REPRISE.adoc` (session 223) — DSH-9.2 : le dashboard ne voyait que
+2 boroughs (son propre index) et dépendait de CDN externes.
+
+[cols="1,3"]
+|===
+| # | Livrable
+
+| 1
+| Crawl complet : `configPath` → racine `foundry/` (surchargeable)
+
+| 2
+| Performance : `walkFileTree` élagué, mesure du temps
+
+| 3
+| Rendu : EPIC matrix / activity stream / DAG lisibles, états vides
+
+| 4
+| Zéro CDN : assets vendorés, rendu offline
+
+| 5
+| Preuves : `dashboard-data.json` (N boroughs) + test de non-régression
+
+|===
+
+== Constats d'ouverture
+
+* `build.gradle.kts` (racine) : `configPath = "dashboard-plugin"` → le crawl ne
+  lisait que l'`INDEX.adoc` du plugin (2 boroughs, 12 epics).
+* `IndexCrawler.crawlDirectory` : `walkFileTree` **sans élagage** →
+  `foundry/` pèse plus de 4 Go (`bakery-plugin`, `build/`, `.gradle/`,
+  `node_modules/`) ; un `find` naïf dépasse 120 s.
+* `parseIndex` était appelé **deux fois** par fichier (boroughs + epics).
+* Aucune déduplication : les tables « Portefeuille » de chaque `INDEX.adoc`
+  répètent les mêmes boroughs → doublons et propriétaires d'EPICs instables.
+* `dashboard.thyme` : Bootstrap CSS/JS + vis.js chargés depuis
+  `cdn.jsdelivr.net` / `unpkg.com` → rendu non offline, et canvas interactif
+  interdit par la frontière DSH-BOUNDARY (décision 5).
+
+== Travaux livrés
+
+=== 1. Crawl complet et robuste (`IndexCrawler`)
+
+* `crawlDirectory` élague `build`, `.gradle`, `.git`, `.kotlin`, `.idea`,
+  `node_modules`, `out`, `target`, `dist`, `.venv`, `venv`, `.tox`,
+  `__pycache__`, `.cache`, `backup`, `archives`.
+* `visitFileFailed` tolérant (un fichier illisible ne casse pas le crawl).
+* `parseIndex` appelé **une seule fois** par fichier.
+* Déduplication par clé stable : borough = `project`, epic = `borough|id`,
+  session = `borough|numéro` ; fusion « la ligne la plus riche gagne ».
+* Propriétaire d'un EPIC/session résolu par le **chemin le plus profond**
+  (normalisation des projets `workspace-agent (IntelliJ)` → `workspace-agent`).
+* **Fallback de synthèse** : un borough qui se décrit sans table
+  `Borough | Project` (attributs `:code-name:`, `_DAG_ : Nx`, prose) est
+  synthétisé depuis le répertoire `foundry/public|private/<repo>/`. Exemples :
+  `academy-gradle`, `bureau-gradle`, `conventions-gradle`,
+  `container-provision-gradle`, `newpipe-gradle`, `notebook-gradle`,
+  `office-template`, `video-kernel-gradle`.
+* `cleanName` retire les marqueurs d'emoji des noms (`Newark 🔴` → `Newark`).
+
+=== 2. Performance mesurée
+
+[source]
+----
+Dashboard data written to …/dashboard-data.json
+  (38 boroughs, 460 epics, 461 sessions) in 638ms
+----
+
+Le crawl de `foundry/` (38 projets, 4+ Go sur disque) s'exécute en **638 ms**
+grâce à l'élagage. Sans élagage, le même parcours dépasse 120 s.
+
+=== 3. Rendu
+
+* **Couches DAG (N0 → N4)** : table statique groupée par niveau
+  (borough + projet), niveaux inconnus affichés `N?` (fin des `()` vides).
+  → *retrait du canvas vis.js* (DSH-BOUNDARY-1, livré ici car requis par
+  « zéro CDN » et par la frontière S-216).
+* **Activity stream** : les 60 sessions les plus récentes sont affichées,
+  le badge indique `60 / 461 sessions` (le pivot JSON conserve **toutes** les
+  sessions).
+* **EPIC matrix** : plus aucun groupe `UNASSIGNED` (10 EPICs orphelins avant
+  normalisation du propriétaire, 0 après).
+* États vides conservés (aucun EPIC, aucune session, aucun jalon, aucun DAG).
+
+=== 4. Zéro CDN
+
+* Bootstrap **5.3.3** vendoré (`static/vendor/bootstrap.min.css`, 232 803 o,
+  licence MIT conservée dans l'en-tête) ; copié vers `vendor/` (site plat) et
+  `jbake/assets/css/` (site JBake).
+* Suppression des scripts `cdn.jsdelivr.net` (Bootstrap JS, inutile) et
+  `unpkg.com` (vis.js), du canvas et du JSON embarqué.
+* Preuve : aucune référence `href="http…"` / `src="http…"` dans `index.html`.
+
+=== 5. Configuration du consommateur racine
+
+[source,kotlin]
+----
+dashboard {
+    // DSH-9.2 — `../..` = foundry/ depuis dashboard-gradle/
+    configPath = providers.gradleProperty("dashboard.configPath").getOrElse("../..")
+    outputDir = "build/dashboard"
+    publishDir = "build/dashboard-publish"
+}
+----
+
+Surcharge : `./gradlew generateDashboard -Pdashboard.configPath=/autre/racine`.
+
+== Preuves
+
+[cols="2,3"]
+|===
+| Preuve | Résultat
+
+| `dashboard-data.json`
+| **38 boroughs**, **460 EPICs**, **461 sessions** (411 520 o)
+
+| `index.html`
+| en-tête `38 boroughs — 460 epics`, badge `38 boroughs / 7 niveaux`
+  (N0…N4 + N-IDE + N?)
+
+| Temps de crawl
+| **638 ms** (élagage actif)
+
+| Références externes
+| **0** (`grep '(href\|src)="https\?://'` = vide)
+
+| Assets locaux
+| `vendor/bootstrap.min.css` (232 803 o) + `styles.css` (3 483 o)
+
+| Boroughs manquants (avant)
+| `academy`, `bureau`, `conventions`, `container-provision`, `newpipe`,
+  `notebook`, `office-template`, `video-kernel` — désormais présents
+
+|===
+
+== Tests (compilés — Local = Build, Tests = CI)
+
+* `IndexCrawlerTest` : +2 (élagage `build/.git/.gradle/node_modules/backup/
+  archives` ; déduplication boroughs + EPICs) et nettoyage des noms.
+* `DashboardRendererTest` : test DAG remplacé (table statique) + test
+  « aucun asset externe » (pas de CDN, pas de vis-network, assets locaux) +
+  vérification `vendor/bootstrap.min.css` copié.
+* `WorkspaceCrawlTest` (nouveau, skip-gardé) : crawl réel de `foundry/` →
+  ≥ 30 boroughs (dont `academy-gradle`, `video-kernel-gradle`,
+  `conventions-gradle`, `workspace-bom`), ≥ 300 EPICs, sessions non vides.
+* `compileKotlin` / `compileTestKotlin` / `ktlintCheck` : **VERTS**.
+* Note : le workflow CI du dépôt est `Lint` uniquement (GBL-013 US-5) ; les
+  tests sont compilés et seront exécutés par un job de test CI lorsqu'il sera
+  ajouté (aucun test local lancé, règle EAGER).
+
+== Version
+
+* Prochaine release : **`0.0.5`** (jamais réutiliser `0.0.4`, publiée en S-222).
+* `gradle/libs.versions.toml` : `dashboard = "0.0.5"`.
+* Racine consommateur : `id("education.cccp.dashboard") version "0.0.5"`.
+
+== Décisions / écarts
+
+* DSH-BOUNDARY-1 (retrait vis.js + table N0→N4) est **livré en avance** par
+  cette session : il était le seul moyen d'atteindre le zéro CDN sans
+  vendoriser un canvas interactif interdit par la frontière.
+* DSH-BOUNDARY-2 reste **partiel** : `configPath → foundry/` est fait, mais le
+  parsing du `BACKLOG.adoc` racine, le calcul de % par points et le
+  `schemaVersion` du pivot restent à livrer.
+* Les boroughs `Tombouctou` (office/metiers/FPA) et les vestiges hors
+  `foundry/` ne sont pas crawlé (périmètre demandé : `foundry/`).
+
+== Suivant
+
+`DSH-BOUNDARY-0P` (gate maquette) puis `DSH-BOUNDARY-2` (avancement réel :
+BACKLOG racine + points + `schemaVersion`).

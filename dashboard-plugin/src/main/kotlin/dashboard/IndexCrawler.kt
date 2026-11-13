@@ -7,6 +7,7 @@ import dashboard.model.DashboardData
 import dashboard.model.EpicData
 import dashboard.model.EpicStatus
 import dashboard.model.SessionActivity
+import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
@@ -16,6 +17,10 @@ import java.nio.file.attribute.BasicFileAttributes
 /**
  * Crawls INDEX.adoc and SESSIONS_HISTORY.adoc files from the configured
  * workspace directory and produces a typed [DashboardData] model.
+ *
+ * Directories that only contain build output, dependency caches or historical
+ * backups are pruned so that crawling the whole `foundry/` tree stays fast and
+ * does not report duplicated governance entries.
  */
 class IndexCrawler {
     fun crawlDirectory(root: Path): DashboardData {
@@ -24,48 +29,85 @@ class IndexCrawler {
         Files.walkFileTree(
             root,
             object : SimpleFileVisitor<Path>() {
+                override fun preVisitDirectory(
+                    dir: Path,
+                    attrs: BasicFileAttributes,
+                ): FileVisitResult {
+                    val name = dir.fileName?.toString() ?: return FileVisitResult.CONTINUE
+                    val skipped = dir != root && name in SKIPPED_DIRECTORIES
+                    return if (skipped) FileVisitResult.SKIP_SUBTREE else FileVisitResult.CONTINUE
+                }
+
                 override fun visitFile(
                     file: Path,
                     attrs: BasicFileAttributes,
                 ): FileVisitResult {
                     when (file.fileName.toString()) {
-                        "INDEX.adoc" -> indexFiles.add(file)
-                        "SESSIONS_HISTORY.adoc" -> sessionFiles.add(file)
+                        INDEX_FILE -> indexFiles.add(file)
+                        SESSIONS_FILE -> sessionFiles.add(file)
                     }
                     return FileVisitResult.CONTINUE
                 }
+
+                override fun visitFileFailed(
+                    file: Path,
+                    exc: IOException,
+                ): FileVisitResult = FileVisitResult.CONTINUE
             },
         )
-        val allBoroughs = mutableListOf<BoroughData>()
-        val allNodes = mutableListOf<DagNode>()
-        for (f in indexFiles) {
-            val data = parseIndex(f)
-            allBoroughs.addAll(data.boroughs)
-            allNodes.addAll(data.dagNodes)
+        indexFiles.sort()
+        sessionFiles.sort()
+
+        val boroughs = LinkedHashMap<String, BoroughData>()
+        val epics = LinkedHashMap<String, EpicData>()
+        for (file in indexFiles) {
+            val data = parseIndex(file)
+            val fileBoroughs =
+                data.boroughs.ifEmpty {
+                    if (isAlreadyRepresented(root, file, boroughs.values)) {
+                        emptyList()
+                    } else {
+                        synthesizeBorough(root, file)?.let { listOf(it) } ?: emptyList()
+                    }
+                }
+            for (borough in fileBoroughs) {
+                boroughs.merge(boroughKey(borough), borough, ::mergeBorough)
+            }
+            val owner = extractBoroughFromPath(file, boroughs.values.toList())
+            for (epic in data.epics) {
+                val enriched = epic.copy(borough = epic.borough.ifBlank { owner ?: "" })
+                epics.merge(epicKey(enriched), enriched, ::mergeEpic)
+            }
         }
 
-        val allEpics = mutableListOf<EpicData>()
-        for (f in indexFiles) {
-            val data = parseIndex(f)
-            val owner = extractBoroughFromPath(f, allBoroughs)
-            allEpics.addAll(data.epics.map { it.copy(borough = owner ?: it.borough) })
+        val sessions = LinkedHashMap<String, SessionActivity>()
+        for (file in sessionFiles) {
+            val owner = extractBoroughFromPath(file, boroughs.values.toList())
+            for (session in crawlSessionsHistory(file)) {
+                val enriched = session.copy(borough = session.borough.ifBlank { owner ?: "" })
+                sessions.merge(sessionKey(enriched), enriched, ::mergeSession)
+            }
         }
 
-        val allSessions = mutableListOf<SessionActivity>()
-        for (f in sessionFiles) {
-            val sessions = crawlSessionsHistory(f)
-            val borough = extractBoroughFromPath(f, allBoroughs)
-            allSessions.addAll(sessions.map { it.copy(borough = borough ?: it.borough) })
-        }
+        val sortedBoroughs = boroughs.values.toList()
         return DashboardData(
-            boroughs = allBoroughs,
-            epics = allEpics,
-            dagNodes = allNodes,
-            sessions = allSessions,
+            boroughs = sortedBoroughs,
+            epics = epics.values.toList(),
+            dagNodes =
+                sortedBoroughs.map {
+                    DagNode(borough = it.name, project = it.project, dagLevel = it.dagLevel)
+                },
+            sessions = sessions.values.toList(),
         )
     }
 
     fun crawlIndex(file: Path): DashboardData = parseIndex(file)
+
+    fun crawlSessionsHistory(file: Path): List<SessionActivity> {
+        val content = Files.readString(file)
+        val tables = parseTables(content)
+        return tables.firstNotNullOfOrNull { parseSessionsTable(it) } ?: emptyList()
+    }
 
     private fun parseIndex(file: Path): DashboardData {
         val content = Files.readString(file)
@@ -76,20 +118,133 @@ class IndexCrawler {
         return DashboardData(boroughs = boroughs, epics = epics, dagNodes = nodes)
     }
 
-    fun crawlSessionsHistory(file: Path): List<SessionActivity> {
-        val content = Files.readString(file)
-        val tables = parseTables(content)
-        return tables.firstNotNullOfOrNull { parseSessionsTable(it) } ?: emptyList()
-    }
-
     private fun extractBoroughFromPath(
         file: Path,
         boroughs: List<BoroughData>,
     ): String? {
-        val segments = file.map { it.toString().lowercase() }
-        return boroughs.find { segments.contains(it.project.lowercase()) }?.name
-            ?: boroughs.find { segments.contains(it.name.lowercase()) }?.name
+        val segments = file.map { it.toString() }.toList().asReversed()
+        for (segment in segments) {
+            val candidate = segment.lowercase()
+            boroughs.firstOrNull { normalizeProject(it.project) == candidate }?.let { return it.name }
+            boroughs.firstOrNull { cleanName(it.name).lowercase() == candidate }?.let { return it.name }
+        }
+        return null
     }
+
+    private fun isAlreadyRepresented(
+        root: Path,
+        file: Path,
+        boroughs: Collection<BoroughData>,
+    ): Boolean {
+        val segments = runCatching { root.relativize(file) }.getOrNull()?.map { it.toString().lowercase() } ?: return false
+        return boroughs.any { borough ->
+            val project = normalizeProject(borough.project)
+            project.isNotBlank() && segments.contains(project)
+        }
+    }
+
+    private fun normalizeProject(project: String): String =
+        project
+            .replace(Regex("\\([^)]*\\)"), "")
+            .trim()
+            .lowercase()
+
+    /**
+     * Some boroughs describe themselves without a `Borough | Project` table
+     * (attributes + prose only). Fall back to the repository directory under
+     * `foundry/public|private` so that the dashboard still reports them.
+     */
+    private fun synthesizeBorough(
+        root: Path,
+        file: Path,
+    ): BoroughData? {
+        val relative = runCatching { root.relativize(file) }.getOrNull() ?: return null
+        val parts = relative.map { it.toString() }
+        val projectIndex = if (parts.size >= 2 && parts.first() in REPOSITORY_ROOTS) 1 else 0
+        if (projectIndex >= parts.size) return null
+        val project = parts[projectIndex]
+        if (project.isBlank()) return null
+
+        val content = runCatching { Files.readString(file) }.getOrDefault("")
+        val codeName =
+            CODE_NAME_ATTRIBUTE
+                .find(content)
+                ?.groupValues
+                ?.getOrNull(1)
+                ?.trim()
+                ?.takeIf { it.isNotBlank() }
+        val dagLevel =
+            DAG_ATTRIBUTE
+                .find(content)
+                ?.groupValues
+                ?.getOrNull(1)
+                ?.trim()
+                .orEmpty()
+
+        return BoroughData(
+            name = cleanName(codeName ?: prettify(project)),
+            project = project,
+            dagLevel = dagLevel,
+            role = "",
+            session = "",
+        )
+    }
+
+    private fun prettify(project: String): String =
+        project
+            .removeSuffix("-gradle")
+            .split('-')
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+
+    private fun cleanName(raw: String): String =
+        raw
+            .replace(Regex("[^\\p{L}\\p{N} .'\\-]"), "")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+
+    private fun boroughKey(borough: BoroughData): String = (borough.project.ifBlank { borough.name }).trim().lowercase()
+
+    private fun epicKey(epic: EpicData): String = "${epic.borough.trim().lowercase()}|${epic.id.trim().lowercase()}"
+
+    private fun sessionKey(session: SessionActivity): String = "${session.borough.trim().lowercase()}|${session.number.trim().lowercase()}"
+
+    private fun mergeBorough(
+        existing: BoroughData,
+        candidate: BoroughData,
+    ): BoroughData {
+        val winner = if (richness(candidate) > richness(existing)) candidate else existing
+        val fallback = if (winner === existing) candidate else existing
+        return winner.copy(
+            name = winner.name.ifBlank { fallback.name },
+            project = winner.project.ifBlank { fallback.project },
+            dagLevel = winner.dagLevel.ifBlank { fallback.dagLevel },
+            role = winner.role.ifBlank { fallback.role },
+            session = winner.session.ifBlank { fallback.session },
+        )
+    }
+
+    private fun richness(borough: BoroughData): Int = listOf(borough.dagLevel, borough.role, borough.session, borough.project).count { it.isNotBlank() }
+
+    private fun mergeEpic(
+        existing: EpicData,
+        candidate: EpicData,
+    ): EpicData =
+        if (candidate.title.isNotBlank() && existing.title.isBlank()) {
+            candidate
+        } else {
+            existing
+        }
+
+    private fun mergeSession(
+        existing: SessionActivity,
+        candidate: SessionActivity,
+    ): SessionActivity =
+        if (candidate.subject.isNotBlank() && existing.subject.isBlank()) {
+            candidate
+        } else {
+            existing
+        }
 
     private fun parseTables(content: String): List<List<List<String>>> {
         val tableRegex = """\|={3,}\n(.*?)\n\|={3,}""".toRegex(setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.MULTILINE))
@@ -130,7 +285,7 @@ class IndexCrawler {
                     else -> BoroughStatus.ACTIVE
                 }
             BoroughData(
-                name = row.getOrElse(boroughIdx) { "" }.replace("==", "").trim(),
+                name = cleanName(row.getOrElse(boroughIdx) { "" }.replace("==", "")),
                 project = project.replace("==", "").trim(),
                 dagLevel = dagIdx.takeIf { it >= 0 && it < row.size }?.let { row[it] } ?: "",
                 role = role,
@@ -203,5 +358,36 @@ class IndexCrawler {
     private fun extractSessionNumber(raw: String): String {
         val match = Regex("""S?(\d{3})""").find(raw)
         return match?.groupValues?.get(1) ?: ""
+    }
+
+    companion object {
+        private const val INDEX_FILE = "INDEX.adoc"
+        private const val SESSIONS_FILE = "SESSIONS_HISTORY.adoc"
+
+        private val REPOSITORY_ROOTS = setOf("public", "private")
+        private val CODE_NAME_ATTRIBUTE = Regex("""^:code-name:\s*(.+)$""", setOf(RegexOption.MULTILINE))
+        private val DAG_ATTRIBUTE = Regex("""(?i)_?DAG_?\s*:\s*(N[-\w]+)""")
+
+        private val SKIPPED_DIRECTORIES =
+            setOf(
+                "build",
+                ".gradle",
+                ".git",
+                ".kotlin",
+                ".idea",
+                "node_modules",
+                "out",
+                "target",
+                "dist",
+                ".venv",
+                "venv",
+                ".tox",
+                "__pycache__",
+                ".cache",
+                "backup",
+                "archives",
+            )
+
+        fun skippedDirectories(): Set<String> = SKIPPED_DIRECTORIES
     }
 }

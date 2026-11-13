@@ -19,25 +19,46 @@ dashboard-gradle/
 
 == Prerequisites
 
-- JDK 24+
-- Gradle 9.5+
+- JDK 25+
+- Gradle 9.9+
 
 == Development
 
 [source,shell]
 ----
 # Build the plugin
-cd dashboard-plugin && ./gradlew publishToMavenLocal
+cd dashboard-plugin && ./gradlew publishToMavenLocal -Pversion=0.0.5
 
-# Exercise it from the root
-cd .. && ./gradlew tasks
+# Exercise it from the root (crawls ../.. = foundry/)
+cd .. && ./gradlew generateDashboard
+----
+
+The crawled directory is configurable:
+
+[source,shell]
+----
+./gradlew generateDashboard -Pdashboard.configPath=/path/to/foundry
 ----
 
 == Tasks
 
-- `crawlDashboard` — crawls all `INDEX.adoc` and `SESSIONS_HISTORY.adoc` files and produces `build/dashboard/dashboard-data.json`
-- `generateDashboard` — renders the static dashboard site (`index.html`, `styles.css`, DAG graph)
-- `publishDashboardSite` — copies the generated JBake-compatible site to `build/dashboard-publish`
+- `crawlDashboard` — crawls every `INDEX.adoc` / `SESSIONS_HISTORY.adoc` of the
+  workspace (`build/`, `.gradle/`, `.git/`, `node_modules/`, backups pruned) and
+  writes `build/dashboard/dashboard-data.json`
+- `generateDashboard` — renders the offline static dashboard (`index.html`,
+  `styles.css`, vendored `vendor/bootstrap.min.css`, JBake site)
+- `publishDashboardSite` — copies the generated JBake-compatible site to
+  `build/dashboard-publish`
+- `serve` — serves the generated site locally on `http://localhost:8820`
+  (`-Pdashboard.serveHost` / `-Pdashboard.servePort`)
+
+== Rendering
+
+- EPIC matrix grouped by borough, activity stream (60 most recent sessions,
+  full set in the JSON pivot), DAG layers as a static `N0 → N4` table
+  (interactive graph belongs to Brooklin Flow), MVP0 timeline.
+- No CDN: Bootstrap 5.3.3 is vendored (`src/main/resources/static/vendor/`),
+  the page renders fully offline.
 
 == Testing
 
@@ -47,6 +68,9 @@ cd .. && ./gradlew tasks
 ./gradlew cucumberTest  # BDD scenarios
 ./gradlew check         # everything
 ----
+
+Local policy: build/compile only (`compileKotlin`, `compileTestKotlin`);
+test suites run in CI.
 
 == License
 

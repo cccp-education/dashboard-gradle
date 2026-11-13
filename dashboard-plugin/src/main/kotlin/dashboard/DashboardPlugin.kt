@@ -47,7 +47,9 @@ class DashboardPlugin : Plugin<Project> {
                 }
 
                 val crawler = IndexCrawler()
+                val startedAt = System.nanoTime()
                 val data = crawler.crawlDirectory(root)
+                val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000
 
                 val outPath = project.projectDir.toPath().resolve(outputDir)
                 Files.createDirectories(outPath)
@@ -60,7 +62,7 @@ class DashboardPlugin : Plugin<Project> {
                 val jsonFile = outPath.resolve("dashboard-data.json")
                 mapper.writeValue(jsonFile.toFile(), data)
                 project.logger.lifecycle(
-                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions)",
+                    "Dashboard data written to $jsonFile (${data.boroughs.size} boroughs, ${data.epics.size} epics, ${data.sessions.size} sessions) in ${elapsedMs}ms",
                 )
             }
         }

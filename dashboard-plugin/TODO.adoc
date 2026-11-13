@@ -7,9 +7,13 @@
 - [x] Ajouter SessionActivity au modèle pivot + crawler SESSIONS_HISTORY.adoc — S004 ✅
 - [ ] Ajouter une page "Sante du workspace" (builds qui cassent, versions) — P2
 - [x] Finaliser DSH-7 déploiement gh-pages via runner-gradle — S009 ✅
-- [ ] Implémenter theme JBake dashboard.thyme — S005
-- [ ] Implémenter vue EPIC Matrix — S005
-- [ ] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005
-- [x] Implémenter vue DAG Graph — S007 ✅
+- [x] Implémenter theme JBake dashboard.thyme — S005 ✅
+- [x] Implémenter vue EPIC Matrix — S005 ✅
+- [x] Implémenter vue Activity Stream (SESSIONS_HISTORY) — S005 ✅
+- [x] Implémenter vue DAG Graph — S007 ✅ (canvas vis.js retiré S-223, table N0→N4)
 - [x] Implémenter vue Timeline MVP0 — S008 ✅
 - [x] Ajouter une tâche `serve` (serveur local, `http://localhost:8820`) — DSH-9.1 — S220/222 ✅
+- [x] Crawl complet de `foundry/` + rendu offline (zéro CDN) — DSH-9.2 — S223 ✅
+- [ ] Valider la maquette Phase 0 (`prototype/`) — DSH-BOUNDARY-0P (gate bloquant)
+- [ ] Avancement réel : BACKLOG racine + % par points + `schemaVersion` — DSH-BOUNDARY-2
+- [ ] Incrémentalité `@InputFiles`/`@OutputDirectory`/`@CacheableTask` — DSH-BOUNDARY-3

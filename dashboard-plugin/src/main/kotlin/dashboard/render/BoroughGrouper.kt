@@ -21,7 +21,7 @@ object BoroughGrouper {
                 .map { borough ->
                     BoroughGroup(
                         name = borough.name,
-                        dagLevel = borough.dagLevel,
+                        dagLevel = borough.dagLevel.ifBlank { "N?" },
                         project = borough.project,
                         status = borough.status.name,
                         epics = sortEpics(epicsByBorough[borough.name] ?: emptyList()),

@@ -149,10 +149,11 @@ class DashboardRendererTest {
         DashboardRenderer().render(data, tempDir)
 
         assertThat(tempDir.resolve("styles.css")).exists()
+        assertThat(tempDir.resolve("vendor/bootstrap.min.css")).exists()
     }
 
     @Test
-    fun `render should include DAG graph section with embedded graph json`(
+    fun `render should expose the DAG as a static table without any external asset`(
         @TempDir tempDir: Path,
     ) {
         val data =
@@ -169,13 +170,18 @@ class DashboardRendererTest {
         DashboardRenderer().render(data, tempDir)
 
         val html = Files.readString(tempDir.resolve("index.html"))
-        assertThat(html).contains("DAG Graph")
-        assertThat(html).contains("dag-graph")
-        assertThat(html).contains("vis-network")
+        assertThat(html).contains("Couches DAG")
         assertThat(html).contains("BAKERY (N2)")
         assertThat(html).contains("Dashboard (N3)")
-        assertThat(html).contains("\"from\" : \"BAKERY\"")
-        assertThat(html).contains("\"to\" : \"Dashboard\"")
+        assertThat(html).contains("bakery-gradle")
+
+        // DSH-9.2 — offline render: no CDN, no interactive canvas, local assets only.
+        assertThat(html).doesNotContain("cdn.jsdelivr")
+        assertThat(html).doesNotContain("unpkg.com")
+        assertThat(html).doesNotContain("vis-network")
+        assertThat(html).doesNotContain("src=\"http")
+        assertThat(html).doesNotContain("href=\"http")
+        assertThat(html).contains("vendor/bootstrap.min.css")
     }
 
     @Test

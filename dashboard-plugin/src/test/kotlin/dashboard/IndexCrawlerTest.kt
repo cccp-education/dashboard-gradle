@@ -192,4 +192,81 @@ class IndexCrawlerTest {
         assertThat(data.sessions[0].borough).isEqualTo("Dashboard")
         assertThat(data.sessions[0].subject).isEqualTo("Renommage ALGER")
     }
+
+    @Test
+    fun `crawlDirectory should prune build output, caches and historical backups`() {
+        val bakery = tempDir.resolve("bakery")
+        Files.createDirectories(bakery)
+        Files.writeString(
+            bakery.resolve("INDEX.adoc"),
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | BAKERY | bakery-gradle | N2 | Site statique | S001
+            |===
+            """.trimIndent(),
+        )
+        for (skipped in listOf("build", ".git", ".gradle", "node_modules", ".agents/backup", ".agents/archives")) {
+            val dir = bakery.resolve(skipped)
+            Files.createDirectories(dir)
+            Files.writeString(
+                dir.resolve("INDEX.adoc"),
+                """
+                |===
+                | Borough | Project | DAG | Role in MVP0 | Session
+                | GHOST | ghost-gradle | N9 | build output | S999
+                |===
+                """.trimIndent(),
+            )
+            Files.writeString(dir.resolve("SESSIONS_HISTORY.adoc"), "|===\n| # | Date | Subject | Files\n| 999 | x | Ghost | 0 |\n|===")
+        }
+
+        val data = crawler.crawlDirectory(tempDir)
+
+        assertThat(data.boroughs).hasSize(1)
+        assertThat(data.boroughs[0].name).isEqualTo("BAKERY")
+        assertThat(data.sessions).isEmpty()
+    }
+
+    @Test
+    fun `crawlDirectory should deduplicate boroughs and epics across INDEX files`() {
+        val rootIndex = tempDir.resolve("dashboard-gradle/INDEX.adoc")
+        Files.createDirectories(rootIndex.parent)
+        Files.writeString(
+            rootIndex,
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | Dashboard | dashboard-gradle | N3 | Dashboard vision | S003
+            |===
+            |===
+            | EPIC | Sujet | Pts | Priorite | Statut
+            | DSH-0 | Bootstrap | 3 | P0 | ✅ S000
+            |===
+            """.trimIndent(),
+        )
+
+        val pluginIndex = tempDir.resolve("dashboard-gradle/dashboard-plugin/.agents/INDEX.adoc")
+        Files.createDirectories(pluginIndex.parent)
+        Files.writeString(
+            pluginIndex,
+            """
+            |===
+            | Borough | Project | DAG | Role in MVP0 | Session
+            | Dashboard | dashboard-gradle | N3 | Dashboard vision | S005
+            |===
+            |===
+            | EPIC | Sujet | Pts | Priorite | Statut
+            | DSH-0 | Bootstrap | 3 | P0 | ✅ S000
+            | DSH-9 | Serveur local | 8 | P1 | 🟡 S220
+            |===
+            """.trimIndent(),
+        )
+
+        val data = crawler.crawlDirectory(tempDir)
+
+        assertThat(data.boroughs).hasSize(1)
+        assertThat(data.epics).hasSize(2)
+        assertThat(data.epics.map { it.id }).containsExactlyInAnyOrder("DSH-0", "DSH-9")
+    }
 }

@@ -2,3 +2,5 @@
 
 * GBL-013 — portabilité CI (session close) : voir `.agents/sessions/` (rapport dédié).
 * DSH-9.1 — tâche `serve` (serveur HTTP JDK, `localhost:8820`, garde path-traversal) : `dashboard-plugin 0.0.2 → 0.0.3 → 0.0.4`, sessions 220/222.
+* DSH-9.2 — crawl complet `foundry/` (38 boroughs / 460 EPICs / 461 sessions, 638 ms), élagage + déduplication + fallback de synthèse ; zéro CDN (Bootstrap 5.3.3 vendoré, vis.js retiré) ; `configPath` racine `../..` (surcharge `-Pdashboard.configPath`) ; activity stream plafonné à 60 récents — session 223.
+* DSH-BOUNDARY-1 — retrait du canvas vis.js + table statique « Couches DAG (N0 → N4) », livré en avance (contrainte zéro CDN + frontière S-216) — session 223.

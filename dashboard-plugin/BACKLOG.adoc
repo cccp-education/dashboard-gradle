@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-11-14 (S-220 — **DSH-9.1 livré** : tâche `serve` — serveur HTTP JDK loopback, garde path-traversal, host/port configurables ; DSH-9.2 (crawl/rendu) reste ouvert.)_
+_Dernière mise à jour : 2026-11-14 (S-223 — **DSH-9.2 ✅** : crawl complet de `foundry/` — 38 boroughs / 460 EPICs / 461 sessions en 638 ms ; zéro CDN (Bootstrap vendoré, vis.js retiré) ; **DSH-BOUNDARY-1 ✅ livré en avance** (table DAG N0→N4). DSH-BOUNDARY-2 reste partiel : `configPath` seul.)_
 
 == P0 — Terminé
 
@@ -71,8 +71,8 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 
 |===
 | US | Description | Statut | Pts
-| DSH-BOUNDARY-1 | Retrait canvas vis.js + table ordonnée N0→N4 (structure cedee a Brooklin Flow) | 🟡 À FAIRE | 3
-| DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | 🟡 À FAIRE | 5
+| DSH-BOUNDARY-1 | Retrait canvas vis.js + table ordonnée N0→N4 (structure cedee a Brooklin Flow) | ✅ TERMINÉ (S-223, livré avec le zéro CDN) | 3
+| DSH-BOUNDARY-2 | Avancement réel : `configPath` → `foundry/`, parsing `BACKLOG.adoc` racine + par borough, % par points, `schemaVersion` du pivot | 🟡 PARTIEL (S-223 : `configPath` ✅ ; BACKLOG + % + `schemaVersion` à faire) | 5
 | DSH-BOUNDARY-3 | Incrémentalité : `@TaskAction` + `@InputFiles`/`@OutputDirectory`/`@CacheableTask` (UP-TO-DATE si contenu/structure inchanges) | 🟡 À FAIRE | 3
 | DSH-BOUNDARY-4 | Homepage Panorama (3 zones vision/avancement/structure) + page fiche borough (niveau 1) | 🟡 À FAIRE | 5
 |===
@@ -127,7 +127,7 @@ _Faits mesurés (S-220)_ :
 * Tests : unit (résolution port/MIME), functional TestKit (démarrage/arrêt),
   Cucumber BDD.
 
-=== US DSH-9.2 — Audit + correction du rendu `generateDashboard` — 5 pts — 🟡 À FAIRE
+=== US DSH-9.2 — Audit + correction du rendu `generateDashboard` — 5 pts — ✅ S-223
 
 * Corriger la source de données : `configPath` → racine workspace ; crawl de
   **tous** les boroughs (INDEX + BACKLOG + SESSIONS_HISTORY).

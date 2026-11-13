@@ -59,3 +59,20 @@ workspace-bom aligné. Preuve : `./gradlew serve` → 200/200/404 sur
 
 Clôture S-222 : `PROMPT_REPRISE.adoc` réécrit pour la session 223 (DSH-9.2) et
 commité (`af9aa62`) ; couverture/archive/TODO mis à jour. Arbre propre.
+
+== Session 223 — DSH-9.2 : crawl complet + rendu offline — 2026-11-14
+
+Le dashboard agrège désormais tout `foundry/` : **38 boroughs, 460 EPICs,
+461 sessions** (crawl **638 ms**). `IndexCrawler` élague les répertoires de
+build/caches/backups, déduplique boroughs/EPICs/sessions (« la ligne la plus
+riche gagne ») et synthétise les boroughs qui se décrivent sans table
+`Borough | Project` (attributs `:code-name:`, `_DAG_ :`). `configPath` racine =
+`../..` (`-Pdashboard.configPath` surchargeable). Rendu : table statique
+« Couches DAG (N0 → N4) » (vis.js retiré = DSH-BOUNDARY-1 ✅ en avance),
+activity stream plafonné à 60 récents sur 461, états vides conservés.
+**Zéro CDN** : Bootstrap 5.3.3 vendoré (`static/vendor/bootstrap.min.css`),
+aucune référence `href/src` externe. Tests compilés : +2 `IndexCrawlerTest`
+(élagage, déduplication), `DashboardRendererTest` (DAG statique + absence
+d'assets externes), `WorkspaceCrawlTest` skip-gardé (≥ 30 boroughs réels).
+Prochaine release `0.0.5`. Rapport
+`.agents/sessions/223-dsh-9-2-crawl-render.adoc`.

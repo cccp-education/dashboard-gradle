@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dashboard.model.DashboardData
 import dashboard.model.EpicStatus
+import dashboard.model.SessionActivity
 import dashboard.timeline.TimelineBuilder
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
@@ -19,8 +20,9 @@ import java.nio.file.Path
  *
  * Thymeleaf is initialized with a [ClassLoaderTemplateResolver] pointing to the
  * embedded templates in `src/main/resources/templates/`. The output produces:
- * - `index.html`: main page with EPIC matrix, activity stream, and DAG graph
+ * - `index.html`: main page with EPIC matrix, activity stream, DAG layers and timeline
  * - `styles.css`: stylesheet with the status palette
+ * - `vendor/bootstrap.min.css`: vendored Bootstrap (offline render, no CDN)
  */
 class DashboardRenderer {
     private val templateEngine: TemplateEngine = createTemplateEngine()
@@ -44,12 +46,12 @@ class DashboardRenderer {
                 title = "Dashboard Workspace CCCP",
                 boroughs = data.boroughs.sortedBy { it.dagLevel },
                 epics = data.epics.sortedWith(compareBy({ it.priority }, { it.id })),
-                sessions = data.sessions.sortedByDescending { it.number.padStart(3, '0') },
+                sessions = recentSessions(data.sessions),
                 stats = computeStats(data),
                 boroughGroups = BoroughGrouper.groupByBorough(data),
-                dagGraph = dagGraph,
-                dagGraphJson = mapper.writeValueAsString(dagGraph),
+                dagLevels = groupDagLevels(dagGraph),
                 timeline = TimelineBuilder.build(data),
+                sessionCount = data.sessions.size,
             )
 
         val context =
@@ -63,17 +65,23 @@ class DashboardRenderer {
         // ── Flat site (legacy, consumed by direct preview)
         Files.writeString(outputDir.resolve("index.html"), html)
         copyStaticAsset("static/styles.css", outputDir.resolve("styles.css"))
+        copyStaticAsset(VENDOR_BOOTSTRAP, outputDir.resolve("vendor/bootstrap.min.css"))
 
         // ── JBake-compatible site structure, consumable by bakery-gradle serve/bake
         val jbakeDir = outputDir.resolve("jbake")
         Files.createDirectories(jbakeDir)
         writeJbakeProperties(jbakeDir.resolve("jbake.properties"))
         Files.createDirectories(jbakeDir.resolve("content"))
-        Files.writeString(jbakeDir.resolve("content/index.html"), wrapAsJbakeContent(html.replace("href=\"styles.css\"", "href=\"css/styles.css\"")))
+        val jbakeHtml =
+            html
+                .replace("href=\"styles.css\"", "href=\"css/styles.css\"")
+                .replace("href=\"vendor/bootstrap.min.css\"", "href=\"css/bootstrap.min.css\"")
+        Files.writeString(jbakeDir.resolve("content/index.html"), wrapAsJbakeContent(jbakeHtml))
         Files.createDirectories(jbakeDir.resolve("templates"))
         copyStaticAsset("templates/jbake-index.thyme", jbakeDir.resolve("templates/index.thyme"))
         Files.createDirectories(jbakeDir.resolve("assets/css"))
         copyStaticAsset("static/styles.css", jbakeDir.resolve("assets/css/styles.css"))
+        copyStaticAsset(VENDOR_BOOTSTRAP, jbakeDir.resolve("assets/css/bootstrap.min.css"))
         Files.createDirectories(jbakeDir.resolve("assets/js"))
         Files.writeString(jbakeDir.resolve("assets/js/dashboard-data.json"), mapper.writeValueAsString(data))
     }
@@ -101,10 +109,30 @@ class DashboardRenderer {
         )
     }
 
+    /**
+     * Keeps the activity stream readable when the workspace holds thousands of
+     * sessions: the full set stays in `dashboard-data.json`, the page shows the
+     * most recent entries only.
+     */
+    private fun recentSessions(sessions: List<SessionActivity>): List<SessionActivity> =
+        sessions
+            .sortedWith(compareByDescending<SessionActivity> { it.date }.thenByDescending { it.number })
+            .take(RECENT_SESSIONS_LIMIT)
+
+    private fun groupDagLevels(graph: DagGraph): List<DagLevelGroup> =
+        graph.nodes
+            .groupBy { it.group.ifBlank { UNKNOWN_DAG_LEVEL } }
+            .toList()
+            .sortedWith(compareBy({ DagGraphBuilder.parseDagLevel(it.first) }, { it.first }))
+            .map { (level, nodes) ->
+                DagLevelGroup(level = level, nodes = nodes.sortedBy { it.project })
+            }
+
     private fun copyStaticAsset(
         resourcePath: String,
         target: Path,
     ) {
+        target.parent?.let { Files.createDirectories(it) }
         javaClass.classLoader.getResourceAsStream(resourcePath)?.use { input ->
             Files.copy(input, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         } ?: throw IllegalStateException("Static asset not found: $resourcePath")
@@ -147,6 +175,10 @@ $html
     }
 
     companion object {
+        private const val VENDOR_BOOTSTRAP = "static/vendor/bootstrap.min.css"
+        private const val RECENT_SESSIONS_LIMIT = 60
+        private const val UNKNOWN_DAG_LEVEL = "N?"
+
         /**
          * Returns the CSS class associated with an EPIC status.
          */
