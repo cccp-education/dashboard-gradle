@@ -6,3 +6,5 @@
 * DSH-BOUNDARY-1 — retrait du canvas vis.js + table statique « Couches DAG (N0 → N4) », livré en avance (contrainte zéro CDN + frontière S-216) — session 223.
 * DSH-BOUNDARY-2 — `progress` par points (global + par borough), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse »), `schemaVersion 1.0` du pivot ; rendu carte d'avancement global + badges par borough + colonne DAG — session 224.
 * DSH-BOUNDARY-0P — prototype de navigation pur HTML/CSS/JS/mock (`prototype/` : Panorama 3 zones, fiche borough, coquille graphe, états empty/loaded/overloaded), exclu du JAR — session 224 (validation pilote en attente).
+
+* GBL-013 US-9 — `WorkspaceCrawlTest` skip-gardé en CI isolée (`foundry/public/workspace-bom`) ; correctif cross-borough `dashboard-plugin` ; run `43524985246` vert — session 225.

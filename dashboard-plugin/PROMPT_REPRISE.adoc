@@ -1,6 +1,14 @@
-= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 225
-:session: 225
+= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 226
+:session: 226
 :date: 2026-11-14
+
+== Session 225 — GBL-013 US-9 : crawl plein workspace en CI isolée
+
+* `WorkspaceCrawlTest` skip-gardé sur `foundry/public/workspace-bom` (le
+  workspace complet) ; la matrice cross-borough clone un seul borough.
+* Correctif workspace-bom : `dashboard-plugin` est le build testable, pas la
+  racine consommateur (pattern 0124).
+* Run `43524985246` VERT. Rapport `.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
 
 == Où on en est (acquis — ne pas refaire)
 

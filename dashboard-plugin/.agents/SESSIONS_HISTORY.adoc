@@ -97,3 +97,11 @@ EPICs / 461 sessions — 47 % (196/417 pts)** en ~400 ms. Tests compilés :
 functional (+1), Cucumber (+1 scénario). Release JitPack `0.0.6`
 (tag `v0.0.6`, POM/JAR 200, `prototype` exclu du JAR). Rapport
 `.agents/sessions/224-dsh-boundary-0p-2.adoc`.
+
+== Session 225 — GBL-013 US-9 : crawl plein workspace en CI isolée — 2026-11-14
+
+`WorkspaceCrawlTest` skip-gardé sur `foundry/public/workspace-bom` (workspace
+complet) ; la matrice cross-borough clone un seul borough. Correctif workspace-bom
+(`dashboard-plugin` comme sous-build). Run `43524985246` **VERT**. Rapport
+`.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
+

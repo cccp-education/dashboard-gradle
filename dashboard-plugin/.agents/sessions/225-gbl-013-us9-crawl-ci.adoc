@@ -1,0 +1,21 @@
+= Session 225 — GBL-013 US-9 : crawl plein workspace root-safe en CI isolée
+:date: 2026-11-14
+:borough: ALGER (dashboard-gradle)
+
+== Livré
+
+* `WorkspaceCrawlTest` : l'assertion « whole workspace » est désormais
+  skip-gardée sur la présence de `foundry/public/workspace-bom` (preuve du
+  workspace complet). Dans la matrice cross-borough, seul le borough dashboard
+  est cloné sous `foundry/public/` — le test s'abstient au lieu d'échouer sur
+  un crawl d'un seul borough.
+* Correctif CI cross-borough (workspace-bom) : `testableProjects` et la matrice
+  `Check · dashboard` pointent vers `dashboard-plugin` (build autonome 0124),
+  plus vers la racine sans tâche `check`.
+* Ré-exécution du run `43524985246` **VERTE** (commit `4576e21` côté
+  workspace-bom + `9a73e1a` côté dashboard).
+
+== Notes
+
+Test-only ; aucun code métier modifié. `compileTestKotlin` + `ktlintCheck`
+VERTS (Local = Build).

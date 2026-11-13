@@ -1,5 +1,6 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
+_Derniere mise a jour_ : 2026-11-14 — Session 225 (GBL-013 US-9 : `WorkspaceCrawlTest` skip-gardé en CI isolée, matrice cross-borough `dashboard-plugin`, run `43524985246` VERT)
 _Derniere mise a jour_ : 2026-11-14 — Session 224 (DSH-BOUNDARY-0P + DSH-BOUNDARY-2)
 _session terminee_ : 224 — **DSH-BOUNDARY-2 ✅** : `progress` par **points** (global + par borough, `schemaVersion 1.0`), parsing du `BACKLOG.adoc` racine (EPICs GBL « Transverse ») ; **DSH-BOUNDARY-0P** implémenté (`prototype/` : Panorama 3 zones, fiche borough, coquille graphe, états empty/loaded/overloaded) en attente de validation pilote. Preuve dogfood : **39 boroughs / 471 EPICs / 461 sessions — 47 % (196/417 pts)** en 355 ms. **Release JitPack `0.0.6`** (tag `v0.0.6`, POM/JAR HTTP 200, `prototype` absent du JAR). Rapport `.agents/sessions/224-dsh-boundary-0p-2.adoc`.
 _session terminee_ : 223 — **DSH-9.2 ✅** : crawl complet de `foundry/` (**38 boroughs / 460 EPICs / 461 sessions en 638 ms**), élagage + déduplication + fallback de synthèse, **zéro CDN** (Bootstrap 5.3.3 vendoré, vis.js retiré) et **DSH-BOUNDARY-1 ✅ livré en avance** (table statique DAG N0→N4). **Release JitPack `0.0.5`** (tag `v0.0.5`, POM/JAR HTTP 200, dogfood racine 740 ms). Rapport `.agents/sessions/223-dsh-9-2-crawl-render.adoc`.
