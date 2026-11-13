@@ -1,8 +1,11 @@
-# CNV-16 — JitPack build recipe (N2 dashboard-plugin).
+# CNV-17 — JitPack canal unique (N3 dashboard-plugin).
+# Build from a public tag; the plugin version comes from the workspace catalog
+# (`ws.versions.dashboard.plugin`, 0.0.2) and JitPack serves it at the tag.
 before_install:
-  - sdk install java 25.0.5.0+8-tem
-  - sdk use java 25.0.5.0+8-tem
+  - sdk install java 25-open || (sleep 10 && sdk install java 25-open)
+  - sdk use java 25-open
+  - java -version 2>&1 | grep -q 'version "25'
 install:
-  - ./gradlew publishToMavenLocal
+  - ./gradlew publishToMavenLocal -Pversion="${VERSION#v}"
 env:
   CI: "true"

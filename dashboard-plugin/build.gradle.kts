@@ -13,8 +13,9 @@ plugins {
 
 group = "education.cccp"
 version =
-    ws.versions.dashboard.plugin
-        .get()
+    providers
+        .gradleProperty("version")
+        .getOrElse(ws.versions.dashboard.plugin.get())
 kotlin.jvmToolchain(25)
 
 repositories {
