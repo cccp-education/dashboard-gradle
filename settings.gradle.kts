@@ -11,7 +11,7 @@ pluginManagement {
 pluginManagement.repositories.maven("https://jitpack.io")
 pluginManagement.resolutionStrategy.eachPlugin {
     if (requested.id.id.startsWith("education.cccp.build.")) {
-        useModule("com.github.cccp-education.conventions-gradle:conventions-plugin:0.0.16")
+        useModule("com.github.cccp-education.conventions-gradle:conventions-plugin:v0.0.17")
     }
 }
 
@@ -36,11 +36,11 @@ rootProject.name = "dashboard-gradle"
 include("dashboard-plugin")
 
 // ── MEM-CAT-ROLLOUT-6 — Catalog workspace published (MEMPHIS): single pin per borough (D4) ──
-// education.cccp:workspace-catalog:0.0.116 — cross-borough source of truth for plugin versions.
+// Catalog workspace served by JitPack (CNV-17) — single pin per borough (D4)
 dependencyResolutionManagement {
     versionCatalogs {
         create("ws") {
-            from("education.cccp:workspace-catalog:0.0.116")
+            from("com.github.cccp-education.workspace-bom:workspace-catalog:0.0.136")
         }
     }
 }
@@ -54,3 +54,4 @@ nmcpSettings {
         publishingType = "AUTOMATIC"
     }
 }
+dependencyResolutionManagement.repositories.maven("https://jitpack.io")
