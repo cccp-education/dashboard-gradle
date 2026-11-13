@@ -50,7 +50,7 @@ class ServeDashboardFunctionalTest {
                 .withPluginClasspath()
                 .build()
 
-        assertThat(result.output).contains("serve - Serves the generated dashboard")
+        assertThat(result.output).contains("serve - Serves the generated dashboard locally (default http://localhost:8820")
     }
 
     @Test

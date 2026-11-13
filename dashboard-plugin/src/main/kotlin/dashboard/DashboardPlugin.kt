@@ -23,13 +23,13 @@ class DashboardPlugin : Plugin<Project> {
         val extension = project.extensions.create("dashboard", DashboardExtension::class.java)
 
         extension.serveHost.convention(
-            project.providers.gradleProperty("dashboard.serveHost").orElse("127.0.0.1"),
+            project.providers.gradleProperty("dashboard.serveHost").orElse("localhost"),
         )
         extension.servePort.convention(
             project.providers
                 .gradleProperty("dashboard.servePort")
                 .map { it.trim().toInt() }
-                .orElse(8080),
+                .orElse(8820),
         )
 
         project.tasks.register("crawlDashboard") { task ->
@@ -93,7 +93,7 @@ class DashboardPlugin : Plugin<Project> {
         project.tasks.register("serve", ServeDashboardTask::class.java) { task ->
             task.group = DashboardConstants.DASHBOARD_GROUP
             task.description =
-                "Serves the generated dashboard locally (default http://127.0.0.1:8080, Ctrl+C to stop)."
+                "Serves the generated dashboard locally (default http://localhost:8820, Ctrl+C to stop)."
             task.dependsOn("generateDashboard")
             task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
             task.host.set(extension.serveHost)
