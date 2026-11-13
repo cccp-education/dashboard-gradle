@@ -1,0 +1,63 @@
+= Session 220 — DSH-9.1 : tâche `serve` (serveur local)
+:session: 220
+:date: 2026-11-14
+:us: DSH-9.1
+:statut: ✅ TERMINÉ
+
+== Mission
+
+Ajouter au plugin une tâche `serve` (serveur local du dashboard généré),
+absente jusqu'ici (`crawlDashboard`, `generateDashboard`,
+`publishDashboardSite` seulement).
+
+== Livré
+
+=== Domaine `dashboard.serve`
+
+* `DashboardMimeTypes` (objet pur) — MIME par extension (HTML/CSS/JS/JSON/SVG/
+  polices, fallback `application/octet-stream`).
+* `DashboardStaticContent` (objet pur) — résolution demande → fichier :
+  `/` et répertoires → `index.html`, query string ignorée, **garde
+  path-traversal** (normalisation + `startsWith(root)`).
+* `DashboardServer` — serveur HTTP **JDK** (`com.sun.net.httpserver`,
+  zéro dépendance), bind loopback, `GET` statique, 404, `Cache-Control:
+  no-store`, port `0` accepté (port éphémère pour les tests).
+
+=== Tâche Gradle
+
+* `ServeDashboardTask` (`@DisableCachingByDefault`, `@InputDirectory`,
+  `@Input host/port`) — `dependsOn generateDashboard`, bloque jusqu'à Ctrl+C,
+  log `Serving <dir> on http://<host>:<port> (Ctrl+C to stop)`.
+* `DashboardExtension` : `serveHost` (défaut `127.0.0.1`), `servePort`
+  (défaut `8080`), surchargeables par DSL et par CLI
+  `-Pdashboard.serveHost` / `-Pdashboard.servePort`.
+* `DashboardPlugin` : enregistrement de `serve` (groupe `dashboard`).
+
+== Usage
+
+[source,bash]
+----
+./gradlew serve                       # http://127.0.0.1:8080
+./gradlew serve -Pdashboard.servePort=8081
+./gradlew -t serve                    # régénération continue (Gradle -t)
+----
+
+== Tests (compilés en local, exécutés en CI)
+
+* `DashboardMimeTypesTest` (3 tests) — types MIME.
+* `DashboardStaticContentTest` (5 tests) — index/répertoire, query, 404,
+  traversal `/../` et `/%2e%2e/`.
+* `DashboardServerTest` — serveur réel sur port éphémère : 200 + content-type,
+  CSS, 404.
+* `ServeDashboardFunctionalTest` (TestKit) — tâche enregistrée dans le groupe
+  `dashboard` ; `serve --dry-run` planifie `generateDashboard`.
+
+`compileKotlin` et `compileTestKotlin` **VERTS** (Local = Build ; aucun test
+lancé en local). Preuve d'exécution = CI.
+
+== Suite
+
+* **DSH-9.2** — audit/correction du rendu `generateDashboard` : `configPath`
+  → racine workspace (crawl complet), zéro CDN (assets vendorés), preuve du
+  nombre de boroughs. Toujours 🟡.
+* `DSH-BOUNDARY-0P` (gate maquette) puis `DSH-BOUNDARY-1→7` ; `DSH-8` ouvert.

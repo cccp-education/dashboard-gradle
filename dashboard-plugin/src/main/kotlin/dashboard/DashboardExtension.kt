@@ -22,6 +22,12 @@ abstract class DashboardExtension {
     @get:Optional
     abstract val boroughs: ListProperty<String>
 
+    @get:Input
+    abstract val serveHost: Property<String>
+
+    @get:Input
+    abstract val servePort: Property<Int>
+
     @get:Internal
     abstract val foundryDir: DirectoryProperty
 

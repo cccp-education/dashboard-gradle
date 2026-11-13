@@ -35,3 +35,12 @@ dépendances. Version toujours dérivée du catalogue. CI `Lint` **verte**
 `43469669403` / `43463753298`. Zéro test local, zéro secret. `DSH-8` et le gate
 `DSH-BOUNDARY-0P` restent ouverts. Rapport
 `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
+
+== Session 220 — DSH-9.1 : tâche `serve` — 2026-11-14
+
+Ajout du serveur local `serve` (domaine `dashboard.serve` : MIME, résolution
+statique avec garde path-traversal, serveur HTTP JDK ; tâche
+`ServeDashboardTask` avec `dependsOn generateDashboard`, host/port
+configurables et CLI `-Pdashboard.serve*`). Tests unitaires + TestKit
+(compilés, exécutés en CI). `compileKotlin`/`compileTestKotlin` verts.
+Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.

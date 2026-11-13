@@ -1,6 +1,6 @@
 = BACKLOG — dashboard-gradle
 
-_Dernière mise à jour : 2026-09-14 (S-216 — Cadrage EPIC DSH-BOUNDARY : frontière ALGER / Brooklin Flow / Edster. Redécoupage des EPICs, retrait vis.js, avancement réel, incrémentalité, homepage Panorama. Zéro code modifié.)_
+_Dernière mise à jour : 2026-11-14 (S-220 — **DSH-9.1 livré** : tâche `serve` — serveur HTTP JDK loopback, garde path-traversal, host/port configurables ; DSH-9.2 (crawl/rendu) reste ouvert.)_
 
 == P0 — Terminé
 
@@ -95,6 +95,52 @@ _Cadrage : `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`. Frontière ALGER
 | Export JSON dashboard data | ✅ CADUQUE — `dashboard-data.json` est le contrat public fondationnel depuis S-002, versionné DSH-BOUNDARY-2
 | Mode sombre | 🟡 À FAIRE (reste ALGER DSH-8)
 |===
+
+== DSH-9 — Serveur local `serve` + qualité du rendu (demande pilote S-220, 2026-11-14)
+
+_Constat pilote_ : `./gradlew serve` **n'existe pas** — le plugin n'expose que
+`crawlDashboard`, `generateDashboard`, `publishDashboardSite` — et le rendu
+produit dans `build/dashboard/index.html` est jugé inexploitable.
+
+_Faits mesurés (S-220)_ :
+
+* `build/dashboard/index.html` **est bien** la sortie de `generateDashboard`
+  (`DashboardRenderer`, statique) ; fichier daté du 2026-09-21 (**stale**) et
+  en-tête « **2 boroughs — 12 epics** » alors que le workspace gouverne 30+
+  boroughs.
+* Cause probable : le root consommateur configure `configPath =
+  "dashboard-plugin"` (le plugin lui-même) au lieu de la racine workspace
+  (`foundry/`) → le crawl ne voit qu'un sous-ensemble (cf. DSH-BOUNDARY-2).
+* Dépendance réseau : Bootstrap chargé depuis `cdn.jsdelivr.net` (rendu non
+  offline, aucun asset vendoré).
+
+=== US DSH-9.1 — Tâche `serve` (serveur local) — 3 pts — ✅ S-220
+
+* Tâche `serve` (groupe `dashboard`), `dependsOn generateDashboard`.
+* Serveur HTTP embarqué JDK (`com.sun.net.httpserver.HttpServer`), **aucune
+  dépendance externe** ; bind **127.0.0.1** uniquement.
+* Sert `outputDir` en statique (`/` → `index.html`), MIME corrects.
+* Port/host configurables : extension `serve { host; port }` +
+  `-Pdashboard.servePort` (défaut 8080, échec explicite si occupé).
+* Tâche bloquante, message `Serving <outputDir> on http://127.0.0.1:<port>
+  (Ctrl+C to stop)` ; compatible `./gradlew -t serve` (régénération continue).
+* Tests : unit (résolution port/MIME), functional TestKit (démarrage/arrêt),
+  Cucumber BDD.
+
+=== US DSH-9.2 — Audit + correction du rendu `generateDashboard` — 5 pts — 🟡 À FAIRE
+
+* Corriger la source de données : `configPath` → racine workspace ; crawl de
+  **tous** les boroughs (INDEX + BACKLOG + SESSIONS_HISTORY).
+* Rendu vérifié : EPIC matrix, activity stream, DAG lisibles ; états vides.
+* Zéro CDN : assets vendorés (CSS local), rendu offline.
+* Preuve : capture(s) + `dashboard-data.json` (N boroughs) ; test de
+  non-régression sur le nombre de boroughs/EPICs.
+
+=== Critères d'acceptation
+
+* `./gradlew serve` sert `build/dashboard/index.html` sur `127.0.0.1:8080`.
+* `generateDashboard` produit un dashboard dont l'en-tête reflète le workspace
+  complet (pas « 2 boroughs »), sans dépendance réseau.
 
 '''
 

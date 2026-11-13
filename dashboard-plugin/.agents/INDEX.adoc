@@ -1,9 +1,10 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
-_Derniere mise a jour_ : 2026-11-14 — Session 219 (CNV-17 : JitPack canal unique)
+_Derniere mise a jour_ : 2026-11-14 — Session 220 (DSH-9.1 : tâche `serve`)
+_session terminee_ : 220 — DSH-9.1 : tâche `serve` (domaine `dashboard.serve` : MIME, résolution statique + garde path-traversal, serveur HTTP JDK loopback ; `ServeDashboardTask` `dependsOn generateDashboard`, host/port DSL + `-Pdashboard.serve*` ; tests unit + TestKit compilés). `compileKotlin`/`compileTestKotlin` verts. Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 _session terminee_ : 219 — CNV-17 : catalogue workspace `ws` servi par JitPack (`workspace-catalog:0.0.136`, fin de `education.cccp:*`), shim `conventions-plugin:0.0.17` sans préfixe `v`, JitPack en résolution de dépendances. CI `Lint` verte `43469669403` / `43463753298`. Rapport `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
 _session terminee_ : 216 — Cadrage EPIC DSH-BOUNDARY (frontière ALGER / Brooklin Flow / Edster). 9 US ~31 pts. Redécoupage : retrait vis.js, avancement réel (foundry + BACKLOG), incrémentalité, homepage Panorama, absorption DFL-1/2/3/7. Zéro code modifié.
-_prochaine session_ : 220 — maintenance : `DSH-BOUNDARY-0P` (maquette, **gate bloquant**) puis `DSH-BOUNDARY-1→7` ; `DSH-8` reste ouvert.
+_prochaine session_ : 221 — **DSH-9.2** (audit/correction du rendu : `configPath` → racine workspace, crawl complet, zéro CDN) ; ensuite `DSH-BOUNDARY-0P` (maquette, **gate bloquant**) puis `DSH-BOUNDARY-1→7` ; `DSH-8` reste ouvert.
 
 NOTE: Voir aussi `DASHBOARD_REACT_FLOW.adoc` à la racine du workspace — comparaison
 Understand-Anything et création du borough `dashboard-flow-gradle` (Brooklin Flow).
@@ -75,6 +76,7 @@ _Toute modification du code source du plugin DOIT etre suivie de `./gradlew -q p
 | DSH-6 | Timeline roadmap — jalons MVP0 | 5 | P1 | ✅ S008 (5/5 pts) | Dashboard
 | DSH-7 | Integration runner-gradle + deploiement | 5 | P1 | ✅ S009 (5/5 pts) | Dashboard
 | DSH-8 | Git Sync — refresh par clone/pull git des boroughs | 8 | P2 | PLANIFIE | Dashboard
+| DSH-9 | Serveur local `serve` + audit/correction du rendu `generateDashboard` | 8 | P1 | 🟡 CADRÉ S-220 | Dashboard
 | PUB | Publication Maven Central nmcp | 5 | P1 | ✅ S-215 (0.0.1 Central) | Dashboard
 | DSH-10 | Site JBake-compatible consommable par bakery-gradle | 5 | P1 | ✅ S010 | Dashboard
 | DSH-BOUNDARY | Frontière Dashboard (ALGER / Brooklin Flow / Edster) | 26 | P1 | ✅ Cadré S-216 (7 US) | Dashboard + Brooklin Flow

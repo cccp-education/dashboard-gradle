@@ -1,70 +1,50 @@
-= PROMPT_REPRISE — dashboard-gradle (Session 219 terminée — CNV-17/JitPack)
-:session: 220
+= PROMPT_REPRISE — dashboard-gradle (Session 220 terminée — DSH-9.1 `serve`)
+:session: 221
 :date: 2026-11-14
 
-== Session 219 accomplie — CNV-17 : JitPack canal unique
+== Session 220 accomplie — DSH-9.1 : tâche `serve`
 
-Décision pilote 2026-11-13 : JitPack devient le **canal unique** des artefacts
-publics `education.cccp` (un artefact = un canal = un nom = une version).
-Central (quota Sonatype jusqu'au 2026-12-01) et le Portal ne sont plus ciblés
-pour `foundry/public/**`.
+Ajout du serveur local du dashboard généré (absent jusqu'ici) :
 
-* **Catalogue workspace** : `education.cccp:workspace-catalog:0.0.116` →
-  `com.github.cccp-education.workspace-bom:workspace-catalog:0.0.136`
-  (catalogue `ws`, source unique des versions de plugin).
-* **Shim** : `education.cccp.build.*` → tag JitPack
-  `conventions-plugin:0.0.17` (correctif : **sans** préfixe `v`).
-* **JitPack** présent en `pluginManagement` et en `dependencyResolutionManagement`.
-* `version` reste **dérivée** du catalogue (`ws.versions.dashboard.plugin`).
-* Aucun code métier modifié ; zéro test local. **CI `Lint` verte**
-  `43469669403` (`bcfc6a2`) et `43463753298` (`8a4f129`).
+* Domaine `dashboard.serve` : `DashboardMimeTypes` (pur), `DashboardStaticContent`
+  (résolution `/`→`index.html`, query ignorée, **garde path-traversal**),
+  `DashboardServer` (HTTP **JDK**, boucle locale, port `0` pour les tests).
+* Tâche `ServeDashboardTask` : `@DisableCachingByDefault`, `dependsOn
+  generateDashboard`, bloque jusqu'à Ctrl+C, log `Serving … (Ctrl+C to stop)`.
+* DSL `serveHost` (défaut `127.0.0.1`) / `servePort` (défaut `8080`) +
+  CLI `-Pdashboard.serveHost` / `-Pdashboard.servePort`.
+* Tests : `DashboardMimeTypesTest`, `DashboardStaticContentTest`,
+  `DashboardServerTest`, `ServeDashboardFunctionalTest` (TestKit).
+  `compileKotlin`/`compileTestKotlin` **verts** (Local = Build ; exécution CI).
 
-Rapport : `.agents/sessions/219-cnv-17-jitpack-channel.adoc`.
-Cadrage : `conventions-gradle/conventions-plugin/.agents/CADRAGE_EPIC_CNV_17_JITPACK_PRIMARY.adoc`.
+[source,bash]
+----
+./gradlew serve
+./gradlew serve -Pdashboard.servePort=8081
+./gradlew -t serve
+----
 
-== Contexte hérité (rappel)
+Rapport : `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 
-* S-217 — tolérance CI des credentials nmcp (`?: ""`), débloque `runAllTests` MEMPHIS.
-* S-216 — **cadrage EPIC DSH-BOUNDARY** : ALGER = pilotage (chiffres) /
-  Brooklin Flow = navigation (structure) / Edster = interactif privé. 13
-  décisions, 9 US ~31 pts, absorption DFL-1/2/3/7.
-* DSH-0→7, DSH-10, PUB : ✅ TERMINÉS.
+== Mission Session 221 — DSH-9.2 (audit/correction du rendu)
 
-== Statut
-- DSH-8 (Git Sync + filtres + mode sombre) : 🟡 reste ALGER.
-- DSH-BOUNDARY : ✅ CADRÉ ; **Phase 0 = gate bloquant** avant toute US de production.
+1. **Source de données** : le root consommateur configure `configPath =
+   "dashboard-plugin"` (le plugin) alors que le crawl doit viser la racine
+   workspace (`foundry/`) → `build/dashboard/index.html` affiche « 2 boroughs »
+   au lieu de 30+. Corriger et prouver le nombre de boroughs/EPICs.
+2. **Rendu** : `EPIC matrix`, activity stream, DAG lisibles ; états vides.
+3. **Zéro CDN** : vendoriser le CSS (plus de `cdn.jsdelivr.net`), rendu offline.
+4. Preuves : `dashboard-data.json` + capture(s) ; test de non-régression sur le
+   nombre de boroughs.
 
-== Mission session 220 — maintenance
+== Règles dures
 
-*Mission par défaut : la maquette de navigation (DSH-BOUNDARY-0P).*
+* Thymeleaf **uniquement** pour le rendu (pas de HTML ad hoc).
+* Ne jamais retirer l'exclusion `prototype/**` de `processResources`.
+* Local = Build, Tests = CI (aucun test lancé en local sans permission).
+* `DSH-BOUNDARY-0P` (maquette) reste le **gate** avant `DSH-BOUNDARY-1→7`.
 
-Emplacement : `src/main/resources/prototype/` (README.adoc + `mock/` déjà en
-place). À produire : `index.html` (Panorama 3 zones), `borough.html` (fiche
-borough), `graph.html` (coquille graphe), `styles.css`, `app.js`, `mock/*.json`.
+== Références
 
-Périmètre : Panorama 3 zones (vision critical path A1→A4 / avancement par
-points / structure N0→N4), fiche borough, coquille graphe, états
-(vide/chargé/surcharge), transitions niveau 0 → 1, responsive.
-
-*Interdits* : Thymeleaf, React Flow, données réelles (mock en dur uniquement),
-publication (exclu de `processResources`).
-
-*Gate bloquant* : aucune US de production (DSH-BOUNDARY-1→7) ne démarre avant
-validation pilote de cette maquette.
-
-== Vérifications d'ouverture
-
-. `git status` — working tree propre attendu (session 219 committée/poussée).
-. `./gradlew help` / `./gradlew tasks` — configuration VERTE sur le catalogue
-   JitPack `0.0.136`.
-. Lire `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` § Ordre d'exécution et
-   `.agents/INDEX.adoc` + `BACKLOG.adoc` (`DSH-8`, `DSH-BOUNDARY`).
-
-== Rappels
-
-* **Local = Build, Tests = CI** : compiler/builder uniquement ; jamais `check` local.
-* **Un artefact = un canal = un nom = une version** : ne jamais réintroduire
-  une coordonnée Central dans un catalogue publié.
-* Version = tag : bump **avant** le tag `vX.Y.Z`, version servie `X.Y.Z`.
-* Shim : `conventions-plugin:0.0.17` (sans `v`).
-* Zéro logique LLM/RAG dans ce borough (frontière DSH-BOUNDARY).
+* `BACKLOG.adoc` § DSH-9 ; `.agents/INDEX.adoc` (roadmap) ;
+  `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc`.

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dashboard.publish.PublishDashboardTask
 import dashboard.render.DashboardRenderer
+import dashboard.serve.ServeDashboardTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.nio.file.Files
@@ -11,14 +12,25 @@ import java.nio.file.Files
 /**
  * Gradle plugin entry point for the workspace dashboard.
  *
- * Registers three tasks:
+ * Registers four tasks:
  * - `crawlDashboard`: scans INDEX.adoc / SESSIONS_HISTORY.adoc and writes dashboard-data.json
  * - `generateDashboard`: renders the static HTML/CSS dashboard from the JSON data
  * - `publishDashboardSite`: copies the generated site to the configured publish directory
+ * - `serve`: serves the generated site locally (loopback only) until interrupted
  */
 class DashboardPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("dashboard", DashboardExtension::class.java)
+
+        extension.serveHost.convention(
+            project.providers.gradleProperty("dashboard.serveHost").orElse("127.0.0.1"),
+        )
+        extension.servePort.convention(
+            project.providers
+                .gradleProperty("dashboard.servePort")
+                .map { it.trim().toInt() }
+                .orElse(8080),
+        )
 
         project.tasks.register("crawlDashboard") { task ->
             task.group = DashboardConstants.DASHBOARD_GROUP
@@ -76,6 +88,16 @@ class DashboardPlugin : Plugin<Project> {
             task.dependsOn("generateDashboard")
             task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
             task.publishDir.set(project.layout.projectDirectory.dir(extension.publishDir))
+        }
+
+        project.tasks.register("serve", ServeDashboardTask::class.java) { task ->
+            task.group = DashboardConstants.DASHBOARD_GROUP
+            task.description =
+                "Serves the generated dashboard locally (default http://127.0.0.1:8080, Ctrl+C to stop)."
+            task.dependsOn("generateDashboard")
+            task.outputDir.set(project.layout.projectDirectory.dir(extension.outputDir))
+            task.host.set(extension.serveHost)
+            task.port.set(extension.servePort)
         }
     }
 }
