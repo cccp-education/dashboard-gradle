@@ -11,11 +11,13 @@ plugins {
     id("education.cccp.build.lint") version "0.0.14"
 }
 
+val dashboardPluginVersion = ws.versions.dashboard.plugin.get()
+
 group = "education.cccp"
 version =
     providers
         .gradleProperty("version")
-        .getOrElse(ws.versions.dashboard.plugin.get())
+        .getOrElse(dashboardPluginVersion)
 kotlin.jvmToolchain(25)
 
 repositories {
