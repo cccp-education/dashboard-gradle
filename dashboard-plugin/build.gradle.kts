@@ -22,6 +22,9 @@ kotlin.jvmToolchain(25)
 repositories {
     mavenLocal()
     mavenCentral()
+    // CNV-17 / GBL-013 — JitPack serves the relabelled `workspace-bom`; a
+    // project-level repositories block overrides the settings' repositories.
+    maven("https://jitpack.io")
 }
 
 dependencies {

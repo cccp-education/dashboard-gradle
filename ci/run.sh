@@ -3,12 +3,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT/dashboard-plugin"
 
 job="${1:-}"
 case "$job" in
   fast|test)
-    ./gradlew :dashboard-plugin:ktlintCheck --no-daemon --console=plain
+    ./gradlew ktlintCheck --no-daemon --console=plain
     ;;
   *)
     printf 'unsupported job for dashboard-gradle: %s\n' "${job:-<none>}" >&2
