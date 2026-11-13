@@ -17,7 +17,14 @@ class WorkspaceCrawlTest {
     @Test
     fun `crawling the real foundry should report the whole workspace`() {
         val foundry = Path.of("../../..").toAbsolutePath().normalize()
-        assumeTrue(Files.isDirectory(foundry.resolve("public")), "workspace foundry not present: $foundry")
+        // GBL-013 US-9 — the cross-borough matrix clones only the dashboard
+        // borough under foundry/public; the full workspace is proven by the
+        // presence of the workspace-bom N0 repository. Skip in the isolated
+        // checkout instead of asserting a one-borough crawl.
+        assumeTrue(
+            Files.isDirectory(foundry.resolve("public/workspace-bom")),
+            "full workspace not present (isolated borough checkout): $foundry",
+        )
 
         val data = IndexCrawler().crawlDirectory(foundry)
 
