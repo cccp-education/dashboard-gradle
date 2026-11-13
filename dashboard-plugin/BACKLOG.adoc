@@ -138,7 +138,7 @@ _Faits mesurés (S-220)_ :
 
 === Critères d'acceptation
 
-* `./gradlew serve` sert `build/dashboard/index.html` sur `127.0.0.1:8080`.
+* `./gradlew serve` sert `build/dashboard/index.html` sur `localhost:8820` (défaut).
 * `generateDashboard` produit un dashboard dont l'en-tête reflète le workspace
   complet (pas « 2 boroughs »), sans dépendance réseau.
 

@@ -1,5 +1,5 @@
-= PROMPT_REPRISE — dashboard-gradle (Sessions 220-221 terminées — serve + GBL-013)
-:session: 222
+= PROMPT_REPRISE — dashboard-gradle (Sessions 220-222 terminées)
+:session: 223
 :date: 2026-11-14
 
 == Session 220 accomplie — DSH-9.1 : tâche `serve`
@@ -36,7 +36,14 @@ provider de version. Reste GBL-013 **US-5→US-9**
 (`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc`).
 Rapport `.agents/sessions/221-gbl-013-standalone-0124.adoc`.
 
-== Mission Session 222 — DSH-9.2 (+ GBL-013 US-5→9)
+== Session 222 — `serve` par défaut `http://localhost:8820`
+
+Défauts `serveHost=localhost`, `servePort=8820` (DSL/CLI), release
+`dashboard-plugin 0.0.4`, root + catalogues pinnés 0.0.4. Preuve :
+`./gradlew serve` → 200/200/404 sur `localhost:8820`. Rapport
+`.agents/sessions/222-serve-default-localhost-8820.adoc`.
+
+== Mission Session 223 — DSH-9.2 (+ GBL-013 US-5→9)
 
 1. **Source de données** : le root consommateur configure `configPath =
    "dashboard-plugin"` (le plugin) alors que le crawl doit viser la racine

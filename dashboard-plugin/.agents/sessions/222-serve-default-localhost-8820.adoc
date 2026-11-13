@@ -1,0 +1,43 @@
+= Session 222 — `serve` par défaut sur http://localhost:8820
+:session: 222
+:date: 2026-11-14
+:us: DSH-9.1 (complément)
+:statut: ✅ TERMINÉ
+
+== Mission
+
+Demande pilote : `serve` doit écouter par défaut sur
+`http://localhost:8820/` (au lieu de `127.0.0.1:8080`).
+
+== Livré
+
+* `DashboardPlugin` : conventions `serveHost = "localhost"`,
+  `servePort = 8820` (toujours surchargeables par DSL ou
+  `-Pdashboard.serveHost` / `-Pdashboard.servePort`).
+* Description de tâche mise à jour : `(default http://localhost:8820, Ctrl+C
+  to stop)`.
+* `ServeDashboardFunctionalTest` : assertion alignée.
+* Release **`dashboard-plugin 0.0.4`** (tag `v0.0.4`, JitPack POM **200**),
+  root consommateur et catalogues pinnés `0.0.4` ; catalogue `workspace-bom`
+  `dashboard-plugin = 0.0.4` (garde `verifyCrossBoroughPins`).
+
+== Preuve
+
+`./gradlew serve` (sans option) :
+
+[source,text]
+----
+Serving …/build/dashboard on http://localhost:8820 (Ctrl+C to stop)
+GET /            → 200
+GET /styles.css  → 200
+GET /nope        → 404
+----
+
+`compileKotlin`, `compileTestKotlin`, `ktlintCheck`, `validatePlugins` verts.
+Aucun test Gradle lancé localement (Local = Build, Tests = CI).
+
+== Suite
+
+* **DSH-9.2** — rendu/crawl (`configPath` → racine workspace, « 2 boroughs »,
+  zéro CDN).
+* GBL-013 **US-5→US-9** ; `DSH-BOUNDARY-0P` (gate) puis `DSH-BOUNDARY-1→7`.

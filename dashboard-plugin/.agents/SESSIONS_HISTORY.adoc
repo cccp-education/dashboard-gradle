@@ -48,3 +48,11 @@ Rapport `.agents/sessions/220-dsh-9-1-serve-task.adoc`.
 == Session 221 — GBL-013 + alignement article 0124 — 2026-11-14
 
 dashboard-plugin devient un build autonome (wrapper 9.9.1, settings, catalogue ws 0.0.136, shim JitPack) ; root consommateur sans include. ci/run.sh + lint.yml migrés, verify-gradle-wrapper sur le wrapper du plugin. Run 43498693366 VERT. Fix ktlint préexistant (providers…orElse(ws.versions.dashboard.plugin).get()). Rapport `.agents/sessions/221-gbl-013-standalone-0124.adoc`.
+
+== Session 222 — `serve` par défaut `http://localhost:8820` — 2026-11-14
+
+Défauts `serveHost=localhost`, `servePort=8820` (surchargeables DSL/CLI),
+description alignée, test mis à jour. Release `dashboard-plugin 0.0.4`
+(tag `v0.0.4`, JitPack 200), root + catalogues pinnés 0.0.4, catalogue
+workspace-bom aligné. Preuve : `./gradlew serve` → 200/200/404 sur
+`localhost:8820`. Rapport `.agents/sessions/222-serve-default-localhost-8820.adoc`.
