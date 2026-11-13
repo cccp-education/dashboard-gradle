@@ -145,3 +145,11 @@ CDN), `GenerateDashboardFunctionalTest`/`CrawlDashboardFunctionalTest` migrés
 sur le Panorama et `build/dashboard-data/`, Cucumber (Panorama/fiches +
 `the borough page "<nom>" should contain`), `IndexCrawlerTest` +1 (points
 depuis un BACKLOG de borough). Compilés ; totaux globaux au prochain run CI.
+
+== GBL-013 US-9 (S-225) — delta tests
+
+* `WorkspaceCrawlTest` — l'assertion « whole workspace » est skip-gardée sur
+  `foundry/public/workspace-bom` (workspace complet). La matrice cross-borough
+  clone un seul borough : le test s'abstient au lieu d'échouer. Aucun test
+  métier modifié ; run `43524985246` vert.
+
