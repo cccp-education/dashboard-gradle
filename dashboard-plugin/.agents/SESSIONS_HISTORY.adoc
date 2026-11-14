@@ -102,8 +102,9 @@ functional (+1), Cucumber (+1 scénario). Release JitPack `0.0.6`
 
 `WorkspaceCrawlTest` skip-gardé sur `foundry/public/workspace-bom` (workspace
 complet) ; la matrice cross-borough clone un seul borough. Correctif workspace-bom
-(`dashboard-plugin` comme sous-build). Run `43524985246` **VERT**. Rapport
-`.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
+(`dashboard-plugin` comme sous-build). Tests obsolètes réalignés
+(`DashboardPluginTest` descriptions, `DashboardRendererTest` fiche dashboard).
+Run `43530947609` **VERT**. Rapport `.agents/sessions/225-gbl-013-us9-crawl-ci.adoc`.
 
 
 == Session 225 — DSH-BOUNDARY-3 + DSH-BOUNDARY-4 — 2026-11-14

@@ -19,3 +19,12 @@
 
 Test-only ; aucun code métier modifié. `compileTestKotlin` + `ktlintCheck`
 VERTS (Local = Build).
+
+== Correctifs supplémentaires (même run, tests obsolètes)
+
+* `DashboardPluginTest` : descriptions de `crawlDashboard`/`generateDashboard`
+  alignées sur le code courant.
+* `DashboardRendererTest` : les assertions DSH-0/DSH-2 sont vérifiées sur la
+  fiche **dashboard**, la fiche **newark** portant son propre contenu.
+* Run `43530947609` **VERT** après rerun (dashboard `07d8672`).
+
