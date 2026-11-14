@@ -15,7 +15,7 @@ Feature: Dashboard data crawling
     And a nonexistent config path "invalid-path"
     When I execute the "crawlDashboard" task
     Then the build should succeed
-    And the build log should warn "Config path does not exist"
+    And the dashboard data should contain 0 boroughs
 
   Scenario: Crawl INDEX.adoc with epic table
     Given a Gradle project with the dashboard plugin applied

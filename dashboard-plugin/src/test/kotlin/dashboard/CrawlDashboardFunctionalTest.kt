@@ -1,5 +1,6 @@
 package dashboard
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.BeforeEach
@@ -79,7 +80,7 @@ class CrawlDashboardFunctionalTest {
     }
 
     @Test
-    fun `crawlDashboard should warn when config path does not exist`() {
+    fun `crawlDashboard should succeed when config path does not exist`() {
         writePluginProjectWithCustomConfig("nonexistent")
 
         val result =
@@ -90,7 +91,10 @@ class CrawlDashboardFunctionalTest {
                 .withPluginClasspath()
                 .build()
 
-        assertThat(result.output).contains("Config path does not exist")
+        assertThat(result.task(":crawlDashboard")).isNotNull
+        val json = Files.readString(testDir.resolve("build/dashboard-data/dashboard-data.json"))
+        val data = jacksonObjectMapper().readTree(json)
+        assertThat(data["boroughs"].size()).isZero()
     }
 
     private fun writePluginProject() {

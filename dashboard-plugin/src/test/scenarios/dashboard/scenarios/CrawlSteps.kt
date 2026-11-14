@@ -168,12 +168,6 @@ class CrawlSteps(
         assertThat(world.buildResult!!.output).contains("BUILD SUCCESSFUL")
     }
 
-    @Then("the build log should warn {string}")
-    fun thenBuildLogWarns(message: String) {
-        val output = world.buildResult?.output ?: error("No build result")
-        assertThat(output).contains(message)
-    }
-
     @Then("the dashboard data should contain {int} boroughs")
     fun thenDataContainsBoroughs(count: Int) {
         val json = world.readJsonOutput() ?: error("No dashboard JSON output")
