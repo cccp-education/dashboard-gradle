@@ -25,12 +25,12 @@ class DashboardPluginTest {
         val crawl = project.tasks.findByName("crawlDashboard")
         assertThat(crawl).isNotNull
         assertThat(crawl!!.group).isEqualTo("dashboard")
-        assertThat(crawl.description).isEqualTo("Crawls INDEX.adoc and SESSIONS_HISTORY.adoc from all boroughs.")
+        assertThat(crawl.description).isEqualTo("Crawls the workspace governance files and writes the JSON pivot.")
 
         val generate = project.tasks.findByName("generateDashboard")
         assertThat(generate).isNotNull
         assertThat(generate!!.group).isEqualTo("dashboard")
-        assertThat(generate.description).isEqualTo("Generates the static dashboard site from crawled data.")
+        assertThat(generate.description).isEqualTo("Generates the static Panorama and borough sheets from the crawled data.")
     }
 
     @Test

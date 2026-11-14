@@ -46,8 +46,11 @@ class DashboardRendererTest {
         assertThat(bakery).contains("BKY-1")
 
         val newark = Files.readString(tempDir.resolve("borough-newark.html"))
-        assertThat(newark).contains("DSH-0")
-        assertThat(newark).contains("DSH-2")
+        assertThat(newark).contains("Newark")
+
+        val dashboard = Files.readString(tempDir.resolve("borough-dashboard.html"))
+        assertThat(dashboard).contains("DSH-0")
+        assertThat(dashboard).contains("DSH-2")
     }
 
     @Test
