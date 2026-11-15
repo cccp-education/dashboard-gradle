@@ -37,7 +37,7 @@ if (publicationChannel == "jitpack") {
     }
     pluginManagement.resolutionStrategy.eachPlugin {
         if (requested.id.id.startsWith("education.cccp.build.")) {
-            useModule("com.github.cccp-education.conventions-gradle:conventions-plugin:0.0.18")
+            useModule("com.github.cccp-education.conventions-gradle:conventions-plugin:0.0.19")
         }
     }
 }
