@@ -1,0 +1,83 @@
+= Session 227 — GBL-014-5 / GBL-014-4 / hygiène DRM / GBL-013-10 (dashboard)
+:toc:
+
+:_date_: 2026-11-15
+:_borough_: ALGER (dashboard-gradle, N3)
+:_session_precedente_: 226 (GBL-013-5 : `ci/run.sh fast` dans l'image, build autonome 0124)
+:_statut_: ✅ rollout livré, CI verte
+
+== Contexte
+
+Session globale 229 (2026-11-15). Trois chantiers transverses touchent le
+borough :
+
+. **GBL-014-5** — le canal de publication devient une **propriété du build**
+   (`-Pchannel`, défaut `jitpack`), jamais une branche. Un tag `vX.Y.Z` sert le
+   même commit sur les deux canaux.
+. **GBL-014-4** — shim `conventions-plugin` `0.0.18 → 0.0.19`, plus l'hygiène
+   du dépôt JitPack déclaré dans `dependencyResolutionManagement`.
+. **GBL-013-10** — dernière LTS Node : actions `node24`-natives et image CI
+   `cccp-ci-base` rebâtie sur Node 26.13.1.
+
+Cadrages : `.agents/CADRAGE_EPIC_GBL_014_DUAL_CHANNEL.adoc` et
+`.agents/CADRAGE_EPIC_GBL_013_PORTABILITE_CI.adoc` (racine workspace).
+
+== Changements
+
+* `f94e6da` — **GBL-014-5** : `settings.gradle.kts` racine conditionnel sur
+  `providers.gradleProperty("channel").getOrElse("jitpack")`. Le bloc
+  `pluginManagement` (JitPack, shim du **module** `dashboard-plugin` —
+  préférence mavenLocal, `-PdashboardUseJitPack=true` — et shim conventions) et
+  le dépôt `dependencyResolutionManagement` ne sont déclarés qu'en `jitpack` ;
+  idem `dashboard-plugin/settings.gradle.kts`. `ci/run.sh` passe
+  `-Pchannel="$channel"` (`fast|test` = `ktlintCheck`).
+* `16b4a1c` — **hygiène DRM** : le `maven("https://jitpack.io")`
+  **inconditionnel** du `dependencyResolutionManagement` du sous-build est rendu
+  conditionnel au canal — un build `central` ne porte plus aucune coordonnée
+  JitPack.
+* `7ee1297` — **GBL-014-4** : shim `conventions-plugin` `0.0.18 → 0.0.19`
+  (racine + sous-build). Aucun pin `0.0.20` disponible dans ce lot.
+* `1182197` — **GBL-013-10** : `actions/checkout@v4 → v7` et
+  `gradle/actions/setup-gradle@v4 → v6` (`lint.yml`).
+* `b1246d3` — **GBL-013-10** : image `cccp-ci-base` re-pinée
+  `sha256:03ead3787ed8f09068cc582191e4cd8f5e48e3ce696fe53836ecd826de57ea1f`
+  (Node 26.13.1).
+* Aucun code de production modifié ; aucun test exécuté en local
+  (Local = Build, Tests = CI).
+
+== Preuves CI
+
+| Commit | Workflow | Run | Résultat
+| `f94e6da` | `Lint` | `43660589621` | ✅
+| `16b4a1c` | `Lint` | `43665858881` | ✅
+| `7ee1297` | `Lint` | `43670881553` | ✅
+| `1182197` | `Lint` | `43685748925` | ✅
+| `b1246d3` | `Lint` | `43690080534` | ✅
+
+Zéro secret, zéro publication, zéro bump de version.
+
+== Fichiers touchés
+
+* `settings.gradle.kts`
+* `dashboard-plugin/settings.gradle.kts`
+* `ci/run.sh`
+* `.github/workflows/lint.yml`
+
+== Note de numérotation
+
+La séquence vivante du borough va de `000` à `225` (deux entrées `225`) et le
+`BACKLOG` référence déjà `S-226` (GBL-013-5). Le numéro **227** a donc été
+retenu pour ne pas réutiliser un identifiant existant.
+
+== Reste à faire
+
+* **DSH-BOUNDARY-5** (Brooklin Flow : graphe React Flow + overlay
+  `dashboard-data.json` + panneau récap) — validation pilote du prototype 0P
+  requise (gate).
+* **DSH-8** (Git sync des boroughs, filtres de tableau, mode sombre) si le
+  pilote préfère rester sur ALGER.
+* Prochaine release `0.0.8` sur demande pilote (dernière : `0.0.7`,
+  tag `v0.0.7`).
+* Transverse : `bakery` (catalogue relabellé reverté), `container-provision` et
+  racines agrégateurs sans `verifyChannel`, Sonatype 130791 après reset
+  (GBL-014 US-6/US-7), GBL-013 US-7 (workflows `office` bloqués).

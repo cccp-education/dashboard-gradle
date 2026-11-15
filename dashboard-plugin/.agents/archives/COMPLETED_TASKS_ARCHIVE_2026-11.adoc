@@ -11,3 +11,8 @@
 * DSH-BOUNDARY-3 — `crawlDashboard`/`generateDashboard` typées et incrémentales (`@CacheableTask`, `@InputFiles` filtrés, pivot `build/dashboard-data`, sorties disjointes) — session 225.
 * DSH-BOUNDARY-4 — Panorama 3 zones (Vision A1→A4, Avancement, Structure) + 39 fiches `borough-*.html` (EPICs, sessions, progression), export JBake par fiche — session 225.
 * Points réels — parsing des `BACKLOG.adoc` de borough (multi-lignes/indentés/non fermés), 39 boroughs / 487 EPICs / 18 % (1425/7856 pts) — session 225.
+
+* GBL-014-5 — canal de publication conditionnel (`-Pchannel`, défaut `jitpack`) sur `settings.gradle.kts` racine + `dashboard-plugin` ; bloc `pluginManagement` (JitPack + shim module `dashboard-plugin` + shim conventions) et DRM uniquement en `jitpack` ; `ci/run.sh` passe `-Pchannel` — session 227.
+* Hygiène DRM — le `maven("https://jitpack.io")` inconditionnel du `dependencyResolutionManagement` du sous-build devient conditionnel (`16b4a1c`) — session 227.
+* GBL-014-4 — shim `conventions-plugin 0.0.19` (racine + sous-build) — session 227.
+* GBL-013-10 — `checkout@v7` + `setup-gradle@v6` (`lint.yml`), image `cccp-ci-base@sha256:03ead378…` Node 26.13.1 ; CI `Lint` verte sur les 5 commits — session 227.

@@ -1,38 +1,55 @@
-= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 226
-:session: 226
-:date: 2026-11-14
+= PROMPT_REPRISE — dashboard-gradle (ALGER) — session 227 terminée → 228
+:session: 228
+:date: 2026-11-15
+:etat: ✅ GBL-014-5 / hygiène DRM / GBL-014-4 / GBL-013-10 livrés, CI `Lint` verte ; mission 228 = DSH-BOUNDARY-5 (gate pilote sur le prototype 0P).
+
+== Session 227 terminée — canal dual + hygiène + Node LTS
+
+* **GBL-014-5** : `settings.gradle.kts` racine conditionnel sur `-Pchannel`
+  (défaut `jitpack`) — bloc `pluginManagement` (JitPack + shim **module**
+  `dashboard-plugin` + shim conventions) et DRM uniquement en `jitpack` ;
+  idem sous-build ; `ci/run.sh` passe `-Pchannel` (`f94e6da`).
+* **Hygiène DRM** : le `maven("https://jitpack.io")` inconditionnel du
+  `dependencyResolutionManagement` du sous-build devient conditionnel
+  (`16b4a1c`).
+* **GBL-014-4** : shim `conventions-plugin 0.0.18 → 0.0.19` (`7ee1297`).
+* **GBL-013-10** : `checkout@v7` + `setup-gradle@v6` (`lint.yml`) (`1182197`) ;
+  image `cccp-ci-base@sha256:03ead378…` Node 26.13.1 (`b1246d3`).
+* CI `Lint` **verte** sur les 5 commits. Rapport
+  `.agents/sessions/227-gbl-014-5-channel-rollout.adoc`.
 
 == Où on en est (acquis — ne pas refaire)
 
-* **DSH-BOUNDARY-3 ✅ (S-225)** : `crawlDashboard`/`generateDashboard` sont des
-  tâches typées `@CacheableTask` ; le pivot vit dans `build/dashboard-data/`,
-  le site dans `build/dashboard/` (sorties disjointes). 2e run = UP-TO-DATE.
+* **DSH-BOUNDARY-3 ✅ (S-225)** : `crawlDashboard`/`generateDashboard` typées
+  `@CacheableTask` ; pivot `build/dashboard-data/`, site `build/dashboard/`
+  (sorties disjointes), 2e run UP-TO-DATE.
 * **DSH-BOUNDARY-4 ✅ (S-225)** : Panorama 3 zones (Vision A1→A4, Avancement,
-  Structure) + une fiche `borough-<slug>.html` par borough (EPICs, sessions,
-  progression). Vision configurée par la racine (`dashboard { criticalPath }`).
-* **Points réels** : les `BACKLOG.adoc` des boroughs sont parsés
-  (tables multi-lignes/indentées/non fermées tolérées). Dogfood :
-  **39 boroughs / 487 EPICs / 437 sessions — 18 % (1425/7856 pts)**, ~580 ms.
+  Structure) + une fiche `borough-<slug>.html` par borough ; vision configurée
+  par la racine (`dashboard { criticalPath }`).
+* **Points réels** : `BACKLOG.adoc` des boroughs parsés (tables multi-lignes,
+  indentées, non fermées) — 39 boroughs / 487 EPICs / 437 sessions.
 * **Zéro CDN** (Bootstrap 5.3.3 vendoré), DAG en table statique (frontière
   S-216), `prototype/**` exclu du JAR.
-* **Publication (politique définitive)** : **JitPack canal unique** ; Maven
-  Central/Sonatype et Gradle Plugin Portal sont **retirés**. Tag `vX.Y.Z`.
+* **Publication (GBL-014)** : canal = propriété du build
+  (`-Pchannel=central|jitpack`, défaut `jitpack`). JitPack reste le seul canal
+  servi aujourd'hui ; Central/Portal après le reset Sonatype du 2026-12-01.
+  Tag `vX.Y.Z` unique.
 * **Local** : `publishToMavenLocal -Pversion=0.0.8` puis le root préfère
   mavenLocal si le JAR existe ; `-PdashboardUseJitPack=true` force JitPack.
 * Dernière release : **`0.0.7`** (tag `v0.0.7`). Prochaine : `0.0.8`.
 
-== Mission session 226 — DSH-BOUNDARY-5 (Brooklin Flow)
+== Mission session 228 — DSH-BOUNDARY-5 (Brooklin Flow)
 
 1. **Valider le prototype 0P** (gate formel) : `prototype/` (Panorama, fiche,
-   graphe, états `?state=empty|loaded|overloaded`) — recueillir l'accord
-   pilote avant de poursuivre la Phase 1 Brooklin Flow.
-2. **DSH-BOUNDARY-5** (dépôt `foundry/public/dashboard-flow-gradle`) :
-   graphe React Flow chargeant `graph.json` (graphify) + overlay
-   `dashboard-data.json` (ALGER) : coloration par statut, filtres
-   (couche N / borough / statut), panneau récap au clic. Absorbe DFL-1 +
-   DFL-2 (partiel). Zéro calcul de métrique côté Brooklin Flow.
-3. Si le pilote préfère rester ALGER : `DSH-8` (Git sync des boroughs,
-   filtres de tableau, mode sombre) ou audit de rendu des 39 fiches.
+   graphe, états `?state=empty|loaded|overloaded`) — accord pilote requis avant
+   la Phase 1 Brooklin Flow.
+2. **DSH-BOUNDARY-5** (dépôt `foundry/public/dashboard-flow-gradle`) : graphe
+   React Flow chargeant `graph.json` (graphify) + overlay `dashboard-data.json`
+   (ALGER) — coloration par statut, filtres (couche N / borough / statut),
+   panneau récap au clic. Absorbe DFL-1 + DFL-2 (partiel). Zéro calcul de
+   métrique côté Brooklin Flow.
+3. Si le pilote préfère rester ALGER : `DSH-8` (Git sync, filtres, mode sombre)
+   ou audit de rendu des 39 fiches.
 
 == Commandes
 
@@ -48,13 +65,13 @@ cd dashboard-plugin && ./gradlew build  # build autonome (hors tests)
 
 * Thymeleaf **uniquement** pour ALGER ; le prototype reste hors rendu.
 * Local = Build, Tests = CI (aucun `test`/`check` local).
-* JitPack : un artefact = un canal = un nom = une version ; jamais réutiliser
-  une version taggée. Ne jamais lancer `publishPlugins` /
-  `publishAggregationToCentralPortal`.
+* Canal = propriété du build, jamais une branche ; zéro mélange de coordonnées
+  dans un même catalogue. Un tag = un commit ; jamais réutiliser une version
+  taggée.
 * Le DAG interactif reste hors d'ALGER ; Brooklin Flow lit les pivots JSON.
 
 == Références
 
-* Rapport `.agents/sessions/225-dsh-boundary-3-4.adoc`.
+* Rapport `.agents/sessions/227-gbl-014-5-channel-rollout.adoc`.
 * `.agents/CADRAGE_EPIC_DSH_BOUNDARY.adoc` (décisions 1→13).
 * `BACKLOG.adoc` § DSH-BOUNDARY ; `.agents/INDEX.adoc`.

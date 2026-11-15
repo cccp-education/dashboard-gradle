@@ -1,5 +1,6 @@
 = Index des Sessions — Dashboard Gradle Plugin
 
+_Derniere mise a jour_ : 2026-11-15 — Session 227 (**GBL-014-5** canal conditionnel `-Pchannel` (défaut `jitpack`) racine + sous-build, **hygiène DRM**, **GBL-014-4** shim `conventions-plugin 0.0.19`, **GBL-013-10** `checkout@v7` + `setup-gradle@v6` + image `cccp-ci-base@sha256:03ead378…` Node 26.13.1 ; CI `Lint` verte `43660589621`, `43665858881`, `43670881553`, `43685748925`, `43690080534`. Rapport `.agents/sessions/227-gbl-014-5-channel-rollout.adoc`.)
 _Derniere mise a jour_ : 2026-11-14 — Session 225 (GBL-013 US-9 : `WorkspaceCrawlTest` skip-gardé en CI isolée, matrice cross-borough `dashboard-plugin`, run `43524985246` VERT)
 _Derniere mise a jour_ : 2026-11-14 — Session 225 (DSH-BOUNDARY-3 + DSH-BOUNDARY-4)
 _session terminee_ : 225 — **DSH-BOUNDARY-3 ✅ + DSH-BOUNDARY-4 ✅** : `crawlDashboard`/`generateDashboard` typées et incrémentales (pivot `build/dashboard-data`, 2e run UP-TO-DATE) ; Panorama 3 zones (Vision A1→A4, Avancement, Structure) + **39 fiches `borough-*.html`** ; points réels depuis les BACKLOG (39 boroughs / 487 EPICs / 437 sessions — **18 % / 1433/7856 pts**). **Release JitPack `0.0.7`** (tag `v0.0.7`, POM/JAR 200, root JitPack 429 ms). Rapport `.agents/sessions/225-dsh-boundary-3-4.adoc`.
